@@ -1,0 +1,19 @@
+{
+    "import": ["@cspell/dict-es-es/cspell-ext.json"],
+    "language": "en,es",
+    "ignorePaths": [
+        "cspell.json",
+        "node_modules",
+        ".eslintrc.json",
+        ".markdownlint.json",
+        ".prettierrc",
+        ".vscode/*",
+        "docker-compose.yml",
+        "Makefile",
+        "functions/*",
+        ".funcignore",
+        "docs/*",
+        "package.json"
+    ],
+    "words": ["Deduplicator", "deduplicator", "marshall", "spanish", "onetable", "fglob", "unmarshall", "eventbridge"]
+}
