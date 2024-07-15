@@ -2,7 +2,7 @@
     "name": "app-manager-backend",
     "version": "1.0.0",
     "description": "Monorepo boilerplate for backend/frontend projects written in Typescript and following the Hexagonal Architecture paradigm.",
-    "repository": "git@github.com:cjuega/typescript-fullstack-skeleton.git",
+    "repository": "git@eu.git.epam.com:mdkn-0827/appmanager/app-manager-backend.git",
     "author": "Optiva Media an EPAM Company",
     "license": "MIT",
     "private": true,
