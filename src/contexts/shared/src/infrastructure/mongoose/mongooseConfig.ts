@@ -1,15 +1,15 @@
 type MongooseConfig = {
     connectionUri: string;
-    models: Array<string>;
+    models?: Array<string>;
     collection: string;
-    options: {
+    options?: {
         dbName?: string;
         user?: string;
         pass?: string;
         maxPoolSize?: number;
         minPoolSize?: number;
         retryReads?: boolean;
-        retryWrites: boolean;
+        retryWrites?: boolean;
     };
 };
 

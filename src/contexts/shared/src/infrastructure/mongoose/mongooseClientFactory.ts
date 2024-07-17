@@ -37,7 +37,7 @@ export default class MongooseClientFactory {
                     // eslint-disable-next-line no-await-in-loop
                     model = await import(filepath);
 
-                connection.model(model.modelName ?? modelName, model.schema, config.collection);
+                connection.model(model.modelName ?? modelName, model, config.collection);
             })
         );
     }

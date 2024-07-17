@@ -29,6 +29,7 @@
         "lint": "npx eslint . --ext .js,.ts",
         "test": "yarn test:unit",
         "test:unit": "NODE_ENV=test jest --verbose --passWithNoTests",
+        "test:integration": "NODE_ENV=test NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest --config=jest.config.integration.js --verbose --passWithNoTests",
         "build": "yarn build:clean && yarn build:tsc",
         "build:clean": "rm -r dist; exit 0",
         "build:tsc": "tsc && tscpaths -p tsconfig.json -s ./src -o ./dist"
