@@ -15,5 +15,32 @@
         "docs/*",
         "package.json"
     ],
-    "words": ["Deduplicator", "deduplicator", "marshall", "spanish", "onetable", "fglob", "unmarshall", "eventbridge"]
+    "words": [
+        "Deduplicator",
+        "deduplicator",
+        "marshall",
+        "spanish",
+        "onetable",
+        "fglob",
+        "unmarshall",
+        "eventbridge",
+        "mongooseoptions",
+        "pipelinestage",
+        "schemaoptions",
+        "schematypes",
+        "virtuals",
+        "inferschematype",
+        "inferrawdoctype",
+        "mongooseoptions",
+        "pipelinestage",
+        "schemaoptions",
+        "schematypes",
+        "virtuals",
+        "inferschematype",
+        "inferrawdoctype",
+        "backoffice",
+        "Backoffice",
+        "backoffice",
+        "backofficecontents"
+    ]
 }
