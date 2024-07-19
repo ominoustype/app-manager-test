@@ -1,21 +1,73 @@
 import AggregateRoot from '@context/shared/domain/aggregateRoot';
+import Datetime from '@context/shared/domain/datetime';
+import Uuid from '@context/shared/domain/uuid';
 import DocumentId from '@src/domain/documentId';
+import NewDocumentCreatedDomainEvent from './newDocumentCreatedDomainEvent';
+import DocumentName from './documentName';
 
 export type DocumentPrimitives = {
-    id: string;
+    id: string,
+    created_at: string,
+    name: string,
+    type: string, //Enum
+    version: string,
+    properties: string,
+    customerId: string,
+    environmentId: string,
+    updatedBy: string
 };
 
 export default class Document extends AggregateRoot {
-    private readonly id: DocumentId;
+    readonly id: DocumentId;
+    readonly created_at: Datetime;
+    readonly name: DocumentName;
+    readonly type: string;
+    readonly version: string;
+    readonly properties: string;
+    readonly customerId: Uuid;
+    readonly environmentId: Uuid;
+    readonly updatedBy: string;
 
     constructor(primitives: DocumentPrimitives) {
         super();
         this.id = new DocumentId(primitives.id);
+        this.created_at = new Datetime(primitives.created_at);
+        this.name = new DocumentName(primitives.name);
+        this.type = (primitives.type);
+        this.version = (primitives.version);
+        this.properties = (primitives.properties);
+        this.customerId = new Uuid(primitives.customerId);
+        this.environmentId = new Uuid(primitives.environmentId);
+        this.updatedBy = (primitives.updatedBy);
     }
 
     toPrimitives(): DocumentPrimitives {
         return {
-            id: this.id.value
+            created_at: this.created_at.toString(),
+            id: this.id.toString(),
+            name: this.name.toString(),
+            type: this.type.toString(),
+            version: this.version.toString(),
+            properties: this.properties.toString(),
+            customerId: this.customerId.toString(),
+            environmentId: this.environmentId.toString(),
+            updatedBy: this.updatedBy.toString()
         };
+    }
+
+    static fromPrimitives(primitives: DocumentPrimitives): Document {
+        return new Document(primitives);
+    }
+
+    static create(primitives: Omit<DocumentPrimitives, 'created_at' | 'id'>) {
+        const newDocument = new Document({
+            created_at: new Datetime().toString(),
+            id: Uuid.random().toString(),
+            ...primitives
+        });
+
+        newDocument.record(new NewDocumentCreatedDomainEvent(newDocument.toPrimitives()));
+
+        return newDocument;
     }
 }
