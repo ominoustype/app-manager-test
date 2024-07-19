@@ -10,12 +10,12 @@ export default class FindDocumentQueryMother {
 
     static random(): FindDocumentQuery {
         return FindDocumentQueryMother.create({
-            id: UuidMother.random().value
+            id: UuidMother.random().toString()
         })
     }
 
     static randomDocument(query: FindDocumentQuery): Document {
-        const id = UuidMother.create(query.id).value
+        const id = UuidMother.create(query.id).toString()
 
         return DocumentMother.random({id})
     }

@@ -3,6 +3,8 @@ import DocumentId from '@src/domain/documentId';
 import Document from '@src/domain/document';
 
 interface DocumentRepository {
+    create(document: Document): Promise<void>;
+    
     find(id: DocumentId): Promise<Nullable<Document>>;
 }
 
