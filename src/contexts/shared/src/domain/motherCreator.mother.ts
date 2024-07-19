@@ -9,6 +9,10 @@ export default class MotherCreator {
         return faker.datatype.number({ min: 0, max });
     }
 
+    static word(): string {
+        return faker.lorem.word();
+    }
+
     static words(): string {
         return faker.lorem.words();
     }
