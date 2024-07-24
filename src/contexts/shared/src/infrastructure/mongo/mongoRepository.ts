@@ -121,4 +121,10 @@ export default abstract class MongoRepository<T extends AggregateRoot> {
     }
 
     protected abstract getCursor(item: T, isBackward: boolean): Cursor;
+
+    convertCriteria(criteria: Criteria) {
+        return this.converter.convert(
+            MongoRepository.addDefaultOrder(criteria)
+        );
+    }
 }
