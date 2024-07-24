@@ -51,9 +51,9 @@ describe('documentFinder', () => {
             ),
             query = FindDocumentQueryMother.random();
 
-        repository.whenFindThenReturn(null);
-
         try {
+            repository.whenFindThenReturn(null);
+
             await handler.handle(query);
         } catch (e) {
             expect(e).toBeInstanceOf(DocumentNotFoundError);

@@ -2,6 +2,7 @@ import { EventBus } from "@context/shared/domain/eventBus/eventBus";
 import DocumentRepository from "@src/domain/documentRepository";
 import CreateDocumentCommand from "./createDocumentCommand";
 import Document from "@src/domain/document";
+import DocumentAlreadyExistsError from "@src/domain/errors/documentAlreadyExistsError";
 
 export default class DocumentCreator {
     private readonly repository: DocumentRepository;
@@ -15,6 +16,12 @@ export default class DocumentCreator {
 
     async run(command: CreateDocumentCommand): Promise<void> {
         const newDocument = Document.create(command.data);
+
+        const document = await this.repository.find(newDocument.id);
+
+        if (document !== null) {
+            throw new DocumentAlreadyExistsError(newDocument.id.value)
+        }
 
         await this.repository.create(newDocument);
 
