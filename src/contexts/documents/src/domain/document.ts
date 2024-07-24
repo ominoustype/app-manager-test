@@ -4,6 +4,9 @@ import Uuid from '@context/shared/domain/uuid';
 import DocumentId from '@src/domain/documentId';
 import NewDocumentCreatedDomainEvent from './newDocumentCreatedDomainEvent';
 import DocumentName from './documentName';
+import DocumentUpdatedDomainEvent from './documentUpdatedDomainEvent';
+import DocumentRemovedDomainEvent from './documentRemovedDomainEvent';
+import { merge } from 'lodash';
 
 export type DocumentPrimitives = {
     id: string,
@@ -69,5 +72,35 @@ export default class Document extends AggregateRoot {
         newDocument.record(new NewDocumentCreatedDomainEvent(newDocument.toPrimitives()));
 
         return newDocument;
+    }
+
+    equalsTo(other: Document): boolean {
+        return (
+            (!this.created_at || !other.created_at || (this.created_at && other.created_at && this.created_at.equalsTo(other.created_at))) &&
+            (!this.id || !other.id || (this.id && other.id && this.id.equalsTo(other.id))) &&
+            (!this.name || !other.name || (this.name && other.name && this.name.equalsTo(other.name))) &&
+            (this.type === (other.type)) &&
+            (!this.version || !other.version || (this.version && other.version && this.version === (other.version))) &&
+            (!this.properties || !other.properties || (this.properties && other.properties && this.properties === (other.properties))) &&
+            (!this.customerId || !other.customerId || (this.customerId && other.customerId && this.customerId.equalsTo(other.customerId))) &&
+            (!this.environmentId || !other.environmentId || (this.environmentId && other.environmentId && this.environmentId.equalsTo(other.environmentId))) &&
+            (!this.updatedBy || !other.updatedBy || (this.updatedBy && other.updatedBy && this.updatedBy === other.updatedBy))
+        ) as boolean
+    }
+
+    merge(toMerge: Partial<DocumentPrimitives>): DocumentPrimitives {
+        return merge(this.toPrimitives(), toMerge);
+    }
+
+    update(primitives: Partial<DocumentPrimitives>): Document {
+        const newDocument = new Document(this.merge(primitives));
+
+        newDocument.record(new DocumentUpdatedDomainEvent(newDocument.toPrimitives()));
+
+        return newDocument;
+    }
+
+    delete() {
+        this.record(new DocumentRemovedDomainEvent(this.toPrimitives()));
     }
 }
