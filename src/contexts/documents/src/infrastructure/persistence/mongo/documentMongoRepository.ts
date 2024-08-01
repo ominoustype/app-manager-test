@@ -83,17 +83,21 @@ export default class DocumentMongoRepository extends MongoRepository<Document> i
         const collection = await this.collection();
 
         const documents = collection.find(find, { limit, skip });
-        const items = (await documents.toArray()).map((document) =>
-            Document.fromPrimitives({
-                ...document,
-                // eslint-disable-next-line no-underscore-dangle
-                id: document._id
-            })
+        const items = (await documents.toArray()).map((document) => 
+            this.getParsedDocument(document)
         );
 
         return new Documents(
             items.length <= 0 ? [] : items.map((i) => i.toPrimitives())
         );
+    }
+
+    getParsedDocument(document: any): Document {
+        return Document.fromPrimitives({
+            ...document,
+            // eslint-disable-next-line no-underscore-dangle
+            id: document._id
+        });
     }
 
     
