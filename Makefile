@@ -1,7 +1,7 @@
 SHELL := $(shell which bash)
 # Test if the dependencies we need to run this Makefile are installed
 DOCKER := $(shell command -v docker)
-DOCKER_COMPOSE := $(shell command -v docker-compose)
+DOCKER_COMPOSE := $(shell command -v docker compose)
 .PHONY = deps
 deps:
 ifndef DOCKER
@@ -9,7 +9,7 @@ ifndef DOCKER
 	@exit 1
 endif
 ifndef DOCKER_COMPOSE
-	@echo "docker-compose is not available. Please install docker-compose"
+	@echo "docker compose is not available. Please install docker compose"
 	@exit 1
 endif
 	yarn install --force

@@ -1,8 +1,9 @@
+import { omit } from 'lodash';
 import { EventBus } from '@src/domain/eventBus/eventBus';
 import { DomainEvent } from '@src/domain/eventBus/domainEvent';
 import { DomainEventSubscriber } from '@src/domain/eventBus/domainEventSubscriber';
 
-export default class EventBusMock implements EventBus {
+export default class EventBusMock implements EventBus { 
     private mockPublish = jest.fn();
 
     async publish(events: DomainEvent[]): Promise<void> {
@@ -14,14 +15,14 @@ export default class EventBusMock implements EventBus {
         //
     }
 
-    assertLastPublishedEventIs(expectedEvent: DomainEvent): void {
+    assertLastPublishedEventIs(expectedEvent: DomainEvent, exclusions?: Array<string>): void {
         const publishSpyCalls = this.mockPublish.mock.calls,
             lastPublishSpyCall = publishSpyCalls[publishSpyCalls.length - 1],
             lastPublishedEvent = lastPublishSpyCall[0][0];
 
         expect(publishSpyCalls.length).toBeGreaterThan(0);
 
-        expect(this.getDataFromDomainEvent(expectedEvent)).toMatchObject(this.getDataFromDomainEvent(lastPublishedEvent));
+        expect(this.getDataFromDomainEvent(expectedEvent, exclusions)).toMatchObject(this.getDataFromDomainEvent(lastPublishedEvent, exclusions));
     }
 
     assertLastPublishedEventsAre(events: DomainEvent[]): void {
@@ -65,10 +66,10 @@ export default class EventBusMock implements EventBus {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    private getDataFromDomainEvent(event: DomainEvent): any {
+    private getDataFromDomainEvent(event: DomainEvent, exclusions?: Array<string>): any {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { eventId, occurredOn, ...attributes } = event;
 
-        return attributes;
+        return omit(attributes, exclusions ?? []);;
     }
 }
