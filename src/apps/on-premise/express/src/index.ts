@@ -2,11 +2,13 @@ import ExpressServer from 'express'
 
 import loadDocuments from './documents/routes'
 import errorHandler from './errorMiddleware'
+import loadDeploymentConfigs from './deploymentConfigs/routes'
 
 const app = ExpressServer()
 const port = 3000
 
 loadDocuments(app)
+loadDeploymentConfigs(app)
 
 app.use(errorHandler)
 
