@@ -3,7 +3,7 @@ import FindEnvironmentQueryHandler from "./findEnvironmentQueryHandler";
 import EnvironmentFinder from "./environmentFinder";
 import FindEnvironmentQueryMother from "./findEnvironmentQuery.mother";
 import EnvironmentNotFoundError from "@src/domain/errors/environmentNotFoundError";
-import FindEnvironmentResponseMother from "./findEnvironment.mother";
+import FindEnvironmentResponseMother from "./findEnvironmentResponse.mother";
 import Uuid from "@context/shared/domain/uuid";
 
 describe('environmentFinder', () => {
@@ -24,7 +24,7 @@ describe('environmentFinder', () => {
         repository.assertFindHasBeenCalledWith(new Uuid(query.id));
     });
 
-    it('should find an Environment', async () => {
+    it('should find an environment', async () => {
         expect.hasAssertions();
 
         const repository = new EnvironmentRepositoryMock(),
@@ -42,7 +42,7 @@ describe('environmentFinder', () => {
         expect(response).toStrictEqual(expected);
     });
     
-    it('should throw an EnvironmentNotFoundError when the Environment does not exist', async () => {
+    it('should throw an EnvironmentNotFoundError when the environment does not exist', async () => {
         expect.hasAssertions();
 
         const repository = new EnvironmentRepositoryMock(),

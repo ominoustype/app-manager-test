@@ -20,9 +20,9 @@ export default class EnvironmentMother{
         })
     }
 
-    static merge(oldDocument: Environment, newDocument: Environment) {
+    static merge(oldEnvironment: Environment, newEnvironment: Environment) {
         return EnvironmentMother.create({
-            ...oldDocument.merge(newDocument.toPrimitives())
+            ...oldEnvironment.merge(newEnvironment.toPrimitives())
         });
     }
 

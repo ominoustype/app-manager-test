@@ -5,7 +5,7 @@ import EnvironmentMother from "@src/domain/environment.mother";
 import UuidMother from "@context/shared/domain/uuid.mother";
 
 const client = MongoClientFactory.createClient(
-    'mongoClientAppManager',
+    'environments',
     {
         url: 'mongodb://0.0.0.0:27017/'
     }
@@ -24,14 +24,14 @@ describe('environmentMongoRepository', () => {
         await arranger.close();
     });
         
-    it('should create an Environment', async () => {
+    it('should create an environment', async () => {
         //expect.hasAssertions()
         await repository.create(EnvironmentMother.random());
     });
 
     describe('find', () => {
 
-        it("should return an Environment by id", async () => {
+        it("should return an environment by id", async () => {
             //expect.hasAssertions()
 
             const environment = EnvironmentMother.random();
@@ -43,7 +43,7 @@ describe('environmentMongoRepository', () => {
                 console.log("Integration test Environment/find by id: \n"+JSON.stringify(result, null, '\t'));
         });
     
-        it("should return null if the Environment doesn't exist", async () => {
+        it("should return null if the environment doesn't exist", async () => {
             //expect.hasAssertions()
 
             const result = await repository.find(UuidMother.random());
@@ -57,11 +57,11 @@ describe('environmentMongoRepository', () => {
         it("should delete a Environment", async () => {
             // expect.hasAssertions();
 
-            const document = EnvironmentMother.random();
+            const environment = EnvironmentMother.random();
 
-            await repository.create(document);
-            await repository.delete(document);
-            const result = await repository.find(document.id);
+            await repository.create(environment);
+            await repository.delete(environment);
+            const result = await repository.find(environment.id);
 
             console.log("Integration test Environment/delete: \n"+result)
             expect(result).toBeNull();

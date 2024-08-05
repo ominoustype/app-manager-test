@@ -14,36 +14,36 @@ export default class EnvironmentRepositoryMock implements EnvironmentRepository 
     private mockDelete = jest.fn();
     private mockUpdate = jest.fn();
     
-    async whenFindThenReturn(Environment: Nullable<Environment>): Promise<void> {
-        this.mockFind.mockReturnValue(Promise.resolve(Environment));
+    async whenFindThenReturn(environment: Nullable<Environment>): Promise<void> {
+        this.mockFind.mockReturnValue(Promise.resolve(environment));
     }
 
     async assertFindHasBeenCalledWith(id: Uuid): Promise<void> {
         expect(this.mockFind).toHaveBeenCalledWith(id);
     }
 
-    assertCreateHasBeenCalledWith(Environment: Environment, exclusions: Array<string>) {
+    assertCreateHasBeenCalledWith(environment: Environment, exclusions: Array<string>) {
         const { mock } = this.mockCreate,
             lastEnvironmentCreated = mock.calls[mock.calls.length - 1][0],
             lastEnvironmentCreatedPrimitives = omit(
                 lastEnvironmentCreated.toPrimitives(),
                 exclusions ?? []
             ),
-            expectedBody = omit(Environment.toPrimitives(), exclusions ?? []);
+            expectedBody = omit(environment.toPrimitives(), exclusions ?? []);
 
         expect(lastEnvironmentCreatedPrimitives).toStrictEqual(expectedBody);
     }
 
-    async assertDeleteHasBeenCalledWith(Environment: Environment): Promise<void> {
-        expect(this.mockDelete).toHaveBeenCalledWith(Environment);
+    async assertDeleteHasBeenCalledWith(environment: Environment): Promise<void> {
+        expect(this.mockDelete).toHaveBeenCalledWith(environment);
     }
 
-    async assertUpdateHasBeenCalledWith(Environment: Environment): Promise<void> {
-        expect(this.mockUpdate).toHaveBeenCalledWith(Environment);
+    async assertUpdateHasBeenCalledWith(environment: Environment): Promise<void> {
+        expect(this.mockUpdate).toHaveBeenCalledWith(environment);
     }
 
-    async whenSearchThenReturn(Environment: Environments): Promise<void> {
-        this.mockSearch.mockReturnValue(Environment);
+    async whenSearchThenReturn(environment: Environments): Promise<void> {
+        this.mockSearch.mockReturnValue(environment);
     }
 
     async assertSearchHasBeenCalledWith(params: SearchEnvironmentsQueryParams): Promise<void> {
@@ -58,15 +58,15 @@ export default class EnvironmentRepositoryMock implements EnvironmentRepository 
         return this.mockSearch(params);
     }
 
-    create(Environment: Environment): Promise<void> {
-        return this.mockCreate(Environment);
+    create(environment: Environment): Promise<void> {
+        return this.mockCreate(environment);
     }
 
-    delete(Environment: Environment): Promise<void> {
-        return this.mockDelete(Environment);
+    delete(environment: Environment): Promise<void> {
+        return this.mockDelete(environment);
     }
 
-    update(Environment: Environment): Promise<void> {
-        return this.mockUpdate(Environment);
+    update(environment: Environment): Promise<void> {
+        return this.mockUpdate(environment);
     }
 }

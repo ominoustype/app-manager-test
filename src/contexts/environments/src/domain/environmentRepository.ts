@@ -5,15 +5,15 @@ import { SearchEnvironmentsQueryParams } from "@src/application/search/searchEnv
 import Environments from "./environments";
 
 interface EnvironmentRepository {
-    create(Environment: Environment): Promise<void>;
+    create(environment: Environment): Promise<void>;
 
     find(id: EnvironmentId): Promise<Nullable<Environment>>;
 
     search(params: SearchEnvironmentsQueryParams): Promise<Environments>;
 
-    delete(Environment: Environment): Promise<void>;
+    delete(environment: Environment): Promise<void>;
 
-    update(Environment: Environment): Promise<void>;
+    update(environment: Environment): Promise<void>;
 }
 
 export default EnvironmentRepository;

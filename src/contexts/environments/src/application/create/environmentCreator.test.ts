@@ -11,12 +11,12 @@ describe('environmentCreator', () => {
     it("should call the repository with the proper parameter", async () => {
         expect.hasAssertions();
 
-        const repository = new EnvironmentRepositoryMock();
-        const eventBus = new EventBusMock();
-        const handler = new CreateEnvironmentCommandHandler(
+        const repository = new EnvironmentRepositoryMock(),
+            eventBus = new EventBusMock(),
+            handler = new CreateEnvironmentCommandHandler(
                         new EnvironmentCreator(repository, eventBus)
-        );
-        const command = CreateEnvironmentCommandMother.random();
+        ),
+        command = CreateEnvironmentCommandMother.random();
 
         repository.whenFindThenReturn(null);
         await handler.handle(command);
@@ -27,16 +27,16 @@ describe('environmentCreator', () => {
         )
     });
 
-    it("should throw an EnvironmentAlreadyExistsError when Environment does exist", async () => {
+    it("should throw an EnvironmentAlreadyExistsError when environment does exist", async () => {
         expect.hasAssertions();
 
-        const repository = new EnvironmentRepositoryMock();
-        const eventBus = new EventBusMock();
-        const handler = new CreateEnvironmentCommandHandler(
+        const repository = new EnvironmentRepositoryMock(),
+        eventBus = new EventBusMock(),
+        handler = new CreateEnvironmentCommandHandler(
                         new EnvironmentCreator(repository, eventBus)
-        );
-        const command = CreateEnvironmentCommandMother.random();
-        const environment = CreateEnvironmentCommandMother.applyCommand(command);
+        ),
+        command = CreateEnvironmentCommandMother.random(),
+        environment = CreateEnvironmentCommandMother.applyCommand(command);
 
         try{
             repository.whenFindThenReturn(environment);
@@ -50,12 +50,12 @@ describe('environmentCreator', () => {
     it("should publish a NewEnvironmentCreatedDomainEvent", async () => {
         expect.hasAssertions();
 
-        const repository = new EnvironmentRepositoryMock();
-        const eventBus = new EventBusMock();
-        const handler = new CreateEnvironmentCommandHandler(
+        const repository = new EnvironmentRepositoryMock(),
+            eventBus = new EventBusMock(),
+            handler = new CreateEnvironmentCommandHandler(
                         new EnvironmentCreator(repository, eventBus)
-        );
-        const command = CreateEnvironmentCommandMother.random();
+        ),
+        command = CreateEnvironmentCommandMother.random();
 
         repository.whenFindThenReturn(null);
 

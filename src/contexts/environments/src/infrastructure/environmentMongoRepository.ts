@@ -35,16 +35,16 @@ implements EnvironmentRepository{
         return this.byId(id.value, Environment.fromPrimitives);
     }
 
-    async create(Environment: Environment): Promise<void> {
-        await this.persist(Environment.id.value, Environment);
+    async create(environment: Environment): Promise<void> {
+        await this.persist(environment.id.value, environment);
     }
 
-    async delete(Environment: Environment): Promise<void> {
-        await this.remove(Environment.id.value);
+    async delete(environment: Environment): Promise<void> {
+        await this.remove(environment.id.value);
     }
 
-    async update(Environment: Environment): Promise<void> {
-        await this.persist(Environment.id.value, Environment);
+    async update(environment: Environment): Promise<void> {
+        await this.persist(environment.id.value, environment);
     }
 
     async search(params: SearchEnvironmentsQueryParams): Promise<Environments> {
