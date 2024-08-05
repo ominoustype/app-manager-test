@@ -46,7 +46,12 @@ export default class DeploymentConfigs extends AggregateRoot {
     }
 
     equalsTo(other: DeploymentConfigs): boolean {
-        return ((!this.id || !other.id || (this.id && other.id && this.id.equalsTo(other.id))) 
+        return (
+            (!this.id || !other.id || (this.id && other.id && this.id.equalsTo(other.id))) &&
+            (!this.name || !other.name || (this.name && other.name && this.name.equalsTo(other.name))) &&
+            (!this.enviromentId || !other.enviromentId || (this.enviromentId && other.enviromentId && this.enviromentId.equalsTo(other.enviromentId))) &&
+            (!this.customerId || !other.customerId || (this.customerId && other.customerId && this.customerId.equalsTo(other.customerId))) &&
+            (this.deviceType === (other.deviceType))
         ) as boolean
     }
 

@@ -9,7 +9,7 @@ import DeploymentConfigsAlreadyExistsError from "@src/domain/errors/deploymentCo
 describe('deploymentConfigsCreator', () => {
 
     it('should call the repository with the correct parameters', async () => {
-        //expect.hasAssertions();
+        expect.hasAssertions();
 
         const repository = new DeploymentConfigsRepositoryMock();
         const eventBus = new EventBusMock();
@@ -29,7 +29,7 @@ describe('deploymentConfigsCreator', () => {
     });
 
     it('should throw a DeploymentConfigsAlreadyExistsError', async () => {
-        //expect.hasAssertions();
+        expect.hasAssertions();
 
         const repository = new DeploymentConfigsRepositoryMock(),
             eventBus = new EventBusMock(),

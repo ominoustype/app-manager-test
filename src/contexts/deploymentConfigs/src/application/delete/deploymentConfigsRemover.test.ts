@@ -8,7 +8,7 @@ import DeploymentConfigsRemover from "./deploymentConfigsRemover";
 describe('deploymentConfigsRemover', () => {
 
     it('should call the repository with the correct parameters', async () => {
-        //expect.hasAssertions();
+        expect.hasAssertions();
 
         const repository = new DeploymentConfigsRepositoryMock();
         const eventBus = new EventBusMock();
@@ -27,7 +27,7 @@ describe('deploymentConfigsRemover', () => {
     });
 
     it('should publish a deploymentConfigsRemovedDomainEvent', async () => {
-        //expect.hasAssertions();
+        expect.hasAssertions();
 
         const repository = new DeploymentConfigsRepositoryMock();
         const eventBus = new EventBusMock();
