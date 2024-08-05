@@ -10,7 +10,7 @@ import { merge } from 'lodash';
 export type DeploymentConfigsPrimitives = {
     id: string,
     name: string,
-    enviromentId: string;
+    environmentId: string;
     customerId: string,
     deviceType: string; //enum
 };
@@ -18,7 +18,7 @@ export type DeploymentConfigsPrimitives = {
 export default class DeploymentConfigs extends AggregateRoot {
     readonly id: DeploymentConfigsId;
     readonly name: DeploymentConfigsName;
-    readonly enviromentId: Uuid;
+    readonly environmentId: Uuid;
     readonly customerId: Uuid;
     readonly deviceType: string;
 
@@ -26,7 +26,7 @@ export default class DeploymentConfigs extends AggregateRoot {
         super();
         this.id = new DeploymentConfigsId(primitives.id);
         this.name = new DeploymentConfigsName(primitives.name);
-        this.enviromentId = new Uuid(primitives.enviromentId);
+        this.environmentId = new Uuid(primitives.environmentId);
         this.customerId = new Uuid(primitives.customerId);
         this.deviceType = (primitives.deviceType);
     }
@@ -35,7 +35,7 @@ export default class DeploymentConfigs extends AggregateRoot {
         return{
             id: this.id.toString(),
             name: this.name.toString(),
-            enviromentId: this.enviromentId.toString(),
+            environmentId: this.environmentId.toString(),
             customerId: this.customerId.toString(),
             deviceType: this.deviceType.toString()
         };
@@ -46,7 +46,12 @@ export default class DeploymentConfigs extends AggregateRoot {
     }
 
     equalsTo(other: DeploymentConfigs): boolean {
-        return ((!this.id || !other.id || (this.id && other.id && this.id.equalsTo(other.id))) 
+        return (
+            (!this.id || !other.id || (this.id && other.id && this.id.equalsTo(other.id))) &&
+            (!this.name || !other.name || (this.name && other.name && this.id.equalsTo(other.name))) && 
+            (!this.environmentId || !other.environmentId || (this.environmentId && other.environmentId && this.environmentId.equalsTo(other.environmentId))) && 
+            (!this.customerId || !other.customerId || (this.customerId && other.customerId && this.customerId.equalsTo(other.customerId))) && 
+            (this.deviceType === (other.deviceType))
         ) as boolean
     }
 
@@ -70,10 +75,10 @@ export default class DeploymentConfigs extends AggregateRoot {
     }
 
     update(primitives: Partial<DeploymentConfigsPrimitives>): DeploymentConfigs {
-        const newDocument = new DeploymentConfigs(this.merge(primitives));
+        const newDeploymentsConfig = new DeploymentConfigs(this.merge(primitives));
 
-        newDocument.record(new DeploymentConfigsUpdatedDomainEvent(newDocument.toPrimitives()));
+        newDeploymentsConfig.record(new DeploymentConfigsUpdatedDomainEvent(newDeploymentsConfig.toPrimitives()));
 
-        return newDocument;
+        return newDeploymentsConfig;
     }
 }

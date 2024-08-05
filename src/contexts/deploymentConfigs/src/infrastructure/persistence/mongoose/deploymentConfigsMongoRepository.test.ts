@@ -56,11 +56,11 @@ describe('deploymentConfigsMongoRepository', () => {
         it("should delete a deploymentConfigs", async () => {
             // expect.hasAssertions();
 
-            const document = DeploymentConfigsMother.random();
+            const deploiymentsConfig = DeploymentConfigsMother.random();
 
-            await repository.create(document);
-            await repository.delete(document);
-            const result = await repository.find(document.id);
+            await repository.create(deploiymentsConfig);
+            await repository.delete(deploiymentsConfig);
+            const result = await repository.find(deploiymentsConfig.id);
 
             console.log("Integration test DeploymentConfigs/delete: \n"+result)
             expect(result).toBeNull();

@@ -39,7 +39,7 @@ describe('deploymentsConfigsSearcher', () => {
     });
     
     it('should return a response with deploymentsConfigs when there are deploymentsConfigs', async () => {
-        // expect.hasAssertions();
+        expect.hasAssertions();
 
         const repository = new DeploymentConfigsRepositoryMock(),
             handler = new SearchDeploymentsConfigsQueryHandler(

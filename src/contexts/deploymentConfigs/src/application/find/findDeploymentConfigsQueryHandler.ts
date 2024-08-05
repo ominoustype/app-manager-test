@@ -2,12 +2,12 @@ import Query from '@context/shared/domain/queryBus/query';
 import { QueryHandler } from '@context/shared/domain/queryBus/queryHandler';
 import FindDeploymentConfigsQuery from '@src/application/find/findDeploymentConfigsQuery';
 import FindDeploymentConfigsResponse from '@src/application/find/findDeploymentConfigsResponse';
-import DocumentFinder from '@src/application/find/deploymentConfigsFinder';
+import DeploymentConfigsFinder from '@src/application/find/deploymentConfigsFinder';
 
 export default class FindDeploymentConfigsQueryHandler implements QueryHandler<FindDeploymentConfigsQuery, FindDeploymentConfigsResponse>{
-    private readonly finder: DocumentFinder;
+    private readonly finder: DeploymentConfigsFinder;
 
-    constructor(finder: DocumentFinder){
+    constructor(finder: DeploymentConfigsFinder){
         this.finder = finder;
     }
     
