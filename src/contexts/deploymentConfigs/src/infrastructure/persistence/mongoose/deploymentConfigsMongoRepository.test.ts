@@ -5,7 +5,7 @@ import UuidMother from "@context/shared/domain/uuid.mother";
 import MongoEnvironmentArranger from "@context/shared/infrastructure/mongo/mongoEnvironmentArranger";
 
 const client = MongoClientFactory.createClient(
-    'mongoClientAppManager',
+    'deploymentConfigs',
     {
         url: 'mongodb://0.0.0.0:27017/'
     }
@@ -56,11 +56,11 @@ describe('deploymentConfigsMongoRepository', () => {
         it("should delete a deploymentConfigs", async () => {
             // expect.hasAssertions();
 
-            const document = DeploymentConfigsMother.random();
+            const deploiymentsConfig = DeploymentConfigsMother.random();
 
-            await repository.create(document);
-            await repository.delete(document);
-            const result = await repository.find(document.id);
+            await repository.create(deploiymentsConfig);
+            await repository.delete(deploiymentsConfig);
+            const result = await repository.find(deploiymentsConfig.id);
 
             console.log("Integration test DeploymentConfigs/delete: \n"+result)
             expect(result).toBeNull();
@@ -71,9 +71,9 @@ describe('deploymentConfigsMongoRepository', () => {
         it("should update a deploymentConfigs", async () => {
             //expect.hasAssertions();
 
-            const deploymentConfigs = DeploymentConfigsMother.random();
-            const toUpdate = DeploymentConfigsMother.random({id: deploymentConfigs.id.value});
-            const deploymentConfigsMerged = DeploymentConfigsMother.merge(deploymentConfigs, toUpdate);
+            const deploymentConfigs = DeploymentConfigsMother.random(),
+                toUpdate = DeploymentConfigsMother.random({id: deploymentConfigs.id.value}),
+                deploymentConfigsMerged = DeploymentConfigsMother.merge(deploymentConfigs, toUpdate);
 
             await repository.create(deploymentConfigs);
             await repository.update(deploymentConfigsMerged);

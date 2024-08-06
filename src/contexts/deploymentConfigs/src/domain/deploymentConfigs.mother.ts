@@ -12,7 +12,7 @@ export default class DeploymentConfigsMother{
         return DeploymentConfigsMother.create({
             id: UuidMother.random().value,
             name: MotherCreator.words().toString(),
-            enviromentId: UuidMother.random().toString(),
+            environmentId: UuidMother.random().toString(),
             customerId: UuidMother.random().toString(),
             deviceType: MotherCreator.words().toString(),
             ...primitives

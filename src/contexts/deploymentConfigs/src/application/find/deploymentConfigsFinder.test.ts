@@ -10,13 +10,12 @@ describe('deploymentConfigs', () => {
     it('should call the repo with the id', async () => {
         expect.hasAssertions();
 
-        const repository = new DeploymentConfigsRepositoryMock();
-        const handler = new FindDeploymentConfigsQueryHandler(
+        const repository = new DeploymentConfigsRepositoryMock(),
+            handler = new FindDeploymentConfigsQueryHandler(
                         new DeploymentConfigsFinder(repository)
-                        );
-
-        const query = FindDeploymentConfigsQueryMother.random();
-        const deploymentConfigs = FindDeploymentConfigsQueryMother.randomDeploymentConfigs(query);
+            ),
+            query = FindDeploymentConfigsQueryMother.random(),
+            deploymentConfigs = FindDeploymentConfigsQueryMother.randomDeploymentConfigs(query);
 
         repository.whenFindThenReturn(deploymentConfigs);
 
@@ -28,14 +27,13 @@ describe('deploymentConfigs', () => {
     it('should find a deploymentConfig', async () => {
         expect.hasAssertions();
 
-        const repository = new DeploymentConfigsRepositoryMock();
-        const handler = new FindDeploymentConfigsQueryHandler(
+        const repository = new DeploymentConfigsRepositoryMock(),
+            handler = new FindDeploymentConfigsQueryHandler(
                         new DeploymentConfigsFinder(repository)
-                        );
-
-        const query = FindDeploymentConfigsQueryMother.random();
-        const deploymentConfigs = FindDeploymentConfigsQueryMother.randomDeploymentConfigs(query);
-        const expected = FindDeploymentConfigsResponseMother.create(deploymentConfigs.toPrimitives());
+            ),
+            query = FindDeploymentConfigsQueryMother.random(),
+            deploymentConfigs = FindDeploymentConfigsQueryMother.randomDeploymentConfigs(query),
+            expected = FindDeploymentConfigsResponseMother.create(deploymentConfigs.toPrimitives());
 
         repository.whenFindThenReturn(deploymentConfigs);
 
@@ -47,12 +45,11 @@ describe('deploymentConfigs', () => {
     it('should throw a DeploymentConfigsNotFoundError when the deploymentConfigs does not exist', async() => {
         expect.hasAssertions();
 
-        const repository = new DeploymentConfigsRepositoryMock();
-        const handler = new FindDeploymentConfigsQueryHandler(
+        const repository = new DeploymentConfigsRepositoryMock(),
+            handler = new FindDeploymentConfigsQueryHandler(
                         new DeploymentConfigsFinder(repository)
-                        );
-
-        const query = FindDeploymentConfigsQueryMother.random();
+            ),
+            query = FindDeploymentConfigsQueryMother.random();
 
         repository.whenFindThenReturn(null);
 

@@ -11,12 +11,12 @@ describe('deploymentConfigsCreator', () => {
     it('should call the repository with the correct parameters', async () => {
         expect.hasAssertions();
 
-        const repository = new DeploymentConfigsRepositoryMock();
-        const eventBus = new EventBusMock();
-        const handler = new CreateDeploymentConfigsCommandHandler(
+        const repository = new DeploymentConfigsRepositoryMock(),
+            eventBus = new EventBusMock(),
+            handler = new CreateDeploymentConfigsCommandHandler(
                         new DeploymentConfigsCreator(repository, eventBus)
-        );
-        const command = CreateDeploymentConfigsCommandMother.random();
+            ),
+            command = CreateDeploymentConfigsCommandMother.random();
 
         repository.whenFindThenReturn(null);
         
@@ -51,12 +51,12 @@ describe('deploymentConfigsCreator', () => {
     it('should publish a NewDeploymentConfigsCreatedDomainEvent', async () => {
         expect.hasAssertions();
 
-        const repository = new DeploymentConfigsRepositoryMock();
-        const eventBus = new EventBusMock();
-        const handler = new CreateDeploymentConfigsCommandHandler(
+        const repository = new DeploymentConfigsRepositoryMock(),
+            eventBus = new EventBusMock(),
+            handler = new CreateDeploymentConfigsCommandHandler(
                         new DeploymentConfigsCreator(repository, eventBus)
-        );
-        const command = CreateDeploymentConfigsCommandMother.random();
+        ),
+        command = CreateDeploymentConfigsCommandMother.random();
         
         repository.whenFindThenReturn(null);
         await handler.handle(command);
