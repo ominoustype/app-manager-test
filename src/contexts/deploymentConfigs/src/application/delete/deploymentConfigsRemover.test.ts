@@ -10,14 +10,13 @@ describe('deploymentConfigsRemover', () => {
     it('should call the repository with the correct parameters', async () => {
         expect.hasAssertions();
 
-        const repository = new DeploymentConfigsRepositoryMock();
-        const eventBus = new EventBusMock();
-        const handler = new RemoveDeploymentConfigsCommandHandler(
+        const repository = new DeploymentConfigsRepositoryMock(),
+            eventBus = new EventBusMock(),
+            handler = new RemoveDeploymentConfigsCommandHandler(
                         new DeploymentConfigsRemover(repository, eventBus)
-        );
-
-        const command = RemoveDeploymentConfigsCommandMother.random();
-        const deploymentConfigs = RemoveDeploymentConfigsCommandMother.applyCommand(command);
+        ),
+        command = RemoveDeploymentConfigsCommandMother.random(),
+        deploymentConfigs = RemoveDeploymentConfigsCommandMother.applyCommand(command);
 
         repository.whenFindThenReturn(deploymentConfigs);
 
@@ -29,14 +28,13 @@ describe('deploymentConfigsRemover', () => {
     it('should publish a deploymentConfigsRemovedDomainEvent', async () => {
         expect.hasAssertions();
 
-        const repository = new DeploymentConfigsRepositoryMock();
-        const eventBus = new EventBusMock();
-        const handler = new RemoveDeploymentConfigsCommandHandler(
+        const repository = new DeploymentConfigsRepositoryMock(),
+            eventBus = new EventBusMock(),
+            handler = new RemoveDeploymentConfigsCommandHandler(
                         new DeploymentConfigsRemover(repository, eventBus)
-        );
-
-        const command = RemoveDeploymentConfigsCommandMother.random();
-        const deploymentConfigs = RemoveDeploymentConfigsCommandMother.applyCommand(command);
+        ),
+        command = RemoveDeploymentConfigsCommandMother.random(),
+        deploymentConfigs = RemoveDeploymentConfigsCommandMother.applyCommand(command);
 
         repository.whenFindThenReturn(deploymentConfigs);
 

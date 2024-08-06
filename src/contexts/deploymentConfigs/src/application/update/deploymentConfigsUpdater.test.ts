@@ -17,9 +17,9 @@ describe('deploymentConfigsUpdater', () => {
                 new DeploymentConfigsUpdater(repository, eventBus)
             ),
             command = UpdateDeploymentConfigsCommandMother.random(),
-            DeploymentConfigs = UpdateDeploymentConfigsCommandMother.applyCommand(command),
+            deploymentConfigs = UpdateDeploymentConfigsCommandMother.applyCommand(command),
             oldDeploymentConfigs = DeploymentConfigsMother.random(),
-            expected = DeploymentConfigsMother.merge(oldDeploymentConfigs,DeploymentConfigs);
+            expected = DeploymentConfigsMother.merge(oldDeploymentConfigs, deploymentConfigs);
 
         repository.whenFindThenReturn(oldDeploymentConfigs);
 
@@ -37,9 +37,9 @@ describe('deploymentConfigsUpdater', () => {
                 new DeploymentConfigsUpdater(repository,eventBus)
             ),
             command = UpdateDeploymentConfigsCommandMother.random(),
-            DeploymentConfigs = UpdateDeploymentConfigsCommandMother.applyCommand(command),
+            deploymentConfigs = UpdateDeploymentConfigsCommandMother.applyCommand(command),
             oldDeploymentConfigs = DeploymentConfigsMother.random(),
-            expected = DeploymentConfigsMother.merge(oldDeploymentConfigs,DeploymentConfigs);
+            expected = DeploymentConfigsMother.merge(oldDeploymentConfigs, deploymentConfigs);
 
         repository.whenFindThenReturn(oldDeploymentConfigs);
 

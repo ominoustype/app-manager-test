@@ -5,7 +5,7 @@ import UuidMother from "@context/shared/domain/uuid.mother";
 import MongoEnvironmentArranger from "@context/shared/infrastructure/mongo/mongoEnvironmentArranger";
 
 const client = MongoClientFactory.createClient(
-    'mongoClientAppManager',
+    'deploymentConfigs',
     {
         url: 'mongodb://0.0.0.0:27017/'
     }
@@ -71,9 +71,9 @@ describe('deploymentConfigsMongoRepository', () => {
         it("should update a deploymentConfigs", async () => {
             //expect.hasAssertions();
 
-            const deploymentConfigs = DeploymentConfigsMother.random();
-            const toUpdate = DeploymentConfigsMother.random({id: deploymentConfigs.id.value});
-            const deploymentConfigsMerged = DeploymentConfigsMother.merge(deploymentConfigs, toUpdate);
+            const deploymentConfigs = DeploymentConfigsMother.random(),
+                toUpdate = DeploymentConfigsMother.random({id: deploymentConfigs.id.value}),
+                deploymentConfigsMerged = DeploymentConfigsMother.merge(deploymentConfigs, toUpdate);
 
             await repository.create(deploymentConfigs);
             await repository.update(deploymentConfigsMerged);
