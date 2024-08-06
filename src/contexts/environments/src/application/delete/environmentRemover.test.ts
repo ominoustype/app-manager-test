@@ -10,14 +10,13 @@ describe('environmentRemover', () => {
     it('should call the repository with the correct parameters', async () => {
         expect.hasAssertions();
 
-        const repository = new EnvironmentRepositoryMock();
-        const eventBus = new EventBusMock();
-        const handler = new RemoveEnvironmentCommandHandler(
+        const repository = new EnvironmentRepositoryMock(),
+        eventBus = new EventBusMock(),
+        handler = new RemoveEnvironmentCommandHandler(
                         new EnvironmentRemover(repository, eventBus)
-        );
-
-        const command = RemoveEnvironmentCommandMother.random();
-        const environment = RemoveEnvironmentCommandMother.applyCommand(command);
+        ),
+        command = RemoveEnvironmentCommandMother.random(),
+        environment = RemoveEnvironmentCommandMother.applyCommand(command);
 
         repository.whenFindThenReturn(environment);
 
@@ -29,14 +28,13 @@ describe('environmentRemover', () => {
     it('should publish an EnvironmentRemovedDomainEvent', async () => {
         expect.hasAssertions();
 
-        const repository = new EnvironmentRepositoryMock();
-        const eventBus = new EventBusMock();
-        const handler = new RemoveEnvironmentCommandHandler(
+        const repository = new EnvironmentRepositoryMock(),
+        eventBus = new EventBusMock(),
+        handler = new RemoveEnvironmentCommandHandler(
                         new EnvironmentRemover(repository, eventBus)
-        );
-
-        const command = RemoveEnvironmentCommandMother.random();
-        const environment = RemoveEnvironmentCommandMother.applyCommand(command);
+        ),
+        command = RemoveEnvironmentCommandMother.random(),
+        environment = RemoveEnvironmentCommandMother.applyCommand(command);
 
         repository.whenFindThenReturn(environment);
 

@@ -11,16 +11,15 @@ describe('environmentUpdater', () => {
     it('should call the repository with the correct parameters', async () => {
         expect.hasAssertions();
 
-        const repository = new EnvironmentRepositoryMock();
-        const eventBus = new EventBusMock();
-        const handler = new UpdateEnvironmentCommandHandler(
-                        new EnvironmentUpdater(repository, eventBus));
-
-        const command = UpdateEnvironmentCommandMother.random();
-        const environment = UpdateEnvironmentCommandMother.applyCommand(command);
-
-        const oldEnvironment = EnvironmentMother.random();
-        const expected = EnvironmentMother.merge(oldEnvironment, environment);
+        const repository = new EnvironmentRepositoryMock(),
+            eventBus = new EventBusMock(),
+            handler = new UpdateEnvironmentCommandHandler(
+                        new EnvironmentUpdater(repository, eventBus)
+            ),
+            command = UpdateEnvironmentCommandMother.random(),
+            environment = UpdateEnvironmentCommandMother.applyCommand(command),
+            oldEnvironment = EnvironmentMother.random(),
+            expected = EnvironmentMother.merge(oldEnvironment, environment);
 
         repository.whenFindThenReturn(oldEnvironment);
 
@@ -32,16 +31,15 @@ describe('environmentUpdater', () => {
     it('should publish an EnvironmentUpdatedDomainEvent', async () => {
         expect.hasAssertions();
 
-        const repository = new EnvironmentRepositoryMock();
-        const eventBus = new EventBusMock();
-        const handler = new UpdateEnvironmentCommandHandler(
-                        new EnvironmentUpdater(repository, eventBus));
-
-        const command = UpdateEnvironmentCommandMother.random();
-        const environment = UpdateEnvironmentCommandMother.applyCommand(command);
-
-        const oldEnvironment = EnvironmentMother.random();
-        const expected = EnvironmentMother.merge(oldEnvironment, environment);
+        const repository = new EnvironmentRepositoryMock(),
+            eventBus = new EventBusMock(),
+            handler = new UpdateEnvironmentCommandHandler(
+                        new EnvironmentUpdater(repository, eventBus)
+            ),
+            command = UpdateEnvironmentCommandMother.random(),
+            environment = UpdateEnvironmentCommandMother.applyCommand(command),
+            oldEnvironment = EnvironmentMother.random(),
+            expected = EnvironmentMother.merge(oldEnvironment, environment);
         
         repository.whenFindThenReturn(oldEnvironment);
 

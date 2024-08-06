@@ -16,7 +16,7 @@ describe('environmentCreator', () => {
             handler = new CreateEnvironmentCommandHandler(
                         new EnvironmentCreator(repository, eventBus)
         ),
-        command = CreateEnvironmentCommandMother.random();
+            command = CreateEnvironmentCommandMother.random();
 
         repository.whenFindThenReturn(null);
         await handler.handle(command);
@@ -51,8 +51,8 @@ describe('environmentCreator', () => {
         expect.hasAssertions();
 
         const repository = new EnvironmentRepositoryMock(),
-            eventBus = new EventBusMock(),
-            handler = new CreateEnvironmentCommandHandler(
+        eventBus = new EventBusMock(),
+        handler = new CreateEnvironmentCommandHandler(
                         new EnvironmentCreator(repository, eventBus)
         ),
         command = CreateEnvironmentCommandMother.random();

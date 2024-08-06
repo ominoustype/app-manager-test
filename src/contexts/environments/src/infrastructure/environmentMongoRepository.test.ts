@@ -72,9 +72,9 @@ describe('environmentMongoRepository', () => {
         it("should update a Environment", async () => {
             //expect.hasAssertions();
 
-            const environment = EnvironmentMother.random();
-            const toUpdate = EnvironmentMother.random({id: environment.id.value});
-            const environmentMerged = EnvironmentMother.merge(environment, toUpdate);
+            const environment = EnvironmentMother.random(),
+                toUpdate = EnvironmentMother.random({id: environment.id.value}),
+                environmentMerged = EnvironmentMother.merge(environment, toUpdate);
 
             await repository.create(environment);
             await repository.update(environmentMerged);
