@@ -1,0 +1,44 @@
+Document:
+    description:
+        A document is an object 
+    type: object
+    properties:
+        id:
+            description: The document unique identifier
+            $ref: ../../shared/entities/id.yml#/Id
+        createdAt:
+            description: The date and time when the document was created
+            $ref: ../../shared/entities/datetime.yml#/Datetime
+        name:
+            description: The name of the document
+            type: string
+            minLength: 1
+            maxLength: 100
+        type:
+            description: The type of the document
+            $ref: ../entities/type.yml#/Type
+        version:
+            description: The version of the document
+            type: string
+            minLength: 1
+            maxLength: 100
+        properties:
+            description: The array of properties of the document
+            type: array
+            items:
+                type: string
+        customerId:
+            description: The id of the customer associated to the document
+            $ref: ../../shared/entities/id.yml#/Id
+        environmentId:
+            description: The id of the environment associated to the document
+            $ref: ../../shared/entities/id.yml#/Id
+        updatedBy:
+            description: All the updates done to the document
+            type: array
+            items:
+                $ref: ../entities/document-update.yml#/DocumentUpdate
+
+    example:
+        {
+        }

@@ -1,0 +1,4 @@
+Username:
+    type: string
+    format: username
+    example: cpulido

@@ -1,0 +1,31 @@
+DocumentPostBody:
+    description: The body of the request to create a document
+    type: object
+    required:
+        - name
+        - type
+        - version
+        - properties
+        - customerId
+        - environmentId
+    properties:
+        name:
+            description: The name of the document
+            type: string
+            minLength: 1
+            maxLength: 100
+        type:
+            description: The type of the document
+            $ref: ./entities/type.yml#/Type
+        version:
+            description: The version of the document
+        properties:
+            description: The properties of the document
+        customerId:
+            description: The id of the customer associated to the document
+        environmentId:
+            description: The id of the environment associated to the document
+    example:
+        {
+
+        }

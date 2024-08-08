@@ -1,0 +1,45 @@
+DocumentPutBody:
+    description: The body of the request to update a document
+    type: object
+    required:
+        - id
+        - createdAt
+        - name
+        - type
+        - version
+        - properties
+        - customerId
+        - environmentId
+        - updatedBy
+    properties:
+        id:
+            description: The document unique identifier
+            $ref: ../shared/entities/id.yml#/Id
+        createdAt:
+            description: The date and time when the document was created
+            $ref: ../shared/entities/datetime.yml#/Datetime
+        name:
+            description: The name of the document
+            type: string
+            minLength: 1
+            maxLength: 100
+        type:
+            description: The type of the document
+            $ref: ./entities/type.yml#/Type
+        version:
+            description: The version of the document
+        properties:
+            description: The properties of the document
+        customerId:
+            description: The id of the customer associated to the document
+        environmentId:
+            description: The id of the environment associated to the document
+        updatedBy:
+            description: All the updates done to the document
+            type: array
+            items:
+                $ref: ./entities/document-update.yml#/DocumentUpdate
+
+    example:
+        {
+        }

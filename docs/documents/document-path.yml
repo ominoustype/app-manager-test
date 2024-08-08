@@ -1,0 +1,67 @@
+get:
+    operationId: findDocument
+    tags:
+        - DocumentsCtrl
+    summary: Find a document that match the id search criteria
+    description:
+        This rest services return a document that match the id search criteria
+    parameters:
+        - $ref: ../shared/parameters/id-path-parameter.yml#/IdPathParameter
+    responses:
+        200:
+            description: The document that match the given id.
+            content:
+                application/json:
+                    schema:
+                        $ref: models/document.yml#/Document
+                    example:
+                        $ref: models/document.yml#/Document/example
+        401:
+            $ref: ../shared/responses/responses.yml#/Unauthorized
+        403:
+            $ref: ../shared/responses/responses.yml#/Forbidden
+        404:
+            $ref: ../shared/responses/responses.yml#/NotFound
+
+delete:
+    operationId: deleteDocument
+    tags:
+        - DocumentsCtrl
+    summary: Delete an existent document
+    description: This rest service deletes an existent document
+    parameters:
+        - $ref: ../shared/parameters/id-path-parameter.yml#/IdPathParameter
+    responses:
+        204:
+            $ref: ../shared/responses/responses.yml#/NoContent
+        401:
+            $ref: ../shared/responses/responses.yml#/Unauthorized
+        403:
+            $ref: ../shared/responses/responses.yml#/Forbidden
+        404:
+            $ref: ../shared/responses/responses.yml#/NotFound
+
+put:
+    operationId: updateDocument
+    tags:
+        - DocumentsCtrl
+    summary: Update an existing document based on the given information
+    description:
+        This rest services allow to update an existing document based on
+        the given information
+    parameters:
+        - $ref: ../shared/parameters/id-path-parameter.yml#/IdPathParameter
+    requestBody:
+        content:
+            application/json:
+                schema:
+                    $ref: document-put-body.yml#/DocumentPutBody
+    responses:
+        204:
+            $ref: ../shared/responses/responses.yml#/NoContent
+        401:
+            $ref: ../shared/responses/responses.yml#/Unauthorized
+        403:
+            $ref: ../shared/responses/responses.yml#/Forbidden
+        404:
+            $ref: ../shared/responses/responses.yml#/NotFound

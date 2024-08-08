@@ -1,0 +1,8 @@
+Type:
+    description: The type of the document
+    type: string
+    minLength: 1
+    maxLength: 100
+    enum:
+        - 'JSON'
+    example: "JSON"

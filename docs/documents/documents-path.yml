@@ -1,0 +1,50 @@
+get:
+    operationId: searchDocuments
+    tags:
+        - DocumentsCtrl
+    summary:
+        List the documents that match the search criteria
+    description:
+        This rest services return a list of documents that match the search
+        criteria (if not provided, then 50 documents are returned)
+    parameters:
+        - $ref: ../shared/parameters/page-parameter.yml#/PageParameter
+        - $ref: ../shared/parameters/page-size-parameter.yml#/PageSizeParemeter
+        - $ref: ./parameters/document-search-parameter.yml#/DocumentSearchParameter
+    responses:
+        200:
+            description: A list of the documents that match the search params.
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            results:
+                                type: array
+                                items:
+                                    $ref: ./models/document.yml#/Document
+        401:
+            $ref: ../shared/responses/responses.yml#/Unauthorized
+        403:
+            $ref: ../shared/responses/responses.yml#/Forbidden
+
+post:
+    operationId: createDocument
+    tags:
+        - DocumentsCtrl
+    summary: Create a document based on the given information
+    description:
+        This rest services allow to create a document based on the
+        given information
+    requestBody:
+        content:
+            application/json:
+                schema:
+                    $ref: document-post-body.yml#/DocumentPostBody
+    responses:
+        201:
+            $ref: ../shared/responses/responses.yml#/Created
+        401:
+            $ref: ../shared/responses/responses.yml#/Unauthorized
+        403:
+            $ref: ../shared/responses/responses.yml#/Forbidden

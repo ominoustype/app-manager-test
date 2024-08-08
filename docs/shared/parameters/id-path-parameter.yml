@@ -1,0 +1,9 @@
+IdPathParameter:
+    name: id
+    in: path
+    description: The id of the entity to search for
+    required: true
+    schema:
+        type: string
+        format: uuid
+    example: '0ac57044-605f-4ad7-8213-3a9d45dd5276'
