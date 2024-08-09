@@ -3,6 +3,11 @@ import UuidMother from '@context/shared/domain/uuid.mother';
 import DatetimeMother from "@context/shared/domain/datetime.mother";
 import MotherCreator from "@context/shared/domain/motherCreator.mother";
 import Repeater from "@context/shared/domain/repeater.mother";
+import DocumentTypeMother from "./documentType.mother";
+import DocumentNameMother from "./documentName.mother";
+import DocumentVersionMother from "./documentVersion.mother";
+import DocumentIdMother from "./documentId.mother";
+import UpdatesByMother from "./updates/updatesBy.mother";
 
 export default class DocumentMother {
     static create(primitives: DocumentPrimitives): Document {
@@ -11,15 +16,15 @@ export default class DocumentMother {
 
     static random(primitives?: Partial<DocumentPrimitives>): Document {
         return DocumentMother.create({
-            id: UuidMother.random().value,
-            created_at: DatetimeMother.random().toString(),
-            name: MotherCreator.words().toString(),
-            type: MotherCreator.words().toString(),
-            version: MotherCreator.words().toString(),
-            properties: MotherCreator.words().toString(),
+            id: DocumentIdMother.random().value,
+            createdAt: DatetimeMother.random().toString(),
+            name: DocumentNameMother.random().toString(),
+            type: DocumentTypeMother.random(),
+            version: DocumentVersionMother.random().toString(),
+            properties: MotherCreator.words().split(' '),
             customerId: UuidMother.random().value,
             environmentId: UuidMother.random().value,
-            updatedBy: MotherCreator.words().toString(),
+            updatedBy: UpdatesByMother.random().toPrimitives(),
             ...primitives
         })
     }
