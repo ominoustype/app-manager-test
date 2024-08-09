@@ -45,7 +45,7 @@ describe('documentRemover', () => {
             ),
             [
                 'aggregateId',
-                'body.created_at',
+                'body.createdAt',
                 'body.id'
             ]
         )

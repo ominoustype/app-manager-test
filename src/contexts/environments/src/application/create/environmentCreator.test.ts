@@ -65,7 +65,6 @@ describe('environmentCreator', () => {
             ),
             [
                 'aggregateId',
-                'body.created_at',
                 'body.id'
             ]
         );

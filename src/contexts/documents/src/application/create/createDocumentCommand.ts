@@ -1,7 +1,7 @@
 import Command from "@context/shared/domain/commandBus/command";
 import { DocumentPrimitives } from "@src/domain/document";
 
-export type CreateDocumentCommandData = Omit<DocumentPrimitives, 'created_at' | 'id'>;
+export type CreateDocumentCommandData = Omit<DocumentPrimitives, 'createdAt' | 'id'>;
 
 export default class CreateDocumentCommand extends Command {
     readonly data: CreateDocumentCommandData;
