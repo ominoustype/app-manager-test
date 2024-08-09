@@ -7,54 +7,60 @@ import DocumentName from './documentName';
 import DocumentUpdatedDomainEvent from './documentUpdatedDomainEvent';
 import DocumentRemovedDomainEvent from './documentRemovedDomainEvent';
 import { merge } from 'lodash';
+import DocumentType from './documentType';
+import DocumentVersion from './documentVersion';
+import CustomerId from './customerId';
+import EnvironmentId from './environmentId';
+import { UpdateByPrimitives } from './updates/updateBy';
+import UpdatesBy from './updates/updatesBy';
 
 export type DocumentPrimitives = {
     id: string,
-    created_at: string,
+    createdAt: string,
     name: string,
-    type: string, //Enum
+    type: DocumentType,
     version: string,
-    properties: string,
+    properties: Array<string>,
     customerId: string,
     environmentId: string,
-    updatedBy: string
+    updatedBy: Array<UpdateByPrimitives>
 };
 
 export default class Document extends AggregateRoot {
     readonly id: DocumentId;
-    readonly created_at: Datetime;
+    readonly createdAt: Datetime;
     readonly name: DocumentName;
-    readonly type: string;
-    readonly version: string;
-    readonly properties: string;
-    readonly customerId: Uuid;
-    readonly environmentId: Uuid;
-    readonly updatedBy: string;
+    readonly type: DocumentType;
+    readonly version: DocumentVersion;
+    readonly properties: Array<string>;
+    readonly customerId: CustomerId;
+    readonly environmentId: EnvironmentId;
+    readonly updatedBy: UpdatesBy;
 
     constructor(primitives: DocumentPrimitives) {
         super();
         this.id = new DocumentId(primitives.id);
-        this.created_at = new Datetime(primitives.created_at);
+        this.createdAt = new Datetime(primitives.createdAt);
         this.name = new DocumentName(primitives.name);
-        this.type = (primitives.type);
-        this.version = (primitives.version);
+        this.type = primitives.type;
+        this.version = new DocumentVersion(primitives.version);
         this.properties = (primitives.properties);
-        this.customerId = new Uuid(primitives.customerId);
-        this.environmentId = new Uuid(primitives.environmentId);
-        this.updatedBy = (primitives.updatedBy);
+        this.customerId = new CustomerId(primitives.customerId);
+        this.environmentId = new EnvironmentId(primitives.environmentId);
+        this.updatedBy = new UpdatesBy(primitives.updatedBy)
     }
 
     toPrimitives(): DocumentPrimitives {
         return {
-            created_at: this.created_at.toString(),
+            createdAt: this.createdAt.toString(),
             id: this.id.toString(),
             name: this.name.toString(),
-            type: this.type.toString(),
+            type: this.type,
             version: this.version.toString(),
-            properties: this.properties.toString(),
+            properties: this.properties,
             customerId: this.customerId.toString(),
             environmentId: this.environmentId.toString(),
-            updatedBy: this.updatedBy.toString()
+            updatedBy: this.updatedBy.toPrimitives()
         };
     }
 
@@ -62,9 +68,9 @@ export default class Document extends AggregateRoot {
         return new Document(primitives);
     }
 
-    static create(primitives: Omit<DocumentPrimitives, 'created_at' | 'id'>) {
+    static create(primitives: Omit<DocumentPrimitives, 'createdAt' | 'id'>) {
         const newDocument = new Document({
-            created_at: new Datetime().toString(),
+            createdAt: new Datetime().toString(),
             id: Uuid.random().toString(),
             ...primitives
         });
@@ -76,15 +82,15 @@ export default class Document extends AggregateRoot {
 
     equalsTo(other: Document): boolean {
         return (
-            (!this.created_at || !other.created_at || (this.created_at && other.created_at && this.created_at.equalsTo(other.created_at))) &&
+            (!this.createdAt || !other.createdAt || (this.createdAt && other.createdAt && this.createdAt.equalsTo(other.createdAt))) &&
             (!this.id || !other.id || (this.id && other.id && this.id.equalsTo(other.id))) &&
             (!this.name || !other.name || (this.name && other.name && this.name.equalsTo(other.name))) &&
             (this.type === (other.type)) &&
-            (!this.version || !other.version || (this.version && other.version && this.version === (other.version))) &&
-            (!this.properties || !other.properties || (this.properties && other.properties && this.properties === (other.properties))) &&
+            (!this.version || !other.version || (this.version && other.version && this.version.equalsTo(other.version))) &&
+            (!this.properties || !other.properties || (this.properties && other.properties && JSON.stringify(this.properties) === JSON.stringify(other.properties))) &&
             (!this.customerId || !other.customerId || (this.customerId && other.customerId && this.customerId.equalsTo(other.customerId))) &&
             (!this.environmentId || !other.environmentId || (this.environmentId && other.environmentId && this.environmentId.equalsTo(other.environmentId))) &&
-            (!this.updatedBy || !other.updatedBy || (this.updatedBy && other.updatedBy && this.updatedBy === other.updatedBy))
+            (!this.updatedBy || !other.updatedBy || (this.updatedBy && other.updatedBy && JSON.stringify(this.updatedBy) === JSON.stringify(other.updatedBy)))
         ) as boolean
     }
 
