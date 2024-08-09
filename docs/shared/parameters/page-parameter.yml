@@ -1,0 +1,10 @@
+PageParameter:
+    name: page
+    in: query
+    description: The page number of the results to return used  for pagination
+    required: false
+    schema:
+        type: integer
+        minimum: 1
+        default: 1
+    example: 2

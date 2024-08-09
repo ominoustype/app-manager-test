@@ -1,0 +1,10 @@
+PageSizeParemeter:
+    name: page_size
+    in: query
+    description: The number of results to return per page used for pagination
+    required: false
+    schema:
+        type: integer
+        minimum: 1
+        default: 50
+    example: 20

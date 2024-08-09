@@ -1,0 +1,4 @@
+Id:
+    type: string
+    format: uuid
+    example: ffff1a30-97d9-4ede-88a3-80c88927ab37

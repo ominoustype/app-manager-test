@@ -1,0 +1,22 @@
+DocumentUpdate:
+    description: An update of a document
+    type: object
+    properties:
+        updatedAt:
+            description: The date and time when the report was created
+            $ref: ../../shared/entities/datetime.yml#/Datetime
+        username:
+            description: The username of the user which did the update
+            $ref: ./username.yml#/Username
+        userId:
+            description: The id of the user which did the update
+            $ref: ../../shared/entities/id.yml#/Id
+        changes:
+            description: Changes done in the update
+            type: array
+            items:
+                $ref: ./change.yml#/Change
+    example:
+        {
+
+        }

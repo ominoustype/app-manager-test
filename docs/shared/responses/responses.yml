@@ -16,10 +16,10 @@ BadRequest:
         additionalProperties: false
 
 Unauthorized:
-  description: The User is not authenticated and the endpoint requires a logged in user.
+  description: Access denied.
 
 Forbidden:
-  description: The User is not authorized to perform that action.
+  description: You do not have permission to access this resource.
 
 NotFound:
   description: The resource doesn't exist.

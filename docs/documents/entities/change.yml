@@ -1,0 +1,23 @@
+Change:
+    description: A change in an update
+    type: object
+    properties:
+        field:
+          description: The field modified
+          type: string
+          minLength: 1
+          maxLength: 100
+        oldValue:
+          description: The previous value of the field
+          type: string
+          minLength: 1
+          maxLength: 100
+        newValue:
+          description: The new value of the field
+          type: string
+          minLength: 1
+          maxLength: 100
+    example:
+        {
+
+        }
