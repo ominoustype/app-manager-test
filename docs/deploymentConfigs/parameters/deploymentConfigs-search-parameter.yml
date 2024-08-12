@@ -1,0 +1,10 @@
+DeploymentConfigsSearchParameter:
+    name: search
+    in: query
+    description:
+        The search string to search for deploymentConfigs
+    required: false
+    schema:
+        type: string
+        minLength: 1
+        maxLength: 40

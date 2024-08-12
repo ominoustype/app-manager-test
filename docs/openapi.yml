@@ -16,6 +16,11 @@ paths:
   /documents/{id}:
     $ref: ./documents/documents-path.yml
 
+  /deploymentConfigs:
+    $ref: ./deploymentConfigs/deploymentConfigs-path.yml
+  /deploymentConfigs/{id}:
+    $ref: ./deploymentConfigs/deploymentsConfigs-path.yml
+
 
 components:
     securitySchemes:
@@ -26,3 +31,5 @@ components:
     schemas:
         Document:
             $ref: ./documents/models/document.yml#/Document
+        DeploymentConfigs:
+            $ref: ./deploymentConfigs/models/deploymentConfigs.yml#/DeploymentConfigs
