@@ -2,6 +2,9 @@ import UuidMother from "@context/shared/domain/uuid.mother";
 import Environment, { EnvironmentPrimitives } from "./environment";
 import MotherCreator from "@context/shared/domain/motherCreator.mother";
 import Repeater from "@context/shared/domain/repeater.mother";
+import EnvironmentNameMother from "./environmentName.mother";
+import EnvironmentPathMother from "./environmentPath.mother";
+import EnvironmentIdMother from "./environmentId.mother";
 
 export default class EnvironmentMother{
     static create(primitives: EnvironmentPrimitives): Environment {
@@ -11,11 +14,11 @@ export default class EnvironmentMother{
 
     static random(primitives?: Partial<EnvironmentPrimitives>): Environment {
         return EnvironmentMother.create({
-            id: UuidMother.random().value,
-            name: MotherCreator.word(),
-            rules: MotherCreator.words().toString(),
-            customerId: MotherCreator.words().toString(),
-            path: MotherCreator.words().toString(),
+            id: EnvironmentIdMother.random().value,
+            name: EnvironmentNameMother.random().toString(),
+            rules: MotherCreator.words().split(' '),
+            customerId: UuidMother.random().value,
+            path: EnvironmentPathMother.random().toString(),
             ...primitives
         })
     }

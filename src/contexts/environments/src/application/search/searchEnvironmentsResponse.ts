@@ -2,9 +2,9 @@ import { Response } from '@context/shared/domain/queryBus/response';
 import Environments, {EnvironmentsPrimitives} from "@src/domain/environments";
 
 export default class SearchEnvironmentsResponse implements Response {
-    readonly primitives: EnvironmentsPrimitives;
+    readonly environments: EnvironmentsPrimitives;
     
-    constructor(primitives: Environments) { 
-        this.primitives = primitives.toPrimitives();
+    constructor(environments: Environments) { 
+        this.environments = environments.toPrimitives();
     }
 }
