@@ -1,0 +1,32 @@
+DeploymentConfigsPostBody:
+    description: The body of the request to create a deploymentConfigs
+    type: object
+    required:
+        - name
+        - environmentId
+        - customerId
+        - deviceType
+        - documents
+    properties:
+        name:
+            description: The name of the deploymentConfigs
+            type: string
+            minLength: 1
+            maxLength: 100
+        environmentId:
+            description: The id of the environment associated to the deploymentConfigs
+        customerId:
+            description: The id of the customer associated to the deploymentConfigs
+        deviceType:
+            description: The device type of the deploymentConfigs
+            $ref: ./entities/deviceType.yml#/DeviceType
+        documents:
+            description: All the updates done to the document
+            type: array
+            items:
+                $ref: ./entities/deploymentConfigs-document.yml#/DeploymentConfigsDocument
+
+    example:
+        {
+
+        }

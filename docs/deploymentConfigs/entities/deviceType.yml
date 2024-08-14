@@ -1,0 +1,8 @@
+DeviceType:
+    description: The device type of the deploymentConfigs
+    type: string
+    minLength: 1
+    maxLength: 100
+    enum:
+        - 'ANDROID'
+    example: "ANDROID"

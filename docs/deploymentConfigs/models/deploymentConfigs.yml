@@ -1,0 +1,32 @@
+DeploymentConfigs:
+    description:
+        A deploymentConfigs is an object 
+    type: object
+    properties:
+        id:
+            description: The deploymentConfigs unique identifier
+            $ref: ../../shared/entities/id.yml#/Id
+        name:
+            description: The name of the deploymentConfigs
+            type: string
+            minLength: 1
+            maxLength: 100
+        environmentId:
+            description: The id of the environment associated to the deploymentConfigs
+            $ref: ../../shared/entities/id.yml#/Id
+        customerId:
+            description: The id of the customer associated to the deploymentConfigs
+            $ref: ../../shared/entities/id.yml#/Id
+        deviceType:
+            description: The device type of the deploymentConfigs
+            $ref: ../entities/deviceType.yml#/DeviceType
+        documents:
+            description: All the documents related to the deploymentConfigs
+            type: array
+            items:
+                $ref: ../entities/deploymentConfigs-document.yml#/DeploymentConfigsDocument
+
+
+    example:
+        {
+        }
