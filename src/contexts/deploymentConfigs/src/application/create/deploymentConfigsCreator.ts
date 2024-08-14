@@ -7,11 +7,11 @@ import DeploymentConfigsAlreadyExistsError from "@src/domain/errors/deploymentCo
 export default class DeploymentConfigsCreator{
     private readonly repository: DeploymentConfigsRepository;
 
-    private readonly eventbus: EventBus;
+    private readonly eventBus: EventBus;
     
-    constructor(repository: DeploymentConfigsRepository, eventbus: EventBus){
+    constructor(repository: DeploymentConfigsRepository, eventBus: EventBus){
         this.repository = repository;
-        this.eventbus = eventbus;
+        this.eventBus = eventBus;
     }
 
     async run (command: CreateDeploymentConfigsCommand): Promise<void>{
@@ -22,6 +22,6 @@ export default class DeploymentConfigsCreator{
             throw new DeploymentConfigsAlreadyExistsError(deploymentConfigs.id.value);
 
         await this.repository.create(deploymentConfigs);
-        await this.eventbus.publish(deploymentConfigs.pullDomainEvents());
+        await this.eventBus.publish(deploymentConfigs.pullDomainEvents());
     }
 }

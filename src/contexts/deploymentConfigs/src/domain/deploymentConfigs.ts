@@ -6,29 +6,37 @@ import DeploymentConfigsRemovedDomainEvent from "./deploymentConfigsRemovedDomai
 import NewDeploymentConfigsCreatedDomainEvent from "./newDeploymentConfigsCreatedDomainEvent";
 import DeploymentConfigsUpdatedDomainEvent from "./deploymentConfigsUpdatedDomainEvent";
 import { merge } from 'lodash';
+import EnvironmentId from "./environmentId";
+import CustomerId from "./customerId";
+import DeploymentConfigsDeviceType from "./deploymentConfigsDeviceType";
+import { DocumentPrimitives } from "./config/document";
+import Documents from "./config/documents";
 
 export type DeploymentConfigsPrimitives = {
     id: string,
     name: string,
-    environmentId: string;
+    environmentId: string,
     customerId: string,
-    deviceType: string; //enum
+    deviceType: DeploymentConfigsDeviceType,
+    documents: Array<DocumentPrimitives>
 };
 
 export default class DeploymentConfigs extends AggregateRoot {
     readonly id: DeploymentConfigsId;
     readonly name: DeploymentConfigsName;
-    readonly environmentId: Uuid;
-    readonly customerId: Uuid;
-    readonly deviceType: string;
+    readonly environmentId: EnvironmentId;
+    readonly customerId: CustomerId;
+    readonly deviceType: DeploymentConfigsDeviceType;
+    readonly documents: Documents;
 
     constructor(primitives: DeploymentConfigsPrimitives){
         super();
         this.id = new DeploymentConfigsId(primitives.id);
         this.name = new DeploymentConfigsName(primitives.name);
-        this.environmentId = new Uuid(primitives.environmentId);
-        this.customerId = new Uuid(primitives.customerId);
+        this.environmentId = new EnvironmentId(primitives.environmentId);
+        this.customerId = new CustomerId(primitives.customerId);
         this.deviceType = (primitives.deviceType);
+        this.documents = new Documents(primitives.documents);
     }
 
     toPrimitives(): DeploymentConfigsPrimitives {
@@ -37,7 +45,8 @@ export default class DeploymentConfigs extends AggregateRoot {
             name: this.name.toString(),
             environmentId: this.environmentId.toString(),
             customerId: this.customerId.toString(),
-            deviceType: this.deviceType.toString()
+            deviceType: this.deviceType,
+            documents: this.documents.toPrimitives()
         };
     }
 
@@ -48,10 +57,11 @@ export default class DeploymentConfigs extends AggregateRoot {
     equalsTo(other: DeploymentConfigs): boolean {
         return (
             (!this.id || !other.id || (this.id && other.id && this.id.equalsTo(other.id))) &&
-            (!this.name || !other.name || (this.name && other.name && this.id.equalsTo(other.name))) && 
+            (!this.name || !other.name || (this.name && other.name && this.name.equalsTo(other.name))) && 
             (!this.environmentId || !other.environmentId || (this.environmentId && other.environmentId && this.environmentId.equalsTo(other.environmentId))) && 
             (!this.customerId || !other.customerId || (this.customerId && other.customerId && this.customerId.equalsTo(other.customerId))) && 
-            (this.deviceType === (other.deviceType))
+            (this.deviceType === (other.deviceType)) &&
+            (!this.documents || !other.documents || (this.documents && other.documents && JSON.stringify(this.documents) === JSON.stringify(other.documents)))
         ) as boolean
     }
 

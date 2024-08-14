@@ -2,6 +2,10 @@ import UuidMother from "@context/shared/domain/uuid.mother";
 import DeploymentConfigs, { DeploymentConfigsPrimitives } from "./deploymentConfigs";
 import MotherCreator from "@context/shared/domain/motherCreator.mother";
 import Repeater from "@context/shared/domain/repeater.mother";
+import DeploymentConfigsNameMother from "./deploymentConfigsName.mother";
+import DeploymentConfigsDeviceTypeMother from "./deploymentConfigsDeviceType.mother";
+import DocumentsMother from "./config/documents.mother";
+import DeploymentConfigsIdMother from "./deploymentConfigsId.mother";
 
 export default class DeploymentConfigsMother{
     static create(primitives: DeploymentConfigsPrimitives): DeploymentConfigs{
@@ -10,11 +14,12 @@ export default class DeploymentConfigsMother{
 
     static random(primitives?: Partial<DeploymentConfigsPrimitives>): DeploymentConfigs{
         return DeploymentConfigsMother.create({
-            id: UuidMother.random().value,
-            name: MotherCreator.words().toString(),
-            environmentId: UuidMother.random().toString(),
-            customerId: UuidMother.random().toString(),
-            deviceType: MotherCreator.words().toString(),
+            id: DeploymentConfigsIdMother.random().value,
+            name: DeploymentConfigsNameMother.random().toString(),
+            environmentId: UuidMother.random().value,
+            customerId: UuidMother.random().value,
+            deviceType: DeploymentConfigsDeviceTypeMother.random(),
+            documents: DocumentsMother.random().toPrimitives(),
             ...primitives
         });
     }

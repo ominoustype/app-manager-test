@@ -6,12 +6,12 @@ import RemoveDeploymentConfigsCommand from "./removeDeploymentConfigsCommand";
 export default class DeploymentConfigsRemover{
     private readonly repository: DeploymentConfigsRepository;
 
-    private readonly eventbus: EventBus;
+    private readonly eventBus: EventBus;
 
     private readonly finder: DeploymentConfigsFinder;
 
-    constructor(repository: DeploymentConfigsRepository, eventbus: EventBus){
-        this.eventbus = eventbus;
+    constructor(repository: DeploymentConfigsRepository, eventBus: EventBus){
+        this.eventBus = eventBus;
         this.repository = repository;
         this.finder = new DeploymentConfigsFinder(repository);
     }
@@ -27,6 +27,6 @@ export default class DeploymentConfigsRemover{
         deploymentConfigs.delete();
 
         await this.repository.delete(deploymentConfigs);
-        await this.eventbus.publish(deploymentConfigs.pullDomainEvents());
+        await this.eventBus.publish(deploymentConfigs.pullDomainEvents());
     }
 }
