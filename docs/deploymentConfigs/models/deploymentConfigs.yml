@@ -24,7 +24,7 @@ DeploymentConfigs:
             description: All the documents related to the deploymentConfigs
             type: array
             items:
-                $ref: ../entities/deploymentConfigs-documents.yml#/DeploymentConfigsDocuments
+                $ref: ../entities/deploymentConfigs-document.yml#/DeploymentConfigsDocument
 
 
     example:

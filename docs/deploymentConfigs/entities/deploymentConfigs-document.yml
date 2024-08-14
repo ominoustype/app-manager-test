@@ -1,4 +1,4 @@
-DeploymentConfigsDocuments:
+DeploymentConfigsDocument:
     description: A document of a deploymentConfigs
     type: object
     properties:

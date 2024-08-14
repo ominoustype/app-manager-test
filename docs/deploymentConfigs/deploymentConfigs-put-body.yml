@@ -28,7 +28,7 @@ DeploymentConfigsPutBody:
             description: All the updates done to the document
             type: array
             items:
-                $ref: ./entities/deploymentConfigs-documents.yml#/DeploymentConfigsDocuments
+                $ref: ./entities/deploymentConfigs-document.yml#/DeploymentConfigsDocument
         
 
     example:
