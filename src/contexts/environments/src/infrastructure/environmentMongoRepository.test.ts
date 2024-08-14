@@ -3,18 +3,18 @@ import MongoEnvironmentArranger from "@context/shared/infrastructure/mongo/mongo
 import EnvironmentMongoRepository from "./environmentMongoRepository";
 import EnvironmentMother from "@src/domain/environment.mother";
 import UuidMother from "@context/shared/domain/uuid.mother";
+import EnvironmentsMother from '@src/domain/environments.mother';
 
 const client = MongoClientFactory.createClient(
     'environments',
     {
-        url: 'mongodb://0.0.0.0:27017/'
+        url: 'mongodb://localhost:27017/'
     }
 );
 const arranger = new MongoEnvironmentArranger(client);
 let repository: EnvironmentMongoRepository;
 
 describe('environmentMongoRepository', () => {
-
     beforeAll(async () => {
         const cli = await client;
         repository = new EnvironmentMongoRepository(cli)
@@ -25,37 +25,37 @@ describe('environmentMongoRepository', () => {
     });
         
     it('should create an environment', async () => {
-        //expect.hasAssertions()
+        expect.hasAssertions()
         await repository.create(EnvironmentMother.random());
+        expect(true).toBe(true);
     });
 
     describe('find', () => {
 
         it("should return an environment by id", async () => {
-            //expect.hasAssertions()
+            expect.hasAssertions()
 
             const environment = EnvironmentMother.random();
             
             await repository.create(environment);
             const result = await repository.find(environment.id);
 
-            if(result!==null)
-                console.log("Integration test Environment/find by id: \n"+JSON.stringify(result, null, '\t'));
+            expect(result).toStrictEqual(environment);
         });
     
         it("should return null if the environment doesn't exist", async () => {
-            //expect.hasAssertions()
+            expect.hasAssertions()
 
             const result = await repository.find(UuidMother.random());
 
-            console.log("Integration test Environment/find does not exist: \n"+result)
+            expect(result).toBeNull();
         });
 
     });
 
     describe('delete', () => {
-        it("should delete a Environment", async () => {
-            // expect.hasAssertions();
+        it("should delete a environment", async () => {
+            expect.hasAssertions();
 
             const environment = EnvironmentMother.random();
 
@@ -63,14 +63,13 @@ describe('environmentMongoRepository', () => {
             await repository.delete(environment);
             const result = await repository.find(environment.id);
 
-            console.log("Integration test Environment/delete: \n"+result)
             expect(result).toBeNull();
         });
     });
 
     describe('update', () => {
-        it("should update a Environment", async () => {
-            //expect.hasAssertions();
+        it("should update a environment", async () => {
+            expect.hasAssertions();
 
             const environment = EnvironmentMother.random(),
                 toUpdate = EnvironmentMother.random({id: environment.id.value}),
@@ -80,8 +79,46 @@ describe('environmentMongoRepository', () => {
             await repository.update(environmentMerged);
 
             const result = await repository.find(environment.id);
-            if(result!==null)
-                console.log("Integration test Environment/update: \n"+JSON.stringify(result, null, '\t'));
+            expect(result).toStrictEqual(environmentMerged);
         })
+    });
+
+    describe('search', () => {
+        it.skip("should return an empty array if there are no environments", async ()=> {
+            expect.hasAssertions();
+
+            const result = await repository.search({});
+
+            expect(result).toStrictEqual(EnvironmentsMother.empty());
+
+        });
+
+        it.skip('should list all the environments stored', async ()=> {
+            expect.hasAssertions();
+
+            const environments = EnvironmentsMother.random();
+
+            await Promise.all(
+                environments.map((environment) => repository.create(environment))
+            );
+
+            const result = await repository.search({});
+
+            expect(result).toStrictEqual(environments);
+        });
+
+        it("should not return more than the limit", async ()=> {
+            expect.hasAssertions();
+
+            const environments = EnvironmentsMother.randomWithSize(11);
+
+            await Promise.all(
+                environments.map((environment) => repository.create(environment))
+            );
+
+            const result = await repository.search({ page_size: 10 });
+
+            expect(result).toHaveLength(10);
+        });
     });
 });

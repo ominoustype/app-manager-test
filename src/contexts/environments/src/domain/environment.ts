@@ -5,36 +5,39 @@ import NewEnvironmentCreatedDomainEvent from "./newEnvironmentCreatedDomainEvent
 import EnvironmentRemovedDomainEvent from "./environmentRemovedDomainEvent";
 import { merge } from 'lodash';
 import EnvironmentUpdatedDomainEvent from "./environmentUpdatedDomainEvent";
+import CustomerId from "./customerId";
+import EnvironmentName from "./environmentName";
+import EnvironmentPath from "./environmentPath";
 
 export type EnvironmentPrimitives = {
     id: string,
     name: string,
-    rules: string,
+    rules: Array<string>,
     customerId: string,
     path: string
 };
 
 export default class Environment extends AggregateRoot {
     readonly id: EnvironmentId;
-    readonly name: string;
-    readonly rules: string;
-    readonly customerId: string;
-    readonly path: string;
+    readonly name: EnvironmentName;
+    readonly rules: Array<string>;
+    readonly customerId: CustomerId;
+    readonly path: EnvironmentPath;
 
     constructor(primitives: EnvironmentPrimitives) {
         super();
         this.id = new EnvironmentId(primitives.id);
-        this.name = (primitives.name);
+        this.name = new EnvironmentName(primitives.name);
         this.rules = (primitives.rules);
-        this.customerId = (primitives.customerId);
-        this.path = (primitives.path);
+        this.customerId = new CustomerId(primitives.customerId);
+        this.path = new EnvironmentPath(primitives.path);
     }
 
     toPrimitives(): EnvironmentPrimitives {
         return {
             id: this.id.toString(),
             name: this.name.toString(),
-            rules: this.rules.toString(),
+            rules: this.rules,
             customerId: this.customerId.toString(),
             path: this.path.toString()
         }
@@ -47,10 +50,11 @@ export default class Environment extends AggregateRoot {
     equalsTo(other: Environment): boolean {
         return (
             (!this.id || !other.id || (this.id && other.id && this.id.equalsTo(other.id))) &&
-            (!this.name || !other.name || (this.name && other.name && this.name === other.name)) &&
-            (!this.rules || !other.rules || (this.rules && other.rules && this.rules === other.rules)) &&
-            (!this.customerId || !other.customerId || (this.customerId && other.customerId && this.customerId === other.customerId)) &&
-            (!this.path || !other.path || (this.path && other.path && this.path === other.path)) 
+            (!this.name || !other.name || (this.name && other.name && this.name.equalsTo(other.name))) &&
+            (!this.rules || !other.rules || (this.rules && other.rules && JSON.stringify(this.rules) === JSON.stringify(other.rules))) &&
+            (!this.customerId || !other.customerId || (this.customerId && other.customerId &&
+                 this.customerId.equalsTo(other.customerId))) &&
+            (!this.path || !other.path || (this.path && other.path && this.path.equalsTo(other.path))) 
         ) as boolean
     }
 
