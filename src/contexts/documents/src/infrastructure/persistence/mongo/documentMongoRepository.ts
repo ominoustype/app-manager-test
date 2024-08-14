@@ -13,7 +13,9 @@ import DocumentRepository from '@src/domain/documentRepository';
 import Documents from '@src/domain/documents';
 
 const TO_SEARCH_PARAMS_DICT = Object.freeze({
-    search: ['name']
+    search: ['name'],
+    environment: 'environmentId',
+    customer: 'customerId'
 });
 
 const DEFAULT_PAGE_SIZE = 50;
@@ -59,6 +61,10 @@ export default class DocumentMongoRepository extends MongoRepository<Document> i
 
         let find = {};
 
+        const order = copyParams.order === 'true' ? 1 : -1;
+
+        delete copyParams.order;
+
         if (copyParams.search) {
             const orFilters = new Filters(
                 TO_SEARCH_PARAMS_DICT.search.map((field) =>
@@ -80,9 +86,35 @@ export default class DocumentMongoRepository extends MongoRepository<Document> i
             delete copyParams.search;
         }
 
+        if (copyParams.environment) {
+            find = {
+                ...find,
+                ...{
+                    environmentId: {
+                        $in: copyParams.environment.split(';')
+                    }
+                }
+            };
+
+            delete copyParams.environment;
+        }
+
+        if (copyParams.customer) {
+            find = {
+                ...find,
+                ...{
+                    customerId: {
+                        $in: copyParams.customer.split(';')
+                    }
+                }
+            };
+
+            delete copyParams.customer;
+        }
+
         const collection = await this.collection();
 
-        const documents = collection.find(find, { limit, skip });
+        const documents = order ? collection.find(find, { limit, skip }).sort('createdAt', order) : collection.find(find, { limit, skip });
         const items = (await documents.toArray()).map((document) => 
             this.getParsedDocument(document)
         );

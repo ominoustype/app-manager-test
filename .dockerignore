@@ -1,0 +1,4 @@
+.data/
+.husky
+.vscode
+node_modules

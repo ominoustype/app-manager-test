@@ -1,17 +1,17 @@
 services:
     mongodb:
-        profiles: ['database']
+        # profiles: ['database']
         image: mongo:latest
-        # container_name: app-manager-mongodb
+        container_name: app-manager-mongodb
         hostname: mongodb
         ports:
             - 27017:27017
         volumes:
             - ./.data/mongo:/data/db
     mongoclient:
-        profiles: ['database']
+        # profiles: ['database']
         image: mongoclient/mongoclient:latest
-        # container_name: app-manager-mongoclient
+        container_name: app-manager-mongoclient
         hostname: mongoclient
         depends_on:
             - mongodb

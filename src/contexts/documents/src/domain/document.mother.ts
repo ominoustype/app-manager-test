@@ -1,5 +1,4 @@
 import Document, { DocumentPrimitives } from "./document";
-import UuidMother from '@context/shared/domain/uuid.mother';
 import DatetimeMother from "@context/shared/domain/datetime.mother";
 import MotherCreator from "@context/shared/domain/motherCreator.mother";
 import Repeater from "@context/shared/domain/repeater.mother";
@@ -8,6 +7,9 @@ import DocumentNameMother from "./documentName.mother";
 import DocumentVersionMother from "./documentVersion.mother";
 import DocumentIdMother from "./documentId.mother";
 import UpdatesByMother from "./updates/updatesBy.mother";
+import PropertiesMother from "./properties/properties.mother";
+import CustomerMother from "./customer/customer.mother";
+import EnvironmentMother from "./environment/environment.mother";
 
 export default class DocumentMother {
     static create(primitives: DocumentPrimitives): Document {
@@ -21,9 +23,9 @@ export default class DocumentMother {
             name: DocumentNameMother.random().toString(),
             type: DocumentTypeMother.random(),
             version: DocumentVersionMother.random().toString(),
-            properties: MotherCreator.words().split(' '),
-            customerId: UuidMother.random().value,
-            environmentId: UuidMother.random().value,
+            properties: PropertiesMother.random().toPrimitives(),
+            customer: CustomerMother.random().toPrimitives(),
+            environment: EnvironmentMother.random().toPrimitives(),
             updatedBy: UpdatesByMother.random().toPrimitives(),
             ...primitives
         })

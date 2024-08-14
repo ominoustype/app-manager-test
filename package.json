@@ -11,6 +11,7 @@
         "src/apps/*/*"
     ],
     "scripts": {
+        "serve:on-premise": "npx lerna run serve:on-premise --scope @app/* --stream --",
 		"docs:bundle": "npx swagger-cli bundle docs/openapi.yml -r --outfile dist/docs/api/openapi.yml --type yaml",
 		"docs:validate": "npx swagger-cli validate dist/docs/api/openapi.yml",
         "postinstall": "npx husky install",
@@ -31,7 +32,8 @@
         "test:features:aws": "npx lerna run test:features:aws --scope @app/* --since $(git describe --tags --abbrev=0) --stream --concurrency 1 --",
         "publish:docs:aws": "npx lerna run publish:docs:aws --scope @app/* --since $(git describe --tags --abbrev=0) --stream --concurrency 1 --",
         "publish:version": "npx lerna version --conventional-commits --no-commit-hooks --yes",
-        "destroy:aws": "npx lerna run destroy:aws --scope @app/* --stream --"
+        "destroy:aws": "npx lerna run destroy:aws --scope @app/* --stream --",
+        "lerna-dockerize": "lerna-dockerize"
     },
     "devDependencies": {
         "@commitlint/cli": "^16.2.3",

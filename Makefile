@@ -14,6 +14,11 @@ ifndef DOCKER_COMPOSE
 endif
 	yarn install --force
 
+#
+.PHONY = install_deps
+install_deps:
+	yarn install --force
+
 # Start databases containers in background
 .PHONY = start_database
 start_database:

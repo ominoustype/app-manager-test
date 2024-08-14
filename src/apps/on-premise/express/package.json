@@ -1,5 +1,5 @@
 {
-    "name": "@apps/app-manager-express",
+    "name": "@app/app-manager-express",
     "version": "1.0.1",
     "description": "App On Premise to manage AppManager requests",
     "keywords": [],
@@ -32,13 +32,14 @@
         "build": "yarn build:clean && yarn build:tsc",
         "build:clean": "rm -r dist; exit 0",
         "build:tsc": "tsc && tscpaths -p tsconfig.json -s ./src -o ./dist",
-        "serve": "nodemon src/index.ts"
+        "serve": "nodemon src/index.ts",
+        "serve:on-premise": "nodemon src/index.ts"
     },
     "dependencies": {
         "@commitlint/cli": "^16.2.3",
         "@commitlint/config-conventional": "^16.2.1",
-        "@contexts/documents": "^1.0.1",
-        "@contexts/shared": "^1.0.1",
+        "@context/documents": "^1.0.1",
+        "@context/shared": "^1.0.1",
         "express": "^4.19.2",
         "lodash": "^4.17.21",
         "moment": "^2.29.1"

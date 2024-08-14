@@ -4,6 +4,9 @@ export type SearchDocumentsQueryParams = {
     page_size?: number;
     page?: number;
     search?: string;
+    order?: string;
+    environment?: string;
+    customer?: string;
 };
 
 export default class SearchDocumentsQuery extends Query {
