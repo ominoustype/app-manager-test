@@ -6,17 +6,17 @@ import DeploymentConfigsRemovedDomainEvent from "./deploymentConfigsRemovedDomai
 import NewDeploymentConfigsCreatedDomainEvent from "./newDeploymentConfigsCreatedDomainEvent";
 import DeploymentConfigsUpdatedDomainEvent from "./deploymentConfigsUpdatedDomainEvent";
 import { merge } from 'lodash';
-import EnvironmentId from "./environmentId";
-import CustomerId from "./customerId";
 import DeploymentConfigsDeviceType from "./deploymentConfigsDeviceType";
 import { DocumentPrimitives } from "./config/document";
 import Documents from "./config/documents";
+import Customer, { CustomerPrimitives } from "./customer/customer";
+import Environment, { EnvironmentPrimitives } from "./environment/environment";
 
 export type DeploymentConfigsPrimitives = {
     id: string,
     name: string,
-    environmentId: string,
-    customerId: string,
+    environment: EnvironmentPrimitives,
+    customer: CustomerPrimitives,
     deviceType: DeploymentConfigsDeviceType,
     documents: Array<DocumentPrimitives>
 };
@@ -24,8 +24,8 @@ export type DeploymentConfigsPrimitives = {
 export default class DeploymentConfigs extends AggregateRoot {
     readonly id: DeploymentConfigsId;
     readonly name: DeploymentConfigsName;
-    readonly environmentId: EnvironmentId;
-    readonly customerId: CustomerId;
+    readonly environmentId: Environment;
+    readonly customerId: Customer;
     readonly deviceType: DeploymentConfigsDeviceType;
     readonly documents: Documents;
 
@@ -33,8 +33,8 @@ export default class DeploymentConfigs extends AggregateRoot {
         super();
         this.id = new DeploymentConfigsId(primitives.id);
         this.name = new DeploymentConfigsName(primitives.name);
-        this.environmentId = new EnvironmentId(primitives.environmentId);
-        this.customerId = new CustomerId(primitives.customerId);
+        this.environmentId = new Environment(primitives.environment);
+        this.customerId = new Customer(primitives.customer);
         this.deviceType = (primitives.deviceType);
         this.documents = new Documents(primitives.documents);
     }
@@ -43,8 +43,8 @@ export default class DeploymentConfigs extends AggregateRoot {
         return{
             id: this.id.toString(),
             name: this.name.toString(),
-            environmentId: this.environmentId.toString(),
-            customerId: this.customerId.toString(),
+            environment: this.environmentId.toPrimitives(),
+            customer: this.customerId.toPrimitives(),
             deviceType: this.deviceType,
             documents: this.documents.toPrimitives()
         };
