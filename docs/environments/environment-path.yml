@@ -1,0 +1,67 @@
+get:
+    operationId: findEnvironment
+    tags:
+        - EnvironmentsCtrl
+    summary: Find an environment that match the id search criteria
+    description:
+        This rest services return an environment that match the id search criteria
+    parameters:
+        - $ref: ../shared/parameters/id-path-parameter.yml#/IdPathParameter
+    responses:
+        200:
+            description: The environment that match the given id.
+            content:
+                application/json:
+                    schema:
+                        $ref: models/environment.yml#/Environment
+                    example:
+                        $ref: models/environment.yml#/Environment/example
+        401:
+            $ref: ../shared/responses/responses.yml#/Unauthorized
+        403:
+            $ref: ../shared/responses/responses.yml#/Forbidden
+        404:
+            $ref: ../shared/responses/responses.yml#/NotFound
+
+delete:
+    operationId: deleteEnvironment
+    tags:
+        - EnvironmentsCtrl
+    summary: Delete an existent environment
+    description: This rest service deletes an existent environment
+    parameters:
+        - $ref: ../shared/parameters/id-path-parameter.yml#/IdPathParameter
+    responses:
+        204:
+            $ref: ../shared/responses/responses.yml#/NoContent
+        401:
+            $ref: ../shared/responses/responses.yml#/Unauthorized
+        403:
+            $ref: ../shared/responses/responses.yml#/Forbidden
+        404:
+            $ref: ../shared/responses/responses.yml#/NotFound
+
+put:
+    operationId: updateEnvironment
+    tags:
+        - EnvironmentsCtrl
+    summary: Update an existing environment based on the given information
+    description:
+        This rest services allow to update an existing environment based on
+        the given information
+    parameters:
+        - $ref: ../shared/parameters/id-path-parameter.yml#/IdPathParameter
+    requestBody:
+        content:
+            application/json:
+                schema:
+                    $ref: environment-put-body.yml#/EnvironmentPutBody
+    responses:
+        204:
+            $ref: ../shared/responses/responses.yml#/NoContent
+        401:
+            $ref: ../shared/responses/responses.yml#/Unauthorized
+        403:
+            $ref: ../shared/responses/responses.yml#/Forbidden
+        404:
+            $ref: ../shared/responses/responses.yml#/NotFound

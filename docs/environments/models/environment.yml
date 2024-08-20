@@ -1,0 +1,27 @@
+Environment:
+    description: An environment is an object
+    type: object
+    properties:
+        id:
+            description: The environment unique identifier
+            $ref: ../../shared/entities/id.yml#/Id
+        name:
+            description: The name of the environment
+            type: string
+            minLength: 1
+            maxLength: 100
+        rules:
+            description: The array of rules of the environment
+            type: array
+            items:
+                type: string
+        customerId:
+            description: The id of the customer associated to the environment
+            $ref: ../../shared/entities/id.yml#/Id
+        path:
+            description: The path of the environment
+            type: string
+            minLength: 1
+            maxLength: 100
+
+    example: {}
