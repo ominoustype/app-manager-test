@@ -1,4 +1,3 @@
-import UuidMother from "@context/shared/domain/uuid.mother";
 import DeploymentConfigs, { DeploymentConfigsPrimitives } from "./deploymentConfigs";
 import MotherCreator from "@context/shared/domain/motherCreator.mother";
 import Repeater from "@context/shared/domain/repeater.mother";
@@ -6,6 +5,8 @@ import DeploymentConfigsNameMother from "./deploymentConfigsName.mother";
 import DeploymentConfigsDeviceTypeMother from "./deploymentConfigsDeviceType.mother";
 import DocumentsMother from "./config/documents.mother";
 import DeploymentConfigsIdMother from "./deploymentConfigsId.mother";
+import CustomerMother from "./customer/customer.mother";
+import EnvironmentMother from "./environment/environment.mother";
 
 export default class DeploymentConfigsMother{
     static create(primitives: DeploymentConfigsPrimitives): DeploymentConfigs{
@@ -16,8 +17,8 @@ export default class DeploymentConfigsMother{
         return DeploymentConfigsMother.create({
             id: DeploymentConfigsIdMother.random().value,
             name: DeploymentConfigsNameMother.random().toString(),
-            environmentId: UuidMother.random().value,
-            customerId: UuidMother.random().value,
+            environment: EnvironmentMother.random().toPrimitives(),
+            customer: CustomerMother.random().toPrimitives(),
             deviceType: DeploymentConfigsDeviceTypeMother.random(),
             documents: DocumentsMother.random().toPrimitives(),
             ...primitives
