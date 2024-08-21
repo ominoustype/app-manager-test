@@ -18,16 +18,19 @@ import SearchDeploymentsConfigsQuery from '@context/deploymentConfigs/applicatio
 import CreateDeploymentConfigsCommand from '@context/deploymentConfigs/application/create/createDeploymentConfigsCommand';
 import UpdateDeploymentConfigsCommand from '@context/deploymentConfigs/application/update/updateDeploymentConfigsCommand';
 import RemoveDeploymentConfigsCommand from '@context/deploymentConfigs/application/delete/removeDeploymentConfigsCommand';
-import Query from '@context/shared/domain/queryBus/query';
 
 export const HANDLERS = "handlers";
 export const REPOSITORIES = "repositories"
 
+const localhost = "mongodb://localhost:27017/"
+const URL = process.env.URL || localhost;
+
 const dependencies = new Map();
 
+//"mongodb+srv://your_user_name:your_password@cluster0.cojoign.mongodb.net/local_library?retryWrites=true&w=majority";
+
 const client = MongoClientFactory.createClient('deploymentConfigs', {
-    // url: process.env.MONGO_URL as string
-    url: 'mongodb://localhost:27017/'
+    url: URL
 });
 
 const deploymentConfigsRepository = new DeploymentConfigsMongoRepository(client as unknown as MongoClient);
@@ -45,7 +48,7 @@ const updateDeploymentConfigsCommandHandler = new UpdateDeploymentConfigsCommand
 const removeDeploymentConfigsCommandHandler = new RemoveDeploymentConfigsCommandHandler(deploymentConfigsRemover);
 const searchDeploymentConfigsQueryHandler = new SearchDeploymentsConfigsQueryHandler(deploymentConfigsSearcher);
 
-const queryHandlers = new Map<Query, any>();
+const queryHandlers = new Map<any, any>();
 const commandHandlers = new Map<Command, any>();
 
 queryHandlers.set(FindDeploymentConfigsQuery, findDeploymentConfigsQueryHandler);
@@ -55,7 +58,7 @@ commandHandlers.set(CreateDeploymentConfigsCommand, createDeploymentConfigsComma
 commandHandlers.set(UpdateDeploymentConfigsCommand, updateDeploymentConfigsCommandHandler);
 commandHandlers.set(RemoveDeploymentConfigsCommand, removeDeploymentConfigsCommandHandler);
 
-dependencies.set(HANDLERS, {query: queryHandlers, commandHandlers: commandHandlers});
+dependencies.set(HANDLERS, {query: queryHandlers, command: commandHandlers});
 dependencies.set(REPOSITORIES, { deploymentConfigsRepository });
 
 export { dependencies };

@@ -1,36 +1,42 @@
 import { Request, Response } from 'express'
 import { dependencies } from './application.di'
 import { HANDLERS } from './application.di';
+
 import SearchDeploymentConfigsQuery from '@context/deploymentConfigs/application/search/searchDeploymentsConfigsQuery'
 import FindDeploymentConfigsQuery from '@context/deploymentConfigs/application/find/findDeploymentConfigsQuery';
 import CreateDeploymentConfigsCommand from '@context/deploymentConfigs/application/create/createDeploymentConfigsCommand';
 import RemoveDeploymentConfigsCommand from '@context/deploymentConfigs/application/delete/removeDeploymentConfigsCommand';
-import UpdateDeploymentConfigsCommand from '@context/deploymentConfigs/application/update/updateDeploymentConfigsCommand'; 
+import UpdateDeploymentConfigsCommand from '@context/deploymentConfigs/application/update/updateDeploymentConfigsCommand';
+
 import FindDeploymentConfigsQueryHandler from '@context/deploymentConfigs/application/find/findDeploymentConfigsQueryHandler';
-import CreateDeploymentConfigsCommandHandler from '@context/deploymentConfigs/application/create/createDeploymentConfigsCommandHandler';
 import UpdateDeploymentConfigsCommandHandler from '@context/deploymentConfigs/application/update/updateDeploymentConfigsCommandHandler';
 import RemoveDeploymentConfigsCommandHandler from '@context/deploymentConfigs/application/delete/removeDeploymentConfigsCommandHandler';
 import SearchDeploymentsConfigsQueryHandler from '@context/deploymentConfigs/application/search/searchDeploymentsConfigsQueryHandler';
+import CreateDeploymentConfigsCommandHandler from '@context/deploymentConfigs/application/create/createDeploymentConfigsCommandHandler';
+
 
 const CONTENT_TYPE = "content-type";
 const APPLICATION_JSON = "application/json";
 
 export async function searchDeploymentConfigs(req: Request, res: Response) {
-    console.log('Request for searchDeploymentConfigs Triggered')
+    console.log('Request for searchDeploymentConfigs triggered');
 
     const handler = dependencies.get(HANDLERS).query.get(
         SearchDeploymentConfigsQuery) as SearchDeploymentsConfigsQueryHandler;
 
-    const result = await handler.handle(new SearchDeploymentConfigsQuery({...req.query}));
-    
-    res.header(CONTENT_TYPE, APPLICATION_JSON)
+    const result = await handler.handle(
+        new SearchDeploymentConfigsQuery(
+            { ...req.query })
+        );
+
+    res.header(CONTENT_TYPE, APPLICATION_JSON);
     res.status(200).send({
-        body: JSON.stringify({ result: result.deploymentsConfigs }),
-    })
+        body: result.deploymentsConfigs 
+    });
 }
 
 export async function findDeploymentConfigs(req: Request, res: Response) {
-    console.log("Request for findDeploymentConfigs Triggered");
+    console.log("Request for findDeploymentConfigs triggered");
 
     const { id } = req.params;
 
@@ -52,7 +58,7 @@ export async function findDeploymentConfigs(req: Request, res: Response) {
 }
 
 export async function createDeploymentConfigs(req: Request, res: Response) {
-    console.log("Request for createDeploymentConfigs Triggered");
+    console.log("Request for createDeploymentConfigs triggered");
 
     const command = dependencies.get(HANDLERS).command.get(
         CreateDeploymentConfigsCommand) as CreateDeploymentConfigsCommandHandler;
@@ -67,7 +73,7 @@ export async function createDeploymentConfigs(req: Request, res: Response) {
 }
 
 export async function updateDeploymentConfigs(req: Request, res: Response) {
-    console.log("Request for updateDeploymentConfigs Triggered");
+    console.log("Request for updateDeploymentConfigs triggered");
 
     const { id } = req.params;
 
@@ -90,7 +96,7 @@ export async function updateDeploymentConfigs(req: Request, res: Response) {
 }
 
 export async function deleteDeploymentConfigs(req: Request, res: Response) {
-    console.log("Request for deleteDeploymentConfigs Triggered");
+    console.log("Request for deleteDeploymentConfigs triggered");
 
     const { id } = req.params;
 
