@@ -21,6 +21,11 @@ paths:
   /deploymentConfigs/{id}:
     $ref: ./deploymentConfigs/deploymentsConfigs-path.yml
 
+  /environments:
+    $ref: ./environments/environment-path.yml
+  /environments/{id}:
+    $ref: ./environments/environments-path.yml
+
 
 components:
     securitySchemes:
@@ -33,3 +38,5 @@ components:
             $ref: ./documents/models/document.yml#/Document
         DeploymentConfigs:
             $ref: ./deploymentConfigs/models/deploymentConfigs.yml#/DeploymentConfigs
+        Environment:
+            $ref: ./environments/models/environment.yml#/Environment

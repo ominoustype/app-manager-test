@@ -1,0 +1,28 @@
+EnvironmentPutBody:
+    description: The body of the request to create an environment
+    type: object
+    required:
+        - id
+        - name
+        - rules
+        - customerId
+        - path
+    properties:
+        id:
+            description: The environment unique identifier
+            $ref: ../shared/entities/id.yml#/Id
+        name:
+            description: The name of the environment
+            type: string
+            minLength: 1
+            maxLength: 100
+        rules:
+            description: The rules of the environment
+        customerId:
+            description: The id of the customer associated to the environment
+        path:
+            description: The path of the environment
+    example:
+        {
+
+        }
