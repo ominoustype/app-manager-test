@@ -11,8 +11,8 @@
         "src/apps/*/*"
     ],
     "scripts": {
-		"docs:bundle": "npx swagger-cli bundle docs/openapi.yml -r --outfile dist/docs/api/openapi.yml --type yaml",
-		"docs:validate": "npx swagger-cli validate dist/docs/api/openapi.yml",
+        "docs:bundle": "npx swagger-cli bundle docs/openapi.yml -r --outfile dist/docs/api/openapi.yml --type yaml",
+        "docs:validate": "npx swagger-cli validate dist/docs/api/openapi.yml",
         "postinstall": "npx husky install",
         "precommit": "npx lerna run precommit --since $(git describe --tags --abbrev=0) --stream --concurrency 1",
         "lint": "yarn lint:contexts && yarn lint:apps",
@@ -44,6 +44,7 @@
         "typescript": "^5.5.3"
     },
     "dependencies": {
-        "dotenv": "^16.4.5"
+        "dotenv": "^16.4.5",
+        "node-html-parser": "^6.1.13"
     }
 }
