@@ -9,10 +9,11 @@ import DocumentRemovedDomainEvent from './documentRemovedDomainEvent';
 import { merge } from 'lodash';
 import DocumentType from './documentType';
 import DocumentVersion from './documentVersion';
-import CustomerId from './customerId';
-import EnvironmentId from './environmentId';
 import { UpdateByPrimitives } from './updates/updateBy';
 import UpdatesBy from './updates/updatesBy';
+import Customer, { CustomerPrimitives } from './customer/customer';
+import Environment, { EnvironmentPrimitives } from './environment/environment';
+import Properties, { PropertiesPrimitives } from './properties/properties';
 
 export type DocumentPrimitives = {
     id: string,
@@ -20,9 +21,9 @@ export type DocumentPrimitives = {
     name: string,
     type: DocumentType,
     version: string,
-    properties: Array<string>,
-    customerId: string,
-    environmentId: string,
+    properties: PropertiesPrimitives,
+    customer: CustomerPrimitives,
+    environment: EnvironmentPrimitives,
     updatedBy: Array<UpdateByPrimitives>
 };
 
@@ -32,9 +33,9 @@ export default class Document extends AggregateRoot {
     readonly name: DocumentName;
     readonly type: DocumentType;
     readonly version: DocumentVersion;
-    readonly properties: Array<string>;
-    readonly customerId: CustomerId;
-    readonly environmentId: EnvironmentId;
+    readonly properties: Properties;
+    readonly customerId: Customer;
+    readonly environmentId: Environment;
     readonly updatedBy: UpdatesBy;
 
     constructor(primitives: DocumentPrimitives) {
@@ -44,9 +45,9 @@ export default class Document extends AggregateRoot {
         this.name = new DocumentName(primitives.name);
         this.type = primitives.type;
         this.version = new DocumentVersion(primitives.version);
-        this.properties = (primitives.properties);
-        this.customerId = new CustomerId(primitives.customerId);
-        this.environmentId = new EnvironmentId(primitives.environmentId);
+        this.properties = new Properties(primitives.properties);
+        this.customerId = new Customer(primitives.customer);
+        this.environmentId = new Environment(primitives.environment);
         this.updatedBy = new UpdatesBy(primitives.updatedBy)
     }
 
@@ -57,9 +58,9 @@ export default class Document extends AggregateRoot {
             name: this.name.toString(),
             type: this.type,
             version: this.version.toString(),
-            properties: this.properties,
-            customerId: this.customerId.toString(),
-            environmentId: this.environmentId.toString(),
+            properties: this.properties.toPrimitives(),
+            customer: this.customerId.toPrimitives(),
+            environment: this.environmentId.toPrimitives(),
             updatedBy: this.updatedBy.toPrimitives()
         };
     }
