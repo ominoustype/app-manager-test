@@ -23,7 +23,7 @@ export const HANDLERS = "handlers";
 export const REPOSITORIES = "repositories"
 
 const localhost = "mongodb://localhost:27017/"
-const URL = process.env.URL || localhost;
+const URL = process.env.MONGODB_URI || localhost;
 
 const dependencies = new Map();
 

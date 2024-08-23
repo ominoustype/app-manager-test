@@ -26,7 +26,7 @@ const dependencies = new Map();
 
 const client = MongoClientFactory.createClient('documents', {
     // url: process.env.MONGO_URL as string
-    url: 'mongodb://localhost:27017/'
+    url: process.env.MONGODB_URI  || 'mongodb://localhost:27017/'
 });
 const documentRepository = new DocumentMongoRepository(client as unknown as MongoClient);
 const eventBus = new InMemorySyncEventBus();

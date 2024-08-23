@@ -19,6 +19,10 @@ endif
 start_database:
 	docker compose up -d mongodb mongoclient
 
+.PHONY = lol
+lol:
+	echo "eres un lol"
+
 # Run tests
 .PHONY = test
 test: deps start_database

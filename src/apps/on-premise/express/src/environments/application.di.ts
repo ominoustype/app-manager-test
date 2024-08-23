@@ -25,7 +25,7 @@ export const REPOSITORIES = "repositories"
 const dependencies = new Map();
 
 const client = MongoClientFactory.createClient('environments', {
-    url: 'mongodb://localhost:27017/'    
+    url: process.env.MONGODB_URI  || 'mongodb://localhost:27017/'
 });
 
 const eventBus = new InMemorySyncEventBus();
