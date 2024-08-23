@@ -1,4 +1,7 @@
 {
+    "typescript.suggest.paths": false ,
+    "javascript.suggest.paths": false,
+
     "eslint.workingDirectories": [
         "src/apps/cicd/aws",
         "src/apps/docs/swagger-ui",
