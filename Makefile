@@ -15,14 +15,14 @@ endif
 	yarn install --force
 
 # Start databases containers in background
-.PHONY = start_local_database
-start_local_database:
+.PHONY = start_database
+start_database:
 	docker compose -f docker-compose-local.yml up -d
 
 # Start databases containers in background
-.PHONY = start_database
-start_database:
-	docker compose -f docker-compose-on-premise.yml up
+.PHONY = start_database_on_premise
+start_database_on_premise:
+	docker compose -f docker-compose-on-premise.yml up -d
 
 # Run tests
 .PHONY = test
