@@ -15,13 +15,14 @@ endif
 	yarn install --force
 
 # Start databases containers in background
+.PHONY = start_local_database
+start_local_database:
+	docker compose -f docker-compose-local.yml up -d
+
+# Start databases containers in background
 .PHONY = start_database
 start_database:
-	docker compose up -d mongodb mongoclient
-
-.PHONY = lol
-lol:
-	echo "eres un lol"
+	docker compose -f docker-compose-on-premise.yml up
 
 # Run tests
 .PHONY = test
