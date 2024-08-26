@@ -1,4 +1,7 @@
 {
+    "typescript.suggest.paths": false ,
+    "javascript.suggest.paths": false,
+
     "eslint.workingDirectories": [
         "src/apps/cicd/aws",
         "src/apps/docs/swagger-ui",
@@ -55,5 +58,8 @@
         "titleBar.activeForeground": "#FFFFFF",
         "titleBar.inactiveBackground": "#b796ff8b",
         "titleBar.inactiveForeground": "#D9D9D999"
+    },
+    "yaml.schemas": {
+        "https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json": "file:///home/nonost/app-manager-backend/docker-compose-local.yml"
     }
 }

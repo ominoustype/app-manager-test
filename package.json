@@ -11,6 +11,7 @@
         "src/apps/*/*"
     ],
     "scripts": {
+        "serve": "nodemon src/apps/on-premise/express/src/index.ts",
         "docs:bundle": "npx swagger-cli bundle docs/openapi.yml -r --outfile dist/docs/api/openapi.yml --type yaml",
         "docs:validate": "npx swagger-cli validate dist/docs/api/openapi.yml",
         "postinstall": "npx husky install",

@@ -1,0 +1,12 @@
+services:
+    #MongoDB Services
+    mongo_local_db:
+        image: mongo:latest
+        restart: always
+        volumes:
+            - mongo_local_db:/data/db
+        ports:
+            - 27018:27017
+
+volumes: 
+    mongo_local_db: {}
