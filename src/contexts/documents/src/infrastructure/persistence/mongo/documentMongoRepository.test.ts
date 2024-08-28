@@ -8,7 +8,7 @@ import DocumentsMother from "@src/domain/documents.mother";
 const client = MongoClientFactory.createClient(
     'documents',
     {
-        url: 'mongodb://localhost:27017/'
+        url: process.env.MONGODB_LOCAL_URI || 'mongodb://localhost:27018/'
     }
 );
 const arranger = new MongoEnvironmentArranger(client);

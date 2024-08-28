@@ -8,7 +8,7 @@ import EnvironmentsMother from '@src/domain/environments.mother';
 const client = MongoClientFactory.createClient(
     'environments',
     {
-        url: 'mongodb://localhost:27017/'
+        url: process.env.MONGODB_LOCAL_URI || 'mongodb://localhost:27018/'
     }
 );
 const arranger = new MongoEnvironmentArranger(client);

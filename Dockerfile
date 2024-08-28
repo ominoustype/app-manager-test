@@ -12,4 +12,4 @@ RUN cd src/contexts/environments && yarn build
 RUN cd src/contexts/deploymentConfigs && yarn build
 
 EXPOSE 3000
-CMD ["yarn", "serve"]
+CMD ["yarn", "serve:on-premise"]

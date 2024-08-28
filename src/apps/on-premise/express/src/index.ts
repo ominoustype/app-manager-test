@@ -8,6 +8,7 @@ import loadEnvironments from './environments/routes'
 
 const app = ExpressServer()
 const port = process.env.PORT || 4000
+const deployment = process.env.DEPLOYMENT_MESSAGE || "Local use"
 
 app.use(BodyParser.urlencoded({ extended: false }))
 app.use(BodyParser.json())
@@ -19,7 +20,7 @@ loadEnvironments(app)
 app.use(errorHandler)
 
 app.get('/', (_req, res) => {
-  res.send(title+art+footer)
+  res.send(title+art+deployment_text+footer)
 })
 
 app.listen(port, () => {
@@ -40,5 +41,6 @@ const title:string = `<br><pre>
      _     ____   ____      __  __     _     _   _     _     ____  _____  ____  \r\n    \/ \\   |  _ \\ |  _ \\    |  \\\/  |   \/ \\   | \\ | |   \/ \\   \/ ___|| ____||  _ \\ \r\n   \/ _ \\  | |_) || |_) |   | |\\\/| |  \/ _ \\  |  \\| |  \/ _ \\ | |  _ |  _|  | |_) |\r\n  \/ ___ \\ |  __\/ |  __\/    | |  | | \/ ___ \\ | |\\  | \/ ___ \\| |_| || |___ |  _ < \r\n \/_\/   \\_\\|_|    |_|       |_|  |_|\/_\/   \\_\\|_| \\_|\/_\/   \\_\\\\____||_____||_| \\_\\\r\n                                                                                                                                                 
 <pre>`
 
+const deployment_text = `<br><br><i> (`+deployment+`)<i>`
 const time = new Date();
-const footer = `<br><br><br><small> Last reset: ` +time;
+const footer = `<br><br><small> Last reset: ` +time;

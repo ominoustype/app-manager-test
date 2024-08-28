@@ -25,7 +25,7 @@ import RemoveDocumentCommand from '@context/documents/application/delete/removeD
 const dependencies = new Map();
 
 const client = MongoClientFactory.createClient('documents', {
-    url: process.env.MONGODB_URI  || 'mongodb://localhost:27017/'
+    url: process.env.MONGODB_URI  || 'mongodb://localhost:27018/'
 });
 const documentRepository = new DocumentMongoRepository(client as unknown as MongoClient);
 const eventBus = new InMemorySyncEventBus();
