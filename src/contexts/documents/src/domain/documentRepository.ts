@@ -9,7 +9,7 @@ interface DocumentRepository {
     
     find(id: DocumentId): Promise<Nullable<Document>>;
 
-    search(params: SearchDocumentsQueryParams): Promise<Documents>;
+    search(params: SearchDocumentsQueryParams): Promise<[Documents, number]>;
 
     update(document: Document): Promise<void>;
 

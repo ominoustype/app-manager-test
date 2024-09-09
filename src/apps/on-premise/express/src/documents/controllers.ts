@@ -15,15 +15,19 @@ export async function searchDocuments(req: Request, res: Response) {
 
     const result = await handler.handle(
         new SearchDocumentsQuery({
-            ...req.query
+            ...req.query,
+            page_size: req.query.page_size ? parseInt(req.query.page_size as string) : undefined,
+            page: req.query.page ? parseInt(req.query.page as string) : undefined
         })
     );
-    
+
     res.header("content-type", 'application/json')
     res.status(200).send({
-        body: JSON.stringify({ result: result.documents }),
+        body: JSON.stringify({ 
+            result: result.documents,
+            count: result.documentsCounter
+        }),
     })
-    
 }
 
 export async function findDocument(req: Request, res: Response) {

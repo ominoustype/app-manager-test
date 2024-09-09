@@ -10,7 +10,7 @@ import { SearchDocumentsQueryParams } from '@src/application/search/searchDocume
 import Document from '@src/domain/document';
 import DocumentId from '@src/domain/documentId';
 import DocumentRepository from '@src/domain/documentRepository';
-import Documents from '@src/domain/documents';
+import Documents, { DocumentsPrimitives } from '@src/domain/documents';
 
 const TO_SEARCH_PARAMS_DICT = Object.freeze({
     search: ['name'],
@@ -19,6 +19,19 @@ const TO_SEARCH_PARAMS_DICT = Object.freeze({
 });
 
 const DEFAULT_PAGE_SIZE = 50;
+
+const PROJECTION = {
+    id: "$_id",
+    _id: 0,
+    createdAt: 1,
+    name: 1,
+    type: 1,
+    version: 1,
+    properties: 1,
+    customer: 1,
+    environment: 1,
+    updatedBy: 1
+};
 
 export default class DocumentMongoRepository extends MongoRepository<Document> implements DocumentRepository {
     protected moduleName(): string {
@@ -48,16 +61,19 @@ export default class DocumentMongoRepository extends MongoRepository<Document> i
         return this.byId(id.value, Document.fromPrimitives);
     }
 
-    async search(params: SearchDocumentsQueryParams = {}): Promise<Documents> {
+    async search(params: SearchDocumentsQueryParams = {}): Promise<[Documents, count: number]> {
         const copyParams = { ...params };
-        const limit = params.page_size ?? DEFAULT_PAGE_SIZE;
+        const limit: number = params.page_size && !isNaN(params.page_size) ? params.page_size : DEFAULT_PAGE_SIZE;
         const skip =
-            params.page && limit
+            params.page && !isNaN(params.page) && !isNaN(limit)
                 ? params.page * limit
                 : undefined;
 
+        let documentsCounter = -1;
+
         delete copyParams.page;
         delete copyParams.page_size;
+        delete copyParams.count;
 
         let find = {};
 
@@ -86,11 +102,11 @@ export default class DocumentMongoRepository extends MongoRepository<Document> i
             delete copyParams.search;
         }
 
-        if (copyParams.environment) {
+        if (copyParams.environment && typeof(copyParams.environment) === 'string') {
             find = {
                 ...find,
                 ...{
-                    'environment.id': {
+                    'environment.name': {
                         $in: copyParams.environment.split(';')
                     }
                 }
@@ -99,11 +115,11 @@ export default class DocumentMongoRepository extends MongoRepository<Document> i
             delete copyParams.environment;
         }
 
-        if (copyParams.customer) {
+        if (copyParams.customer && typeof(copyParams.customer) === 'string') {
             find = {
                 ...find,
                 ...{
-                    'customer.id': {
+                    'customer.name': {
                         $in: copyParams.customer.split(';')
                     }
                 }
@@ -112,25 +128,15 @@ export default class DocumentMongoRepository extends MongoRepository<Document> i
             delete copyParams.customer;
         }
 
-        const collection = await this.collection();
+        const collection = (await this.collection());
 
-        const documents = order ? collection.find(find, { limit, skip }).sort('createdAt', order) : collection.find(find, { limit, skip });
-        const items = (await documents.toArray()).map((document) => 
-            this.getParsedDocument(document)
-        );
+        if(copyParams.count){
+            documentsCounter = await collection.countDocuments(find);
+        }
+        
+        const documents = collection.find(find, { limit, skip, projection: PROJECTION }).sort('createdAt', order);
+        const items = (await documents.toArray()) as unknown as DocumentsPrimitives;
 
-        return new Documents(
-            items.length <= 0 ? [] : items.map((i) => i.toPrimitives())
-        );
+        return [new Documents(items), documentsCounter];
     }
-
-    getParsedDocument(document: any): Document {
-        return Document.fromPrimitives({
-            ...document,
-            // eslint-disable-next-line no-underscore-dangle
-            id: document._id
-        });
-    }
-
-    
 }

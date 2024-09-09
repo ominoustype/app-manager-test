@@ -4,7 +4,7 @@ import Documents, { DocumentsPrimitives } from '@src/domain/documents';
 
 export default class SearchDocumentsResponseMother {
     static create(documents: DocumentsPrimitives): SearchDocumentsResponse {
-        return new SearchDocumentsResponse(new Documents(documents));
+        return new SearchDocumentsResponse(new Documents(documents), -1);
     }
 
     static fromDocuments(documents: Documents) {

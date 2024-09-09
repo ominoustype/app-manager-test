@@ -41,7 +41,7 @@ export default class DocumentRepositoryMock implements DocumentRepository {
         this.mockFind.mockReturnValue(Promise.resolve(document));
     }
 
-    async search(params: SearchDocumentsQueryParams): Promise<Documents> {
+    async search(params: SearchDocumentsQueryParams): Promise<[Documents, number]> {
         return this.mockSearch(params);
     }
 
