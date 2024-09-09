@@ -8,7 +8,7 @@ import DeploymentsConfigsMother from '@src/domain/deploymentsConfigs.mother';
 const client = MongoClientFactory.createClient(
     'deploymentConfigs',
     {
-        url: 'mongodb://0.0.0.0:27017/'
+        url: process.env.MONGODB_LOCAL_URI || 'mongodb://localhost:27018/'
     }
 );
 const arranger = new MongoEnvironmentArranger(client);

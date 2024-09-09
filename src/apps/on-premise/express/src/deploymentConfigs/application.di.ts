@@ -22,15 +22,10 @@ import RemoveDeploymentConfigsCommand from '@context/deploymentConfigs/applicati
 export const HANDLERS = "handlers";
 export const REPOSITORIES = "repositories"
 
-const localhost = "mongodb://localhost:27017/"
-const URL = process.env.MONGODB_URI || localhost;
-
 const dependencies = new Map();
 
-//"mongodb+srv://your_user_name:your_password@cluster0.cojoign.mongodb.net/local_library?retryWrites=true&w=majority";
-
 const client = MongoClientFactory.createClient('deploymentConfigs', {
-    url: URL
+    url: process.env.MONGODB_URI  || 'mongodb://localhost:27018/'
 });
 
 const deploymentConfigsRepository = new DeploymentConfigsMongoRepository(client as unknown as MongoClient);
