@@ -7,6 +7,7 @@ export type SearchDocumentsQueryParams = {
     order?: string;
     environment?: string;
     customer?: string;
+    count?: boolean;
 };
 
 export default class SearchDocumentsQuery extends Query {

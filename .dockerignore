@@ -1,7 +1,7 @@
-.data
 .husky
 .vscode
 node_modules
 Dockerfile
 .dockerignore
-docker-compose.yml
+docker-compose-local.yml
+docker-compose-on-premise.yml

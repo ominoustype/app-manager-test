@@ -1,5 +1,4 @@
 import ExpressServer from 'express'
-import BodyParser from 'body-parser'
 
 import loadDocuments from './documents/routes'
 import errorHandler from './errorMiddleware'
@@ -10,8 +9,8 @@ const app = ExpressServer()
 const port = process.env.PORT || 4000
 const deployment = process.env.DEPLOYMENT_MESSAGE || "Local use"
 
-app.use(BodyParser.urlencoded({ extended: false }))
-app.use(BodyParser.json())
+app.use(ExpressServer.json())
+app.use(ExpressServer.urlencoded({ extended: true }))
 
 loadDocuments(app)
 loadDeploymentConfigs(app)
