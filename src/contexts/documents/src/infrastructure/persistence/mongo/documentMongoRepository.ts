@@ -73,7 +73,6 @@ export default class DocumentMongoRepository extends MongoRepository<Document> i
 
         delete copyParams.page;
         delete copyParams.page_size;
-        delete copyParams.count;
 
         let find = {};
 
