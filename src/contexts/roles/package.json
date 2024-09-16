@@ -1,7 +1,7 @@
 {
-    "name": "@context/role",
+    "name": "@context/roles",
     "version": "1.0.1",
-    "description": "Role context for app manager",
+    "description": "Roles context for app manager",
     "keywords": [],
     "author": "Optiva Media an EPAM Company",
     "license": "MIT",

@@ -9,14 +9,6 @@ import Roles, { RolesPrimitives } from '@src/domain/roles';
 
 const DEFAULT_PAGE_SIZE = 50;
 
-const PROJECTION = {
-    id: "$_id",
-    _id: 0,
-    name: 1,
-    customerId: 1,
-    environmentIds: 1
-};
-
 export default class RoleMongoRepository extends MongoRepository<Role> implements RoleRepository {
     protected moduleName(): string {
         return 'role';
@@ -49,14 +41,25 @@ export default class RoleMongoRepository extends MongoRepository<Role> implement
         console.log(params); 
 
         const collection = (await this.collection());
-        
-        const roles = collection.find(find, { limit: DEFAULT_PAGE_SIZE, projection: PROJECTION });
-        const items = (await roles.toArray()) as unknown as RolesPrimitives;
 
-        return new Roles(items);
+        const role = collection.find(find, { limit: DEFAULT_PAGE_SIZE });
+        const items = (await role.toArray()).map((role) => 
+            this.getParsed(role)
+        );
+       
+        return new Roles(
+            items.length <= 0 ? [] : items.map((i) => i.toPrimitives())
+        );
     }
 
     async dropCollection() {
         (await this.collection()).drop();
+    }
+
+    getParsed(role: any): Role{
+        return role.fromPrimitives({
+            ...role,
+            id: role._id
+        });
     }
 }

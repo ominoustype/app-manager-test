@@ -22,7 +22,7 @@ import FindRoleQuery from "@context/role/application/find/findRoleQuery";
 const HANDLERS = "handlers";
 export const REPOSITORIES = "repositories"
 
-const client = MongoClientFactory.createClient('role', { 
+const client = MongoClientFactory.createClient('roles', { 
     url: process.env.MONGODB_URI || 'mongodb://localhost:27018/' 
 });    
 

@@ -1,3 +1,4 @@
+import { DocumentsPrimitives } from './../../../../dist/domain/documents.d';
 import Criteria from '@context/shared/domain/criteria/criteria';
 import Cursor from '@context/shared/domain/criteria/cursor';
 import Filter from '@context/shared/domain/criteria/filter';
@@ -19,19 +20,6 @@ const TO_SEARCH_PARAMS_DICT = Object.freeze({
 });
 
 const DEFAULT_PAGE_SIZE = 50;
-
-const PROJECTION = {
-    id: "$_id",
-    _id: 0,
-    createdAt: 1,
-    name: 1,
-    type: 1,
-    version: 1,
-    properties: 1,
-    customer: 1,
-    environment: 1,
-    updatedBy: 1
-};
 
 export default class DocumentMongoRepository extends MongoRepository<Document> implements DocumentRepository {
     protected moduleName(): string {
@@ -133,9 +121,19 @@ export default class DocumentMongoRepository extends MongoRepository<Document> i
             documentsCounter = await collection.countDocuments(find);
         }
         
-        const documents = collection.find(find, { limit, skip, projection: PROJECTION }).sort('createdAt', order);
-        const items = (await documents.toArray()) as unknown as DocumentsPrimitives;
+        const documents = collection.find(find, { limit, skip }).sort('createdAt', order);
+        const items = (await documents.toArray()).map((document) => 
+            this.getParsed(document)
+        );
 
-        return [new Documents(items), documentsCounter];
+        return [new Documents(
+                items.length <= 0 ? [] : items.map((i) => i.toPrimitives())), documentsCounter];
+    }
+
+    getParsed(document: any): Document{
+        return document.fromPrimitives({
+            ...document,
+            id: document._id
+        });
     }
 }

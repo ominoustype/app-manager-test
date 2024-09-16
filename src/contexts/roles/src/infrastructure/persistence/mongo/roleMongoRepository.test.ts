@@ -6,7 +6,7 @@ import UuidMother from "@context/shared/domain/uuid.mother";
 import RolesMother from "@src/domain/roles.mother";
 
 const client = MongoClientFactory.createClient(
-    'role',
+    'roles',
     {
         url: 'mongodb://localhost:27018/'
     }
