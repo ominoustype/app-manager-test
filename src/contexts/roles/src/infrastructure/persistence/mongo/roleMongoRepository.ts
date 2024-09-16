@@ -5,7 +5,7 @@ import { SearchRolesQueryParams } from '@src/application/search/searchRolesQuery
 import Role from '@src/domain/role';
 import RoleId from '@src/domain/roleId';
 import RoleRepository from '@src/domain/roleRepository';
-import Roles, { RolesPrimitives } from '@src/domain/roles';
+import Roles from '@src/domain/roles';
 
 const DEFAULT_PAGE_SIZE = 50;
 

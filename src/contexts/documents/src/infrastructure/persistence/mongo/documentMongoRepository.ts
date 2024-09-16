@@ -1,4 +1,3 @@
-import { DocumentsPrimitives } from './../../../../dist/domain/documents.d';
 import Criteria from '@context/shared/domain/criteria/criteria';
 import Cursor from '@context/shared/domain/criteria/cursor';
 import Filter from '@context/shared/domain/criteria/filter';
@@ -11,7 +10,7 @@ import { SearchDocumentsQueryParams } from '@src/application/search/searchDocume
 import Document from '@src/domain/document';
 import DocumentId from '@src/domain/documentId';
 import DocumentRepository from '@src/domain/documentRepository';
-import Documents, { DocumentsPrimitives } from '@src/domain/documents';
+import Documents from '@src/domain/documents'
 
 const TO_SEARCH_PARAMS_DICT = Object.freeze({
     search: ['name'],
