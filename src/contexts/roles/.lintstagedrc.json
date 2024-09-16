@@ -1,0 +1,4 @@
+{
+    "*": ["cspell **/*.ts --no-summary --no-progress --no-must-find-files"],
+    "src/**/*.{js,ts}": ["npx eslint --fix"]
+}

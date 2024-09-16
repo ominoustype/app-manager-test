@@ -4,6 +4,7 @@ import loadDocuments from './documents/routes'
 import errorHandler from './errorMiddleware'
 import loadDeploymentConfigs from './deploymentConfigs/routes'
 import loadEnvironments from './environments/routes'
+import loadRoles from './roles/routes'
 
 const app = ExpressServer()
 const port = process.env.PORT || 4000
@@ -15,6 +16,7 @@ app.use(ExpressServer.urlencoded({ extended: true }))
 loadDocuments(app)
 loadDeploymentConfigs(app)
 loadEnvironments(app)
+loadRoles(app)
 
 app.use(errorHandler)
 

@@ -99,4 +99,8 @@ implements EnvironmentRepository{
             id: environment._id
         });
     }
+
+    async dropCollection() {
+        (await this.collection()).drop();
+    }
 }

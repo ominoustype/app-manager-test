@@ -10,7 +10,7 @@ import { SearchDocumentsQueryParams } from '@src/application/search/searchDocume
 import Document from '@src/domain/document';
 import DocumentId from '@src/domain/documentId';
 import DocumentRepository from '@src/domain/documentRepository';
-import Documents, { DocumentsPrimitives } from '@src/domain/documents';
+import Documents from '@src/domain/documents'
 
 const TO_SEARCH_PARAMS_DICT = Object.freeze({
     search: ['name'],
@@ -19,19 +19,6 @@ const TO_SEARCH_PARAMS_DICT = Object.freeze({
 });
 
 const DEFAULT_PAGE_SIZE = 50;
-
-const PROJECTION = {
-    id: "$_id",
-    _id: 0,
-    createdAt: 1,
-    name: 1,
-    type: 1,
-    version: 1,
-    properties: 1,
-    customer: 1,
-    environment: 1,
-    updatedBy: 1
-};
 
 export default class DocumentMongoRepository extends MongoRepository<Document> implements DocumentRepository {
     protected moduleName(): string {
@@ -73,7 +60,6 @@ export default class DocumentMongoRepository extends MongoRepository<Document> i
 
         delete copyParams.page;
         delete copyParams.page_size;
-        delete copyParams.count;
 
         let find = {};
 
@@ -134,9 +120,19 @@ export default class DocumentMongoRepository extends MongoRepository<Document> i
             documentsCounter = await collection.countDocuments(find);
         }
         
-        const documents = collection.find(find, { limit, skip, projection: PROJECTION }).sort('createdAt', order);
-        const items = (await documents.toArray()) as unknown as DocumentsPrimitives;
+        const documents = collection.find(find, { limit, skip }).sort('createdAt', order);
+        const items = (await documents.toArray()).map((document) => 
+            this.getParsed(document)
+        );
 
-        return [new Documents(items), documentsCounter];
+        return [new Documents(
+                items.length <= 0 ? [] : items.map((i) => i.toPrimitives())), documentsCounter];
+    }
+
+    getParsed(document: any): Document{
+        return document.fromPrimitives({
+            ...document,
+            id: document._id
+        });
     }
 }
