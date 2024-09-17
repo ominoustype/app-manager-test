@@ -130,7 +130,7 @@ export default class DocumentMongoRepository extends MongoRepository<Document> i
     }
 
     getParsed(document: any): Document{
-        return document.fromPrimitives({
+        return Document.fromPrimitives({
             ...document,
             id: document._id
         });

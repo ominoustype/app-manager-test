@@ -57,7 +57,7 @@ export default class RoleMongoRepository extends MongoRepository<Role> implement
     }
 
     getParsed(role: any): Role{
-        return role.fromPrimitives({
+        return Role.fromPrimitives({
             ...role,
             id: role._id
         });
