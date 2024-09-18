@@ -1,10 +1,10 @@
 import UpdateBy, { UpdateByPrimitives } from "./updateBy";
-import UuidMother from '@context/shared/domain/uuid.mother';
 import DatetimeMother from "@context/shared/domain/datetime.mother";
 import MotherCreator from "@context/shared/domain/motherCreator.mother";
 import Repeater from "@context/shared/domain/repeater.mother";
 import UsernameMother from "../users/username.mother";
 import ChangesMother from "./changes.mother";
+import DocumentVersionMother from "../documentVersion.mother";
 
 export default class UpdateByMother {
     static create(primitives: UpdateByPrimitives): UpdateBy {
@@ -15,7 +15,7 @@ export default class UpdateByMother {
         return UpdateByMother.create({
             updatedAt: DatetimeMother.random().toString(),
             username: UsernameMother.random().toString(),
-            userId: UuidMother.random().toString(),
+            version: DocumentVersionMother.random().toString(),
             changes: ChangesMother.random().toPrimitives(),
             ...primitives
         })
