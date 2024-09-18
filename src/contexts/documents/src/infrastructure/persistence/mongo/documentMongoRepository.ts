@@ -14,7 +14,7 @@ import Documents from '@src/domain/documents'
 import DocumentStatus from '@src/domain/documentStatus';
 
 const TO_SEARCH_PARAMS_DICT = Object.freeze({
-    search: ['name'],
+    search: ['_id','name'],
     environment: 'environment',
     customer: 'customer'
 });
