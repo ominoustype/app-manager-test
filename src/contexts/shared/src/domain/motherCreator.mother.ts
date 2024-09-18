@@ -70,4 +70,16 @@ export default class MotherCreator {
     static country(): string {
         return faker.address.country();
     }
+
+    static password(): string {
+        return faker.internet.password();
+    }
+
+    static username(): string {
+        return faker.internet.userName();
+    }
+
+    static future(generatorConfiguration = {}) {
+        return faker.date.future(generatorConfiguration as number);
+    }
 }
