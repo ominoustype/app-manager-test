@@ -39,6 +39,7 @@
         "@context/deploymentConfigs": "^1.0.1",
         "@context/documents": "^1.0.1",
         "@context/environments": "^1.0.1",
+        "@context/users": "^1.0.1",
         "@context/roles": "^1.0.1",
         "@context/customers": "^1.0.1",
         "@context/shared": "^1.0.1",
