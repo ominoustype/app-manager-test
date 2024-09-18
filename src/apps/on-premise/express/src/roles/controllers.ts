@@ -1,15 +1,15 @@
 import { Request, Response } from "express";
 import { dependencies, HANDLERS } from './application.di'
-import FindRoleQuery from "@context/role/application/find/findRoleQuery";
-import FindRoleQueryHandler from "@context/role/application/find/findRoleQueryHandler";
-import CreateRoleCommand from "@context/role/application/create/createRoleCommand";
-import CreateRoleCommandHandler from "@context/role/application/create/createRoleCommandHandler";
-import UpdateRoleCommand from "@context/role/application/update/updateRoleCommand";
-import UpdateRoleCommandHandler from "@context/role/application/update/updateRoleCommandHandler";
-import RemoveRoleCommand from "@context/role/application/delete/removeRoleCommand";
-import RemoveRoleCommandHandler from "@context/role/application/delete/removeRoleCommandHandler";
-import SearchRolesQueryHandler from "@context/role/application/search/searchRolesQueryHandler";
-import SearchRolesQuery from "@context/role/application/search/searchRolesQuery";
+import FindRoleQuery from "@context/roles/application/find/findRoleQuery";
+import FindRoleQueryHandler from "@context/roles/application/find/findRoleQueryHandler";
+import CreateRoleCommand from "@context/roles/application/create/createRoleCommand";
+import CreateRoleCommandHandler from "@context/roles/application/create/createRoleCommandHandler";
+import UpdateRoleCommand from "@context/roles/application/update/updateRoleCommand";
+import UpdateRoleCommandHandler from "@context/roles/application/update/updateRoleCommandHandler";
+import RemoveRoleCommand from "@context/roles/application/delete/removeRoleCommand";
+import RemoveRoleCommandHandler from "@context/roles/application/delete/removeRoleCommandHandler";
+import SearchRolesQueryHandler from "@context/roles/application/search/searchRolesQueryHandler";
+import SearchRolesQuery from "@context/roles/application/search/searchRolesQuery";
 
 const CONTENT_TYPE = 'content-type';
 const APPLICATION_JSON = 'application/json';
