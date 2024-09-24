@@ -1,28 +1,28 @@
 import AggregateRoot from "@context/shared/domain/aggregateRoot";
 import Datetime from "@context/shared/domain/datetime";
 import Username from "../users/username";
-import Uuid from "@context/shared/domain/uuid";
 import { ChangePrimitives } from "./change";
 import Changes from "./changes";
+import DocumentVersion from "../documentVersion";
 
 export type UpdateByPrimitives = {
     updatedAt: string,
     username: string,
-    userId: string,
+    version: string,
     changes: Array<ChangePrimitives>
 };
 
 export default class UpdateBy extends AggregateRoot {
     readonly updatedAt: Datetime;
     readonly username: Username;
-    readonly userId: Uuid;
+    readonly version: DocumentVersion;
     readonly changes: Changes;
 
     constructor(primitives: UpdateByPrimitives) {
         super();
         this.updatedAt = new Datetime(primitives.updatedAt) 
         this.username = new Username(primitives.username) 
-        this.userId = new Uuid(primitives.userId) 
+        this.version = new DocumentVersion(primitives.version) 
         this.changes = new Changes(primitives.changes)
     }
 
@@ -30,7 +30,7 @@ export default class UpdateBy extends AggregateRoot {
         return {
             updatedAt: this.updatedAt.toString(),
             username: this.username.toString(),
-            userId: this.userId.toString(),
+            version: this.version.toString(),
             changes: this.changes.toPrimitives()
         };
     }
@@ -42,7 +42,7 @@ export default class UpdateBy extends AggregateRoot {
     equalsTo(other: UpdateBy): boolean {
         return ((!this.updatedAt) || (!other.updatedAt) || (this.updatedAt && other.updatedAt && this.updatedAt.equalsTo(other.updatedAt))) &&
         ((!this.username) || (!other.username) || (this.username && other.username && this.username.equalsTo(other.username))) &&
-        ((!this.userId) || (!other.userId) || (this.userId && other.userId && this.userId.equalsTo(other.userId))) &&
+        ((!this.version) || (!other.version) || (this.version && other.version && this.version.equalsTo(other.version))) &&
         ((!this.changes) || (!other.changes) || (this.changes && other.changes && this.changes.equalsTo(other.changes)))
     }
 }
