@@ -11,7 +11,8 @@
         "src/apps/*/*"
     ],
     "scripts": {
-        "serve:on-premise": "nodemon src/apps/on-premise/express/src/index.ts",
+        "serve:dev": "nodemon src/apps/on-premise/express/src/index.ts",
+        "serve:production": "node src/apps/on-premise/express/dist/index.js",
         "docs:bundle": "npx swagger-cli bundle docs/openapi.yml -r --outfile dist/docs/api/openapi.yml --type yaml",
         "docs:validate": "npx swagger-cli validate dist/docs/api/openapi.yml",
         "postinstall": "npx husky install",
@@ -37,6 +38,7 @@
     "devDependencies": {
         "@commitlint/cli": "^16.2.3",
         "@commitlint/config-conventional": "^16.2.1",
+        "@types/cors": "^2.8.17",
         "@types/express": "^4.17.21",
         "@types/node": "^20.16.1",
         "husky": "^7.0.4",

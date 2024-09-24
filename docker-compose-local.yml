@@ -2,6 +2,7 @@ services:
     #MongoDB Services
     mongo_local_db:
         image: mongo:latest
+        container_name: mongo_local_db
         restart: always
         volumes:
             - mongo_local_db:/data/db

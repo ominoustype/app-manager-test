@@ -1,0 +1,37 @@
+services:
+    #MongoDB Services
+    mongo_db:
+        image: mongo:latest
+        container_name: mongo_db
+        restart: always
+        volumes:
+            - mongo_db:/data/db
+        ports:
+            - 27017:27017
+
+    #Node Services
+    backend:
+        build: .
+        container_name: backend
+        ports:
+            - 5000:3000
+        environment:
+            - PORT=3000
+            - MONGODB_URI=mongodb://mongo_db:27017/
+            - DEPLOYMENT_MESSAGE=Dockerized for on-premise (backend & frontend)
+        depends_on: 
+            - mongo_db
+
+    #Frontend
+    frontend:
+        container_name: frontend
+        build: 
+            context: ../app-manager-frontend
+            dockerfile: ./Dockerfile
+        ports:
+            - 3000:4200
+        depends_on: 
+            - backend
+
+volumes:
+    mongo_db: {}
