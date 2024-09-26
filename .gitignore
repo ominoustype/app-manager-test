@@ -2,6 +2,10 @@
 package-lock.json
 yarn.lock
 
+####
+data_docs/*
+####
+
 # Logs
 logs
 *.log

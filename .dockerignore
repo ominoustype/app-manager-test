@@ -5,3 +5,12 @@ Dockerfile
 .dockerignore
 docker-compose-local.yml
 docker-compose-on-premise.yml
+.git
+.gitignore
+.prettierrc.json
+commitlint.config.json
+README.md
+LICENSE
+# # # # # 
+data_docs
+.data

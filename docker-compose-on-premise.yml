@@ -2,17 +2,19 @@ services:
     #MongoDB Services
     mongo_db:
         image: mongo:latest
+        container_name: mongo_db
         restart: always
         volumes:
             - mongo_db:/data/db
         ports:
             - 27017:27017
 
-    #Node Services
-    app:
+    #Node Express Services
+    express:
         build: .
+        container_name: express
         ports:
-            - 3000:3000
+            - 5000:3000
         environment:
             - PORT=3000
             - MONGODB_URI=mongodb://mongo_db:27017/
@@ -22,3 +24,8 @@ services:
 
 volumes: 
     mongo_db: {}
+
+networks:
+    default:
+        name: app-manager-network 
+        external: false 
