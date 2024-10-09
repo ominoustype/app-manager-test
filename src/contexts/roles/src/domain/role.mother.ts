@@ -15,7 +15,7 @@ export default class RoleMother {
             id: RoleIdMother.random().value,
             name: RoleNameMother.random().toString(),
             customerId: UuidMother.random().value,
-            environmentIds: MotherCreator.words(),
+            environmentIds: new Array(UuidMother.random().value,UuidMother.random().value,UuidMother.random().value),
             ...primitives
         });
     }

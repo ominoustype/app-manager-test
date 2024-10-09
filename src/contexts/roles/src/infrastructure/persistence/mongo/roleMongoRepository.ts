@@ -38,7 +38,7 @@ export default class RoleMongoRepository extends MongoRepository<Role> implement
 
     async search(params: SearchRolesQueryParams): Promise<Roles> {
         let find = {};
-        console.log(params); 
+        if(params) console.log("params"); 
 
         const collection = (await this.collection());
 

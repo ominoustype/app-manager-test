@@ -7,26 +7,27 @@ import RoleUpdatedDomainEvent from "./events/roleUpdatedDomainEvent";
 import { merge } from 'lodash';
 import RoleName from "./roleName";
 import CustomerId from "./customerId";
+import EnvironmentId from "./environmentId";
 
 export type RolePrimitives = {
     id: string,
     name: string,
     customerId: string,
-    environmentIds: string
+    environmentIds: Array<string>
 };
 
 export default class Role extends AggregateRoot {
     readonly id: RoleId;
     readonly name: RoleName;
     readonly customerId: CustomerId;
-    readonly environmentIds: string; //TODO
+    readonly environmentIds: Array<EnvironmentId>; //TODO
 
     constructor(primitives: RolePrimitives) {
         super();
         this.id = new RoleId(primitives.id);
         this.name = new RoleName(primitives.name);
         this.customerId = new CustomerId(primitives.customerId);
-        this.environmentIds = primitives.environmentIds;
+        this.environmentIds = (primitives.environmentIds.map((environmentId) => new EnvironmentId(environmentId)));
     }
 
     toPrimitives(): RolePrimitives {
@@ -34,7 +35,7 @@ export default class Role extends AggregateRoot {
             id: this.id.toString(),
             name: this.name.toString(),
             customerId: this.customerId.toString(),
-            environmentIds: this.environmentIds.toString()
+            environmentIds: (this.environmentIds.map((environmentId) => environmentId.toString()))
         }
     }
 
@@ -47,7 +48,8 @@ export default class Role extends AggregateRoot {
             (!this.id || !other.id || (this.id && other.id && this.id.equalsTo(other.id))) &&
             (!this.name || !other.name || (this.name && other.name && this.id.equalsTo(other.name))) &&
             (this.customerId || !other.customerId || (this.customerId && other.customerId && this.id.equalsTo(other.customerId))) &&
-            (this.environmentIds === (other.environmentIds))
+            (!this.environmentIds || !other.environmentIds || (this.environmentIds && other.environmentIds && 
+                JSON.stringify(this.environmentIds) === JSON.stringify(other.environmentIds))) //TODO better way?
         ) as boolean;
     }
 

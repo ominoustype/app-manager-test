@@ -8,7 +8,7 @@ import RolesMother from "@src/domain/roles.mother";
 const client = MongoClientFactory.createClient(
     'roles',
     {
-        url: 'mongodb://localhost:27018/'
+        url: process.env.MONGODB_URI || 'mongodb://localhost:27018/'
     }
 );
 const arranger = new MongoEnvironmentArranger(client);
