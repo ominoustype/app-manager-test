@@ -8,7 +8,7 @@ import DeploymentsConfigsMother from '@src/domain/deploymentsConfigs.mother';
 const client = MongoClientFactory.createClient(
     'deploymentConfigs',
     {
-        url: process.env.MONGODB_LOCAL_URI || 'mongodb://localhost:27018/'
+        url: process.env.MONGODB_URI || 'mongodb://localhost:27018/'
     }
 );
 const arranger = new MongoEnvironmentArranger(client);
@@ -83,16 +83,20 @@ describe('deploymentConfigsMongoRepository', () => {
     });
 
     describe('search', () => {
-        it.skip("should return an empty array if there are no deploymentConfigs", async () => {
+        it("should return an empty array if there are no deploymentConfigs", async () => {
             expect.hasAssertions();
+
+            await repository.dropCollection();
 
             const result = await repository.search({});
 
             expect(result).toStrictEqual(DeploymentsConfigsMother.empty());
         });
 
-        it.skip("should list all the deploymentConfigs stored", async() => {
+        it("should list all the deploymentConfigs stored", async() => {
             expect.hasAssertions();
+
+            await repository.dropCollection();
 
             const deploymentsConfigs = DeploymentsConfigsMother.random();
 
@@ -104,10 +108,14 @@ describe('deploymentConfigsMongoRepository', () => {
             expect(result).toStrictEqual(deploymentsConfigs);
         });
 
-        it.skip("should not return more than the limit", async() => {
+        it("should not return more than the limit", async() => {
             expect.hasAssertions();
 
+            await repository.dropCollection();
+
             const deploymentsConfigs = DeploymentsConfigsMother.randomWithSize(11);
+
+            await new Promise(resolve => setTimeout(resolve, 2000)); //TODO find a better solution. @Documents for more information
 
             await Promise.all(
                 deploymentsConfigs.map((deploymentConfigs) => repository.create(deploymentConfigs))
