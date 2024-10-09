@@ -1,6 +1,6 @@
-import Document from './document'
 import DocumentMother from "./document.mother";
 import Documents, { DocumentsPrimitives } from "./documents";
+import Document from "./document";
 
 export default class DocumentsMother {
     static create(documents: DocumentsPrimitives): Documents {
