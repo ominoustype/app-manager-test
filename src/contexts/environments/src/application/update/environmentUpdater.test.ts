@@ -4,7 +4,7 @@ import UpdateEnvironmentCommandHandler from "./updateEnvironmentCommandHandler";
 import EnvironmentUpdater from "./environmentUpdater";
 import UpdateEnvironmentCommandMother from "./updateEnvironmentCommand.mother";
 import EnvironmentMother from "@src/domain/environment.mother";
-import EnvironmentUpdatedDomainEventMother from "@src/domain/environmentUpdatedDomainEvent.mother";
+import EnvironmentUpdatedDomainEventMother from "@src/domain/events/environmentUpdatedDomainEvent.mother";
 
 describe('environmentUpdater', () => {
     

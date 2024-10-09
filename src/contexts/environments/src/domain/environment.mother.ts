@@ -1,24 +1,29 @@
-import UuidMother from "@context/shared/domain/uuid.mother";
+import DatetimeMother from '@context/shared/domain/datetime.mother';
 import Environment, { EnvironmentPrimitives } from "./environment";
 import MotherCreator from "@context/shared/domain/motherCreator.mother";
 import Repeater from "@context/shared/domain/repeater.mother";
 import EnvironmentNameMother from "./environmentName.mother";
 import EnvironmentPathMother from "./environmentPath.mother";
 import EnvironmentIdMother from "./environmentId.mother";
+import CustomerMother from "./customer/customer.mother";
+import CredentialsMother from "./credentials/credentials.mother";
+import PrevDeploysMother from './prevDeploys/prevDeploys.mother';
 
 export default class EnvironmentMother{
     static create(primitives: EnvironmentPrimitives): Environment {
-        const aux = new Environment(primitives);
-        return aux;
+        return new Environment(primitives);
     }
 
     static random(primitives?: Partial<EnvironmentPrimitives>): Environment {
         return EnvironmentMother.create({
             id: EnvironmentIdMother.random().value,
             name: EnvironmentNameMother.random().toString(),
+            createdAt: DatetimeMother.random().toString(),
             rules: MotherCreator.words().split(' '),
-            customerId: UuidMother.random().value,
+            customer: CustomerMother.random().toPrimitives(),
             path: EnvironmentPathMother.random().toString(),
+            credentials: CredentialsMother.random().toPrimitives(),
+            prevDeploys: PrevDeploysMother.random().toPrimitives(),
             ...primitives
         })
     }
@@ -29,17 +34,17 @@ export default class EnvironmentMother{
         });
     }
 
-    static randomList() {
+    static randomList(): Environment[] {
         return Repeater.randomWithoutRepetitions(
             EnvironmentMother.random,
             MotherCreator.positiveNumber(10)
         );
     }
 
-    static randomListWithSize(size: number) {
+    static randomListWithSize(size: number): Environment[] {
         return Repeater.randomWithoutRepetitions(
             EnvironmentMother.random,
-            size
+            size as number
         );
     }
 }

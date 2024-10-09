@@ -1,5 +1,5 @@
-import EnvironmentMother from "./environment.mother";
-import Environment, { EnvironmentPrimitives } from "./environment";
+import EnvironmentMother from "../environment.mother";
+import Environment, { EnvironmentPrimitives } from "../environment";
 import NewEnvironmentCreatedDomainEvent from "./newEnvironmentCreatedDomainEvent";
 
 export default class NewEnvironmentCreatedDomainEventMother {
