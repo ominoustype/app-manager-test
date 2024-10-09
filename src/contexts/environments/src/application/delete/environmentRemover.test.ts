@@ -3,7 +3,7 @@ import EnvironmentRepositoryMock from "@src/__mock__/environmentRepositoryMock";
 import RemoveEnvironmentCommandHandler from "./removeEnvironmentCommandHandler";
 import RemoveEnvironmentCommandMother from "./removeEnvironmentCommand.mother";
 import EnvironmentRemover from "./environmentRemover";
-import EnvironmentRemovedDomainEventMother from "@src/domain/environmentRemovedDomainEvent.mother";
+import EnvironmentRemovedDomainEventMother from "@src/domain/events/environmentRemovedDomainEvent.mother";
 
 describe('environmentRemover', () => {
 

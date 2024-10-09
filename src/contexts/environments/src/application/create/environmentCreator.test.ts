@@ -4,7 +4,7 @@ import CreateEnvironmentCommandHandler from "./createEnvironmentCommandHandler";
 import EnvironmentCreator from "./environmentCreator";
 import CreateEnvironmentCommandMother from "./createEnvironmentCommand.mother";
 import EnvironmentAlreadyExistsError from "@src/domain/errors/environmentAlreadyExistsError";
-import NewEnvironmentCreatedDomainEventMother from "@src/domain/newEnvironmentCreatedDomainEvent.mother";
+import NewEnvironmentCreatedDomainEventMother from "@src/domain/events/newEnvironmentCreatedDomainEvent.mother";
 
 describe('environmentCreator', () => {
 

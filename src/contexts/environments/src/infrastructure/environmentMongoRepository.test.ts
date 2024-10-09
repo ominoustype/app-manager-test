@@ -8,7 +8,7 @@ import EnvironmentsMother from '@src/domain/environments.mother';
 const client = MongoClientFactory.createClient(
     'environments',
     {
-        url: process.env.MONGODB_LOCAL_URI || 'mongodb://localhost:27018/'
+        url: process.env.MONGODB_URI || 'mongodb://localhost:27018/'
     }
 );
 const arranger = new MongoEnvironmentArranger(client);
@@ -84,8 +84,10 @@ describe('environmentMongoRepository', () => {
     });
 
     describe('search', () => {
-        it.skip("should return an empty array if there are no environments", async ()=> {
+        it("should return an empty array if there are no environments", async ()=> {
             expect.hasAssertions();
+
+            await repository.dropCollection();
 
             const result = await repository.search({});
 
@@ -93,8 +95,10 @@ describe('environmentMongoRepository', () => {
 
         });
 
-        it.skip('should list all the environments stored', async ()=> {
+        it('should list all the environments stored', async ()=> {
             expect.hasAssertions();
+
+            await repository.dropCollection();
 
             const environments = EnvironmentsMother.random();
 
@@ -110,7 +114,10 @@ describe('environmentMongoRepository', () => {
         it("should not return more than the limit", async ()=> {
             expect.hasAssertions();
 
+            await repository.dropCollection();
             const environments = EnvironmentsMother.randomWithSize(11);
+
+            await new Promise(resolve => setTimeout(resolve, 1)); //TODO find a better solution. @Documents for more information
 
             await Promise.all(
                 environments.map((environment) => repository.create(environment))
