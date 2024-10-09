@@ -61,5 +61,11 @@
     },
     "yaml.schemas": {
         "https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json": "file:///home/nonost/app-manager-backend/docker-compose-local.yml"
-    }
+    },
+
+    "material-icon-theme.files.associations": {
+        "jest.config.integration.js": "jest",
+        "tsconfig.dist.json": "tsconfig",
+        ".lintstagedrc.json": "eslint",
+    },
 }

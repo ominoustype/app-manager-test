@@ -11,6 +11,7 @@
         "src/apps/*/*"
     ],
     "scripts": {
+        "serve": "nodemon src/apps/on-premise/express/src/index.ts",
         "serve:dev": "nodemon src/apps/on-premise/express/src/index.ts",
         "serve:production": "node src/apps/on-premise/express/dist/index.js",
         "docs:bundle": "npx swagger-cli bundle docs/openapi.yml -r --outfile dist/docs/api/openapi.yml --type yaml",
@@ -21,7 +22,10 @@
         "lint:contexts": "npx lerna run lint --scope @context/* --since $(git describe --tags --abbrev=0) --stream",
         "lint:apps": "npx lerna run lint --scope @app/* --since $(git describe --tags --abbrev=0) --stream",
         "build": "npx lerna run build --scope @context/* --since $(git describe --tags --abbrev=0)",
-        "build:all": "npx lerna run build --scope @context/*",
+        "build:all": "yarn build:contexts && yarn build:apps",
+        "build:contexts": "npx lerna run build --scope @context/*",
+        "build:apps": "npx lerna run build --scope @app/*",
+        "build:all:prod": "npx lerna run build:prod --scope @context/* --scope @app/*",
         "test": "yarn build && yarn test:unit && yarn test:integration && yarn test:features",
         "test:unit": "npx lerna run test:unit --scope @context/* --since $(git describe --tags --abbrev=0) --stream",
         "test:integration": "npx lerna run test:integration --scope @context/* --since $(git describe --tags --abbrev=0) --stream --concurrency 1",
@@ -38,16 +42,14 @@
     "devDependencies": {
         "@commitlint/cli": "^16.2.3",
         "@commitlint/config-conventional": "^16.2.1",
-        "@types/cors": "^2.8.17",
         "@types/express": "^4.17.21",
         "@types/node": "^20.16.1",
         "husky": "^7.0.4",
         "lerna": "^4.0.0",
         "ts-node-dev": "^2.0.0",
-        "typescript": "^5.5.3"
+        "typescript": "^5.6.2"
     },
     "dependencies": {
-        "dotenv": "^16.4.5",
-        "node-html-parser": "^6.1.13"
+        "lerna": "^4.0.0"
     }
 }
