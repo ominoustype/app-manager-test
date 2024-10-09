@@ -17,7 +17,7 @@ export default class EnvironmentsMother {
         );
     }
 
-    static randomWithSize(size: number): Environments {
+    static randomWithSize(size:number): Environments {
         return EnvironmentsMother.create(
             EnvironmentMother.randomListWithSize(size).map((d: Environment) => d.toPrimitives())
         );

@@ -1,5 +1,5 @@
 import { DomainEvent } from "@context/shared/domain/eventBus/domainEvent";
-import { EnvironmentPrimitives } from "./environment";
+import { EnvironmentPrimitives } from "../environment";
 
 type EnvironmentUpdatedDomainEventArgs = Readonly<EnvironmentPrimitives & { eventId?: string; occurredOn?: Date }>
 
