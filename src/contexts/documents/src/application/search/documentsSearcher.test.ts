@@ -15,7 +15,7 @@ describe('documentsSearcher', () => {
             ),
             query = SearchDocumentsQueryMother.random();
 
-        repository.whenSearchThenReturn(DocumentsMother.empty());
+        repository.whenSearchThenReturn(DocumentsMother.empty(),-1);
 
         await handler.handle(query);
 
@@ -31,7 +31,7 @@ describe('documentsSearcher', () => {
             ),
             query = SearchDocumentsQueryMother.random();
 
-        repository.whenSearchThenReturn(DocumentsMother.empty());
+        repository.whenSearchThenReturn(DocumentsMother.empty(),-1);
 
         const response = await handler.handle(query);
 
@@ -49,7 +49,7 @@ describe('documentsSearcher', () => {
             documents = DocumentsMother.random(),
             expected = SearchDocumentsResponseMother.fromDocuments(documents);
 
-        repository.whenSearchThenReturn(documents);
+        repository.whenSearchThenReturn(documents,documents.length);
 
         const response = await handler.handle(query);
 

@@ -20,10 +20,6 @@ describe('documentMongoRepository', () => {
         repository = new DocumentMongoRepository(cli)
     })
 
-    // beforeEach(async () => {
-    //     await arranger.arrange();
-    // });
-
     afterAll(async () => {
         await arranger.close();
     });
@@ -99,7 +95,7 @@ describe('documentMongoRepository', () => {
         it.skip('should return an empty array if there are no documents', async () => {
             expect.hasAssertions();
 
-            const result = await repository.search({});
+            const [result] = await repository.search({});
 
             expect(result).toStrictEqual(DocumentsMother.empty());
         });
@@ -113,7 +109,7 @@ describe('documentMongoRepository', () => {
                 documents.map((document) => repository.create(document))
             );
 
-            const result = await repository.search({});
+            const [result] = await repository.search({});
 
             expect(result).toStrictEqual(documents);
         });
@@ -127,7 +123,7 @@ describe('documentMongoRepository', () => {
                 documents.map((document) => repository.create(document))
             );
 
-            const result = await repository.search({
+            const [result] = await repository.search({
                 page_size: 10
             });
 

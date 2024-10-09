@@ -7,7 +7,7 @@ export default class SearchDocumentsQueryMother {
 
     static random(): SearchDocumentsQuery {
         return SearchDocumentsQueryMother.create({
-            
+            count: true
         })
     }
 }

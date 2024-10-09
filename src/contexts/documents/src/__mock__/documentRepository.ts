@@ -49,8 +49,8 @@ export default class DocumentRepositoryMock implements DocumentRepository {
         expect(this.mockSearch).toHaveBeenCalledWith(params);
     }
 
-    async whenSearchThenReturn(documents: Documents): Promise<void> {
-        this.mockSearch.mockReturnValue(documents);
+    async whenSearchThenReturn(documents: Documents, count: number): Promise<void> {
+        this.mockSearch.mockReturnValue([documents, count]);
     }
 
     update(document: Document): Promise<void> {
