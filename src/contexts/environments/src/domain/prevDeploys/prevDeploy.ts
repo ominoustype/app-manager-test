@@ -1,7 +1,7 @@
 import AggregateRoot from "@context/shared/domain/aggregateRoot";
 import CustomerId from "./prevDeployId";
 import PrevDeployId from "./prevDeployId";
-import PrevDeployCreatedAt from "./prevDeployCreatedAt";
+import Datetime from "@context/shared/domain/datetime";
 
 export type PrevDeployPrimitives = {
     id: string,
@@ -10,12 +10,12 @@ export type PrevDeployPrimitives = {
 
 export default class PrevDeploy extends AggregateRoot  {
     readonly id: PrevDeployId;
-    readonly createdAt: PrevDeployCreatedAt;
+    readonly createdAt: Datetime;
 
     constructor(primitives: PrevDeployPrimitives) {
         super();
         this.id = new CustomerId(primitives.id);
-        this.createdAt = new PrevDeployCreatedAt(primitives.createdAt);
+        this.createdAt = new Datetime(primitives.createdAt);
     }
 
     toPrimitives(): PrevDeployPrimitives {
