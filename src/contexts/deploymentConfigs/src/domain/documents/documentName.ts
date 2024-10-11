@@ -1,3 +1,3 @@
 import StringValueObject from '@context/shared/domain/stringValueObject';
 
-export default class Version extends StringValueObject {}
+export default class DocumentName extends StringValueObject {}

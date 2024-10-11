@@ -100,4 +100,8 @@ export default class DeploymentConfigsMongoRepository extends
             id: deploymentConfigs._id
         });
     }
+
+    async dropCollection() {
+        (await this.collection()).drop();
+    }
 }
