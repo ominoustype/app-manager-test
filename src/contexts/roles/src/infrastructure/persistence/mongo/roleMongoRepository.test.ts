@@ -96,6 +96,8 @@ describe('roleMongoRepository', () => {
 
             await repository.dropCollection();
 
+            await new Promise(resolve => setTimeout(resolve, 1)); //TODO find a better solution. @Documents for more information
+
             const result = await repository.search({});
 
             expect(result).toStrictEqual(RolesMother.empty());
