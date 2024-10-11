@@ -4,9 +4,7 @@
       "rootDir": "./src/"
     },
     "exclude": [
-      "../../../node_modules",
-      "node_modules",
-      "**/*.test.ts",
-      "tests/**/*.ts"
+      "src/__mock__/*.ts",
+      "src/**/*.test.ts"
     ]
-  }
+}
