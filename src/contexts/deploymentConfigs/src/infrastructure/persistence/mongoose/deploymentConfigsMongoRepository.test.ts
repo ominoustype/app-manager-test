@@ -115,7 +115,7 @@ describe('deploymentConfigsMongoRepository', () => {
 
             const deploymentsConfigs = DeploymentsConfigsMother.randomWithSize(11);
 
-            await new Promise(resolve => setTimeout(resolve, 2000)); //TODO find a better solution. @Documents for more information
+            await new Promise(resolve => setTimeout(resolve, 1)); //TODO find a better solution. @Documents for more information
 
             await Promise.all(
                 deploymentsConfigs.map((deploymentConfigs) => repository.create(deploymentConfigs))

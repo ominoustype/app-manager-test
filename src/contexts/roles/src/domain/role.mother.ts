@@ -4,6 +4,7 @@ import RoleIdMother from "./roleId.mother";
 import Repeater from "@context/shared/domain/repeater.mother";
 import RoleNameMother from "./roleName.mother";
 import UuidMother from "@context/shared/domain/uuid.mother";
+import EnvironmentsMother from "./environments/environments.mother";
 
 export default class RoleMother {
     static create(primitives: RolePrimitives): Role {
@@ -15,7 +16,7 @@ export default class RoleMother {
             id: RoleIdMother.random().value,
             name: RoleNameMother.random().toString(),
             customerId: UuidMother.random().value,
-            environmentIds: new Array(UuidMother.random().value,UuidMother.random().value,UuidMother.random().value),
+            environments: EnvironmentsMother.random().toPrimitives(),
             ...primitives
         });
     }
