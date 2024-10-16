@@ -1,6 +1,11 @@
 import Change, { ChangePrimitives } from "./change";
 import MotherCreator from "@context/shared/domain/motherCreator.mother";
 import Repeater from "@context/shared/domain/repeater.mother";
+import DocumentNameMother from "../documentName.mother";
+import DocumentTypeMother from "../documentType.mother";
+import DocumentVersionMother from "../documentVersion.mother";
+import DocumentStatusMother from "../documentStatus.mother";
+import PropertiesMother from "../properties/properties.mother";
 
 export default class ChangeMother {
     static create(primitives: ChangePrimitives): Change {
@@ -9,9 +14,11 @@ export default class ChangeMother {
 
     static random(primitives?: Partial<ChangePrimitives>): Change {
         return ChangeMother.create({
-            field: MotherCreator.word(),
-            oldValue: MotherCreator.word(),
-            newValue: MotherCreator.word(),
+            name: DocumentNameMother.random().toString(),
+            type: DocumentTypeMother.random(),
+            version: DocumentVersionMother.random().toString(),
+            status: DocumentStatusMother.random(),
+            properties: PropertiesMother.random().toPrimitives(),
             ...primitives
         })
     }

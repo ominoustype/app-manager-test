@@ -10,6 +10,7 @@ export default class DocumentRepositoryMock implements DocumentRepository {
     private mockCreate = jest.fn();
     private mockFind = jest.fn();
     private mockSearch = jest.fn();
+    private mockSearchByEnvironment = jest.fn();
     private mockUpdate = jest.fn();
     private mockDelete = jest.fn();
 
@@ -50,7 +51,19 @@ export default class DocumentRepositoryMock implements DocumentRepository {
     }
 
     async whenSearchThenReturn(documents: Documents, count: number): Promise<void> {
-        this.mockSearch.mockReturnValue([documents, count]);
+        this.mockSearch.mockReturnValue([documents,count]);
+    }
+
+    async searchByEnvironment(environment: string): Promise<Documents> {
+        return this.mockSearchByEnvironment(environment);
+    }
+
+    async assertSearchByEnvironmentHasBeenCalledWith(environment: string): Promise<void> {
+        expect(this.mockSearchByEnvironment).toHaveBeenCalledWith(environment);
+    }
+
+    async whenSearchByEnvironmentThenReturn(documents: Documents): Promise<void> {
+        this.mockSearchByEnvironment.mockReturnValue(documents);
     }
 
     update(document: Document): Promise<void> {

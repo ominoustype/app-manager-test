@@ -37,7 +37,20 @@
         "build:tsc:prod": "tsc -p tsconfig.dist.json && tscpaths -p tsconfig.dist.json -s ./src -o ./dist"
     },
     "dependencies": {
-        "@context/shared": "^1.0.1"
+        "@commitlint/cli": "^16.2.3",
+        "@commitlint/config-conventional": "^16.2.1",
+        "@context/shared": "^1.0.1",
+        "@context/environments": "^1.0.1",
+        "aws-sdk": "^2.1082.0",
+        "aws-xray-sdk": "^3.3.4",
+        "dynamodb-onetable": "^2.3.6",
+        "faker": "^5.5.3",
+        "fast-glob": "^3.2.11",
+        "lodash": "^4.17.21",
+        "moment": "^2.29.1",
+        "mongoose": "^8.5.1",
+        "uuid": "^8.3.2",
+        "uuid-validate": "^0.0.3"
     },
     "devDependencies": {
         "@cspell/dict-es-es": "3.0.0",

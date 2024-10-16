@@ -1,30 +1,41 @@
 import AggregateRoot from "@context/shared/domain/aggregateRoot";
-import Field from "./field";
-import Value from "./value";
+import Properties, { PropertiesPrimitives } from "../properties/properties";
+import DocumentStatus from "../documentStatus";
+import DocumentType from "../documentType";
+import DocumentName from "../documentName";
+import DocumentVersion from "../documentVersion";
 
 export type ChangePrimitives = {
-    field: string,
-    oldValue: string,
-    newValue: string,
+    name: string,
+    type: DocumentType,
+    version: string,
+    status: DocumentStatus,
+    properties: PropertiesPrimitives
 };
 
 export default class Change extends AggregateRoot {
-    readonly field: Field;
-    readonly oldValue: Value;
-    readonly newValue: Value;
+    readonly name: DocumentName;
+    readonly type: DocumentType;
+    readonly version: DocumentVersion;
+    readonly status: DocumentStatus;
+    readonly properties: Properties;
 
     constructor(primitives: ChangePrimitives) {
         super();
-        this.field = new Field(primitives.field);
-        this.oldValue = new Value(primitives.oldValue);
-        this.newValue = new Value(primitives.newValue);
+        this.name = new DocumentName(primitives.name);
+        this.type = primitives.type;
+        this.version = new DocumentVersion(primitives.version);
+        this.status = primitives.status;
+        this.properties = new Properties(primitives.properties);
     }
 
     toPrimitives(): ChangePrimitives {
         return {
-            field: this.field.toString(),
-            oldValue: this.oldValue.toString(),
-            newValue: this.newValue.toString()
+            name: this.name.toString(),
+            type: this.type,
+            version: this.version.toString(),
+            status: this.status,
+            properties: this.properties.toPrimitives(),
         };
     }
 
@@ -33,8 +44,12 @@ export default class Change extends AggregateRoot {
     }
 
     equalsTo(other: Change): boolean {
-        return ((!this.field) || (!other.field) || (this.field && other.field && this.field.equalsTo(other.field))) &&
-        ((!this.oldValue) || (!other.oldValue) || (this.oldValue && other.oldValue && this.oldValue.equalsTo(other.oldValue))) &&
-        ((!this.newValue) || (!other.newValue) || (this.newValue && other.newValue && this.newValue.equalsTo(other.newValue)))
+        return (
+            (!this.name || !other.name || (this.name && other.name && this.name.equalsTo(other.name))) &&
+            (this.type === (other.type)) &&
+            (this.status === (other.status)) &&
+            (!this.version || !other.version || (this.version && other.version && this.version.equalsTo(other.version))) &&
+            (!this.properties || !other.properties || (this.properties && other.properties && JSON.stringify(this.properties) === JSON.stringify(other.properties)))
+        )
     }
 }

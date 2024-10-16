@@ -11,6 +11,7 @@ import Document from '@src/domain/document';
 import DocumentId from '@src/domain/documentId';
 import DocumentRepository from '@src/domain/documentRepository';
 import Documents from '@src/domain/documents'
+import DocumentStatus from '@src/domain/documentStatus';
 
 const TO_SEARCH_PARAMS_DICT = Object.freeze({
     search: ['name'],
@@ -43,7 +44,21 @@ export default class DocumentMongoRepository extends MongoRepository<Document> i
     async delete(document: Document): Promise<void> {
         await this.remove(document.id.value);
     }
+    
+    async logicalDelete(document: Document): Promise<void> {
+        const removed = document.toPrimitives();
+        removed.status = DocumentStatus.DELETED;
 
+        await this.persist(document.id.value, new Document(removed))
+    }
+
+    async restore(document: Document): Promise<void> {
+        const restored = document.toPrimitives();
+        restored.status = DocumentStatus.DRAFT;
+
+        await this.persist(document.id.value, new Document(restored))
+    }
+    
     async find(id: DocumentId): Promise<Nullable<Document>> {
         return this.byId(id.value, Document.fromPrimitives);
     }
@@ -127,6 +142,23 @@ export default class DocumentMongoRepository extends MongoRepository<Document> i
 
         return [new Documents(
                 items.length <= 0 ? [] : items.map((i) => i.toPrimitives())), documentsCounter];
+    }
+
+    async searchByEnvironment(environment: string): Promise<Documents> {
+        const find = {
+                    'environment.id': {
+                        $eq: environment
+                    }
+                };
+
+        const collection = (await this.collection());
+        
+        const documents = collection.find(find);
+        const items = (await documents.toArray()).map((document) => 
+            this.getParsed(document)
+        );
+
+        return new Documents(items.length <= 0 ? [] : items.map((i) => i.toPrimitives()));
     }
 
     getParsed(document: any): Document{

@@ -38,6 +38,7 @@
     },
     "dependencies": {
         "@context/shared": "^1.0.1",
+        "@context/documents": "^1.0.1",
         "lodash": "^4.17.21"
     },
     "devDependencies": {
