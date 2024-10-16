@@ -7,7 +7,7 @@ import { CommandBus } from "@context/shared/domain/commandBus/commandBus";
 import UpdateDocumentCommand from "@context/documents/application/update/updateDocumentCommand";
 import SearchByEnvironmentDocumentsResponse from "@context/documents/application/searchByEnvironment/searchByEnvironmentDocumentsResponse";
 import SearchByEnvironmentDocumentsQuery from "@context/documents/application/searchByEnvironment/searchByEnvironmentDocumentsQuery";
-import Document from "@context/documents/domain/document";
+import { DocumentPrimitives } from "@context/documents/domain/document";
 
 export default class EnvironmentUpdater {
     private readonly repository: EnvironmentRepository;
@@ -45,7 +45,7 @@ export default class EnvironmentUpdater {
             })
         ) as unknown as SearchByEnvironmentDocumentsResponse;
 
-        response.documents.map(async (document: Document) => {
+        response.documents.map(async (document: DocumentPrimitives) => {
             await this.commandBus.dispatch(
                 new UpdateDocumentCommand({
                     ...document,
@@ -55,6 +55,7 @@ export default class EnvironmentUpdater {
         })
 
         await this.repository.update(newEnvironment);
+        
         await this.eventBus.publish(newEnvironment.pullDomainEvents());
     }
 }

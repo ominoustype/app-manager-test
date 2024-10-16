@@ -167,4 +167,8 @@ export default class DocumentMongoRepository extends MongoRepository<Document> i
             id: document._id
         });
     }
+
+    async dropCollection() {
+        (await this.collection()).drop();
+    }
 }

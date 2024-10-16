@@ -18,7 +18,7 @@ describe('documentMongoRepository', () => {
     beforeAll(async () => {
         const cli = await client;
         repository = new DocumentMongoRepository(cli)
-    })
+    });
 
     afterAll(async () => {
         await arranger.close();
@@ -92,16 +92,20 @@ describe('documentMongoRepository', () => {
     })
 
     describe('search', () => {
-        it.skip('should return an empty array if there are no documents', async () => {
+        it('should return an empty array if there are no documents', async () => {
             expect.hasAssertions();
+
+            await repository.dropCollection();
 
             const [result] = await repository.search({});
 
             expect(result).toStrictEqual(DocumentsMother.empty());
         });
 
-        it.skip('should list all the documents stored', async () => {
+        it('should list all the documents stored', async () => {
             expect.hasAssertions();
+
+            await repository.dropCollection();
 
             const documents = DocumentsMother.random();
 
@@ -117,7 +121,11 @@ describe('documentMongoRepository', () => {
         it("shouldn't return more than the limit", async () => {
             expect.hasAssertions();
 
+            await repository.dropCollection();
+
             const documents = DocumentsMother.randomWithSize(11);
+
+            await new Promise(resolve => setTimeout(resolve, 1)); //TODO find a better solution. @Documents for more information
 
             await Promise.all(
                 documents.map((document) => repository.create(document))
