@@ -21,6 +21,14 @@ import UpdateDocumentCommand from '@context/documents/application/update/updateD
 import MongoClientFactory from '@context/shared/infrastructure/mongo/mongoClientFactory';
 import Command from '@context/shared/domain/commandBus/command';
 import RemoveDocumentCommand from '@context/documents/application/delete/removeDocumentCommand';
+import DocumentMover from '@context/documents/application/move/documentMover';
+import InMemoryQueryBus from '@context/shared/infrastructure/queryBus/inMemoryQueryBus';
+import QueryHandlersInformation from '@context/shared/infrastructure/queryBus/queryHandlersInformation';
+import MoveDocumentCommandHandler from '@context/documents/application/move/moveDocumentCommandHandler';
+import MoveDocumentCommand from '@context/documents/application/move/moveDocumentCommand';
+import DocumentsByEnvironmentSearcher from '@context/documents/application/searchByEnvironment/documentsByEnvironmentSearcher';
+import SearchByEnvironmentDocumentsQueryHandler from '@context/documents/application/searchByEnvironment/searchByEnvironmentDocumentsQueryHandler';
+import SearchByEnvironmentDocumentsQuery from '@context/documents/application/searchByEnvironment/searchByEnvironmentDocumentsQuery';
 
 const dependencies = new Map();
 
@@ -29,30 +37,37 @@ const client = MongoClientFactory.createClient('documents', {
 });
 const documentRepository = new DocumentMongoRepository(client as unknown as MongoClient);
 const eventBus = new InMemorySyncEventBus();
+const queryBus = new InMemoryQueryBus(new QueryHandlersInformation([]));
 
 const documentCreator = new DocumentCreator(documentRepository, eventBus);
 const documentUpdater = new DocumentUpdater(documentRepository, eventBus);
+const documentMover = new DocumentMover(documentRepository, eventBus, queryBus);
 const documentRemover = new DocumentRemover(documentRepository, eventBus);
 
 const createDocumentCommandHandler = new CreateDocumentCommandHandler(documentCreator);
 const updateDocumentCommandHandler = new UpdateDocumentCommandHandler(documentUpdater);
+const moveDocumentCommandHandler = new MoveDocumentCommandHandler(documentMover);
 const removeDocumentCommandHandler = new RemoveDocumentCommandHandler(documentRemover);
 
 const documentFinder = new DocumentFinder(documentRepository);
 const documentsSearcher = new DocumentsSearcher(documentRepository);
+const documentsSearcherByEnvironment = new DocumentsByEnvironmentSearcher(documentRepository);
 
 const findDocumentQueryHandler = new FindDocumentQueryHandler(documentFinder);
 const searchDocumentsQueryHandler = new SearchDocumentsQueryHandler(documentsSearcher);
+const searchByEnvironmentDocumentsQueryHandler = new SearchByEnvironmentDocumentsQueryHandler(documentsSearcherByEnvironment);
 
 const commandHandlers = new Map<Command, any>();
 const queryHandlers = new Map<any, any>();
 
 commandHandlers.set(CreateDocumentCommand, createDocumentCommandHandler);
 commandHandlers.set(UpdateDocumentCommand, updateDocumentCommandHandler);
+commandHandlers.set(MoveDocumentCommand, moveDocumentCommandHandler);
 commandHandlers.set(RemoveDocumentCommand, removeDocumentCommandHandler);
 
 queryHandlers.set(FindDocumentQuery, findDocumentQueryHandler);
 queryHandlers.set(SearchDocumentsQuery, searchDocumentsQueryHandler);
+queryHandlers.set(SearchByEnvironmentDocumentsQuery, searchByEnvironmentDocumentsQueryHandler);
 
 dependencies.set('handlers', { command: commandHandlers, query: queryHandlers });
 dependencies.set('repositories', { documentRepository });

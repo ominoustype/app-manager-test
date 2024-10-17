@@ -6,6 +6,8 @@ import UpdateDocumentCommand from '@context/documents/application/update/updateD
 import RemoveDocumentCommand from '@context/documents/application/delete/removeDocumentCommand'
 
 import { dependencies } from './application.di'
+import SearchByEnvironmentDocumentsQuery from '@context/documents/application/searchByEnvironment/searchByEnvironmentDocumentsQuery'
+import MoveDocumentCommand from '@context/documents/application/move/moveDocumentCommand'
 
 // You will export functions that will be the controllers for the rest services
 export async function searchDocuments(req: Request, res: Response) {
@@ -26,6 +28,26 @@ export async function searchDocuments(req: Request, res: Response) {
         body: JSON.stringify({ 
             result: result.documents,
             count: result.documentsCounter
+        }),
+    })
+}
+
+export async function searchByEnvironmentDocuments(req: Request, res: Response) {
+    console.log('Request for searchByEnvironmentDocuments Triggered')
+
+    const handler = dependencies.get('handlers').query.get(SearchByEnvironmentDocumentsQuery);
+
+    const result = await handler.handle(
+        new SearchByEnvironmentDocumentsQuery({
+            ...req.query,
+            environment: req.query.environment?.toString() ?? "",
+        })
+    );
+
+    res.header("content-type", 'application/json')
+    res.status(200).send({
+        body: JSON.stringify({ 
+            result: result.documents
         }),
     })
 }
@@ -79,6 +101,30 @@ export async function updateDocument(req: Request, res: Response) {
         await handler.handle(
             new UpdateDocumentCommand({
                 id: id,
+                ...req.body
+            })
+        );
+
+        res.status(204).send()
+    } catch (e) {
+        return e;
+    }
+}
+
+export async function moveDocument(req: Request, res: Response) {
+    console.log('Request for moveDocument Triggered')
+
+    const { documentId, newEnvironmentId } = req.params
+
+    const handler = dependencies.get('handlers').command.get(MoveDocumentCommand);
+
+    console.log('Id to move', documentId)
+
+    try {
+        await handler.handle(
+            new MoveDocumentCommand({
+                documentId,
+                newEnvironmentId,
                 ...req.body
             })
         );
