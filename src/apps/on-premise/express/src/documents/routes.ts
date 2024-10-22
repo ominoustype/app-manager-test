@@ -5,7 +5,7 @@ import { searchDocuments, findDocument, createDocument, updateDocument, deleteDo
 
 export default function loadDocuments(app: Express) {
     app.get('/documents', searchDocuments)
-    app.get('/documents/byevironment', searchByEnvironmentDocuments)
+    app.get('/documents/byEnvironment', searchByEnvironmentDocuments)
     app.get('/documents/:id', findDocument)
     app.post('/documents', createDocument)
     app.put('/documents/:id', updateDocument)

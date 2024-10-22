@@ -5,9 +5,10 @@ import SearchDocumentsQuery from '@context/documents/application/search/searchDo
 import UpdateDocumentCommand from '@context/documents/application/update/updateDocumentCommand'
 import RemoveDocumentCommand from '@context/documents/application/delete/removeDocumentCommand'
 
-import { dependencies } from './application.di'
+import { BUSES, dependencies } from './application.di'
 import SearchByEnvironmentDocumentsQuery from '@context/documents/application/searchByEnvironment/searchByEnvironmentDocumentsQuery'
 import MoveDocumentCommand from '@context/documents/application/move/moveDocumentCommand'
+import FindEnvironmentQuery from '@context/environments/application/find/findEnvironmentQuery'
 
 // You will export functions that will be the controllers for the rest services
 export async function searchDocuments(req: Request, res: Response) {
@@ -115,6 +116,11 @@ export async function moveDocument(req: Request, res: Response) {
     console.log('Request for moveDocument Triggered')
 
     const { documentId, newEnvironmentId } = req.params
+
+    const queryBus = dependencies.get(BUSES).query;
+    
+    const finder = dependencies.get('handlers').query.get(FindEnvironmentQuery);
+    queryBus.addQueryHandlers([finder]);
 
     const handler = dependencies.get('handlers').command.get(MoveDocumentCommand);
 

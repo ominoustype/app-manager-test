@@ -1,15 +1,19 @@
 import { Request, Response } from "express";
-import { dependencies, HANDLERS } from './application.di'
+import { BUSES, dependencies, HANDLERS } from './application.di'
 import CreateEnvironmentCommand from "@context/environments/application/create/createEnvironmentCommand";
 import UpdateEnvironmentCommand from "@context/environments/application/update/updateEnvironmentCommand";
 import RemoveEnvironmentCommand from "@context/environments/application/delete/removeEnvironmentCommand";
 import FindEnvironmentQuery from "@context/environments/application/find/findEnvironmentQuery";
 import SearchEnvironmentsQuery from "@context/environments/application/search/searchEnvironmentsQuery";
 import RemoveDeploymentConfigsCommandHandler from "@context/deploymentConfigs/application/delete/removeDeploymentConfigsCommandHandler";
-import UpdateDocumentCommandHandler from "@context/documents/application/update/updateDocumentCommandHandler";
 import CreateEnvironmentCommandHandler from "@context/environments/application/create/createEnvironmentCommandHandler";
 import FindEnvironmentQueryHandler from "@context/environments/application/find/findEnvironmentQueryHandler";
 import SearchEnvironmentsQueryHandler from "@context/environments/application/search/searchEnvironmentsQueryHandler";
+import UpdateEnvironmentCommandHandler from "@context/environments/application/update/updateEnvironmentCommandHandler";
+import SearchByEnvironmentDocumentsQueryHandler from "@context/documents/application/searchByEnvironment/searchByEnvironmentDocumentsQueryHandler";
+import SearchByEnvironmentDocumentsQuery from "@context/documents/application/searchByEnvironment/searchByEnvironmentDocumentsQuery";
+import UpdateDocumentCommand from "@context/documents/application/update/updateDocumentCommand";
+import UpdateDocumentCommandHandler from "@context/documents/application/update/updateDocumentCommandHandler";
 
 const CONTENT_TYPE = 'content-type';
 const APPLICATION_JSON = 'application/json';
@@ -74,8 +78,19 @@ export async function updateEnvironment(req: Request, res: Response) {
 
     const { id } = req.params;
 
-    const handler = dependencies.get(HANDLERS).command.get(UpdateEnvironmentCommand) as 
+    const queryBus = dependencies.get(BUSES).query;
+    const commandBus = dependencies.get(BUSES).command;
+
+    const finder = dependencies.get(HANDLERS).query.get(SearchByEnvironmentDocumentsQuery) as 
+        SearchByEnvironmentDocumentsQueryHandler;
+    queryBus.addQueryHandlers([finder]);
+
+    const updater = dependencies.get(HANDLERS).command.get(UpdateDocumentCommand) as 
         UpdateDocumentCommandHandler;
+    commandBus.addQueryHandlers([updater]);
+
+    const handler = dependencies.get(HANDLERS).command.get(UpdateEnvironmentCommand) as 
+        UpdateEnvironmentCommandHandler;
 
     console.log("Id to update: "+id);
 

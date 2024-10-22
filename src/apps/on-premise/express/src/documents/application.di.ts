@@ -30,6 +30,8 @@ import DocumentsByEnvironmentSearcher from '@context/documents/application/searc
 import SearchByEnvironmentDocumentsQueryHandler from '@context/documents/application/searchByEnvironment/searchByEnvironmentDocumentsQueryHandler';
 import SearchByEnvironmentDocumentsQuery from '@context/documents/application/searchByEnvironment/searchByEnvironmentDocumentsQuery';
 
+export const BUSES = "buses"
+
 const dependencies = new Map();
 
 const client = MongoClientFactory.createClient('documents', {
@@ -71,5 +73,6 @@ queryHandlers.set(SearchByEnvironmentDocumentsQuery, searchByEnvironmentDocument
 
 dependencies.set('handlers', { command: commandHandlers, query: queryHandlers });
 dependencies.set('repositories', { documentRepository });
+dependencies.set(BUSES, {query: queryBus})
 
 export { dependencies };

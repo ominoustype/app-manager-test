@@ -18,9 +18,14 @@ import UpdateEnvironmentCommand from "@context/environments/application/update/u
 import RemoveEnvironmentCommand from "@context/environments/application/delete/removeEnvironmentCommand";
 import FindEnvironmentQuery from "@context/environments/application/find/findEnvironmentQuery";
 import SearchEnvironmentsQuery from "@context/environments/application/search/searchEnvironmentsQuery";
+import InMemoryQueryBus from "@context/shared/infrastructure/queryBus/inMemoryQueryBus";
+import QueryHandlersInformation from "@context/shared/infrastructure/queryBus/queryHandlersInformation";
+import InMemoryCommandBus from "@context/shared/infrastructure/commandBus/inMemoryCommandBus";
+import CommandHandlersInformation from "@context/shared/infrastructure/commandBus/commandHandlersInformation";
 
 export const HANDLERS = "handlers";
 export const REPOSITORIES = "repositories"
+export const BUSES = "buses"
 
 const dependencies = new Map();
 
@@ -29,10 +34,13 @@ const client = MongoClientFactory.createClient('environments', {
 });
 
 const eventBus = new InMemorySyncEventBus();
+const queryBus = new InMemoryQueryBus(new QueryHandlersInformation([]));
+const commandBus = new InMemoryCommandBus(new CommandHandlersInformation([]));
+
 const environmentRepository = new EnvironmentMongoRepository(client as unknown as MongoClient);
 
 const environmentCreator = new EnvironmentCreator(environmentRepository, eventBus);
-const environmentUpdater = new EnvironmentUpdater(environmentRepository, eventBus);
+const environmentUpdater = new EnvironmentUpdater(environmentRepository, eventBus, queryBus, commandBus);
 const environmentRemover = new EnvironmentRemover(environmentRepository, eventBus);
 
 const environmentFinder = new EnvironmentFinder(environmentRepository);
@@ -57,5 +65,6 @@ queryHandlers.set(SearchEnvironmentsQuery, searchEnvironmentsQueryHandler);
 
 dependencies.set(HANDLERS, {query: queryHandlers, command: commandHandlers});
 dependencies.set(REPOSITORIES, { environmentRepository });
+dependencies.set(BUSES, {query: queryBus, command: commandBus})
 
 export { dependencies };
