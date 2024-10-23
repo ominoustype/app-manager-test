@@ -14,6 +14,7 @@ import UpdatesBy from './updates/updatesBy';
 import Customer, { CustomerPrimitives } from './customer/customer';
 import Environment, { EnvironmentPrimitives } from './environment/environment';
 import Properties, { PropertiesPrimitives } from './properties/properties';
+import DocumentStatus from './documentStatus';
 
 export type DocumentPrimitives = {
     id: string,
@@ -21,6 +22,7 @@ export type DocumentPrimitives = {
     name: string,
     type: DocumentType,
     version: string,
+    status: DocumentStatus,
     properties: PropertiesPrimitives,
     customer: CustomerPrimitives,
     environment: EnvironmentPrimitives,
@@ -33,9 +35,10 @@ export default class Document extends AggregateRoot {
     readonly name: DocumentName;
     readonly type: DocumentType;
     readonly version: DocumentVersion;
+    readonly status: DocumentStatus;
     readonly properties: Properties;
-    readonly customerId: Customer;
-    readonly environmentId: Environment;
+    readonly customer: Customer;
+    readonly environment: Environment;
     readonly updatedBy: UpdatesBy;
 
     constructor(primitives: DocumentPrimitives) {
@@ -45,9 +48,10 @@ export default class Document extends AggregateRoot {
         this.name = new DocumentName(primitives.name);
         this.type = primitives.type;
         this.version = new DocumentVersion(primitives.version);
+        this.status = primitives.status;
         this.properties = new Properties(primitives.properties);
-        this.customerId = new Customer(primitives.customer);
-        this.environmentId = new Environment(primitives.environment);
+        this.customer = new Customer(primitives.customer);
+        this.environment = new Environment(primitives.environment);
         this.updatedBy = new UpdatesBy(primitives.updatedBy)
     }
 
@@ -58,9 +62,10 @@ export default class Document extends AggregateRoot {
             name: this.name.toString(),
             type: this.type,
             version: this.version.toString(),
+            status: this.status,
             properties: this.properties.toPrimitives(),
-            customer: this.customerId.toPrimitives(),
-            environment: this.environmentId.toPrimitives(),
+            customer: this.customer.toPrimitives(),
+            environment: this.environment.toPrimitives(),
             updatedBy: this.updatedBy.toPrimitives()
         };
     }
@@ -69,10 +74,11 @@ export default class Document extends AggregateRoot {
         return new Document(primitives);
     }
 
-    static create(primitives: Omit<DocumentPrimitives, 'createdAt' | 'id'>) {
+    static create(primitives: Omit<DocumentPrimitives, 'createdAt' | 'id' | 'status'>) {
         const newDocument = new Document({
             createdAt: new Datetime().toString(),
             id: Uuid.random().toString(),
+            status: DocumentStatus.DRAFT,
             ...primitives
         });
 
@@ -89,8 +95,8 @@ export default class Document extends AggregateRoot {
             (this.type === (other.type)) &&
             (!this.version || !other.version || (this.version && other.version && this.version.equalsTo(other.version))) &&
             (!this.properties || !other.properties || (this.properties && other.properties && JSON.stringify(this.properties) === JSON.stringify(other.properties))) &&
-            (!this.customerId || !other.customerId || (this.customerId && other.customerId && this.customerId.equalsTo(other.customerId))) &&
-            (!this.environmentId || !other.environmentId || (this.environmentId && other.environmentId && this.environmentId.equalsTo(other.environmentId))) &&
+            (!this.customer || !other.customer || (this.customer && other.customer && this.customer.equalsTo(other.customer))) &&
+            (!this.environment || !other.environment || (this.environment && other.environment && this.environment.equalsTo(other.environment))) &&
             (!this.updatedBy || !other.updatedBy || (this.updatedBy && other.updatedBy && JSON.stringify(this.updatedBy) === JSON.stringify(other.updatedBy)))
         ) as boolean
     }
@@ -100,7 +106,21 @@ export default class Document extends AggregateRoot {
     }
 
     update(primitives: Partial<DocumentPrimitives>): Document {
-        const newDocument = new Document(this.merge(primitives));
+        const newDocument = new Document(this.merge({
+            ...primitives,
+            status: DocumentStatus.DRAFT
+        }));
+
+        newDocument.record(new DocumentUpdatedDomainEvent(newDocument.toPrimitives()));
+
+        return newDocument;
+    }
+
+    move(primitives: EnvironmentPrimitives): Document {
+        const newDocument = new Document({
+            ...this.toPrimitives(),
+            environment: primitives
+        });
 
         newDocument.record(new DocumentUpdatedDomainEvent(newDocument.toPrimitives()));
 

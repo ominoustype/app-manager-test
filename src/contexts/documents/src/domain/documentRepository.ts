@@ -11,6 +11,8 @@ interface DocumentRepository {
 
     search(params: SearchDocumentsQueryParams): Promise<[Documents, number]>;
 
+    searchByEnvironment(environment: string): Promise<Documents>;
+
     update(document: Document): Promise<void>;
 
     delete(document: Document): Promise<void>;

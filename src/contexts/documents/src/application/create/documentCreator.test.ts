@@ -23,7 +23,7 @@ describe('documentCreator', () => {
 
         repository.assertCreateHasBeenCalledWith(
             CreateDocumentCommandMother.applyCommand(command),
-            ['id', 'createdAt']
+            ['id', 'createdAt', 'status']
         )
     });
     

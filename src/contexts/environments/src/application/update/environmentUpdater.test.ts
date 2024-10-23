@@ -5,6 +5,9 @@ import EnvironmentUpdater from "./environmentUpdater";
 import UpdateEnvironmentCommandMother from "./updateEnvironmentCommand.mother";
 import EnvironmentMother from "@src/domain/environment.mother";
 import EnvironmentUpdatedDomainEventMother from "@src/domain/events/environmentUpdatedDomainEvent.mother";
+import QueryBusMock from "@context/shared/__mocks__/queryBus.mock";
+import CommandBusMock from "@context/shared/__mocks__/commandBus.mock";
+import SearchByEnvironmentDocumentsResponseMother from "@context/documents/application/searchByEnvironment/searchByEnvironmentDocumentsResponse.mother";
 
 describe('environmentUpdater', () => {
     
@@ -13,8 +16,10 @@ describe('environmentUpdater', () => {
 
         const repository = new EnvironmentRepositoryMock(),
             eventBus = new EventBusMock(),
+            queryBus = new QueryBusMock(),
+            commandBus = new CommandBusMock(),
             handler = new UpdateEnvironmentCommandHandler(
-                        new EnvironmentUpdater(repository, eventBus)
+                        new EnvironmentUpdater(repository, eventBus, queryBus, commandBus)
             ),
             command = UpdateEnvironmentCommandMother.random(),
             environment = UpdateEnvironmentCommandMother.applyCommand(command),
@@ -22,6 +27,9 @@ describe('environmentUpdater', () => {
             expected = EnvironmentMother.merge(oldEnvironment, environment);
 
         repository.whenFindThenReturn(oldEnvironment);
+        queryBus.whenAskThenReturn(
+            SearchByEnvironmentDocumentsResponseMother.random()
+        );
 
         await handler.handle(command);
 
@@ -33,8 +41,10 @@ describe('environmentUpdater', () => {
 
         const repository = new EnvironmentRepositoryMock(),
             eventBus = new EventBusMock(),
+            queryBus = new QueryBusMock(),
+            commandBus = new CommandBusMock(),
             handler = new UpdateEnvironmentCommandHandler(
-                        new EnvironmentUpdater(repository, eventBus)
+                        new EnvironmentUpdater(repository, eventBus, queryBus, commandBus)
             ),
             command = UpdateEnvironmentCommandMother.random(),
             environment = UpdateEnvironmentCommandMother.applyCommand(command),
@@ -42,6 +52,9 @@ describe('environmentUpdater', () => {
             expected = EnvironmentMother.merge(oldEnvironment, environment);
         
         repository.whenFindThenReturn(oldEnvironment);
+        queryBus.whenAskThenReturn(
+            SearchByEnvironmentDocumentsResponseMother.random()
+        );
 
         await handler.handle(command);
         eventBus.assertLastPublishedEventIs(
