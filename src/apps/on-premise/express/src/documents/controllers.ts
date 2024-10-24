@@ -9,6 +9,7 @@ import { BUSES, dependencies } from './application.di'
 import SearchByEnvironmentDocumentsQuery from '@context/documents/application/searchByEnvironment/searchByEnvironmentDocumentsQuery'
 import MoveDocumentCommand from '@context/documents/application/move/moveDocumentCommand'
 import FindEnvironmentQuery from '@context/environments/application/find/findEnvironmentQuery'
+import InMemoryQueryBus from '@context/shared/infrastructure/queryBus/inMemoryQueryBus'
 
 // You will export functions that will be the controllers for the rest services
 export async function searchDocuments(req: Request, res: Response) {
@@ -26,10 +27,10 @@ export async function searchDocuments(req: Request, res: Response) {
 
     res.header("content-type", 'application/json')
     res.status(200).send({
-        body: JSON.stringify({ 
+        body:{ 
             result: result.documents,
             count: result.documentsCounter
-        }),
+        }
     })
 }
 
@@ -47,10 +48,8 @@ export async function searchByEnvironmentDocuments(req: Request, res: Response) 
 
     res.header("content-type", 'application/json')
     res.status(200).send({
-        body: JSON.stringify({ 
-            result: result.documents
-        }),
-    })
+        body: result.documents
+    });
 }
 
 export async function findDocument(req: Request, res: Response) {
@@ -68,7 +67,7 @@ export async function findDocument(req: Request, res: Response) {
 
         res.header("content-type", 'application/json')
         res.status(200).send({
-            body: JSON.stringify(response.primitives)
+            body: response.primitives
         });
     } catch (e) {
         res.status(404).send({ error: e });
