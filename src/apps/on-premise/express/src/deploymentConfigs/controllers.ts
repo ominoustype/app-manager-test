@@ -14,7 +14,6 @@ import RemoveDeploymentConfigsCommandHandler from '@context/deploymentConfigs/ap
 import SearchDeploymentsConfigsQueryHandler from '@context/deploymentConfigs/application/search/searchDeploymentsConfigsQueryHandler';
 import CreateDeploymentConfigsCommandHandler from '@context/deploymentConfigs/application/create/createDeploymentConfigsCommandHandler';
 
-
 const CONTENT_TYPE = "content-type";
 const APPLICATION_JSON = "application/json";
 
@@ -49,7 +48,7 @@ export async function findDeploymentConfigs(req: Request, res: Response) {
         const response = await handler.handle(new FindDeploymentConfigsQuery({id}));
         res.header(CONTENT_TYPE, APPLICATION_JSON);
         res.status(200).send({
-            body: JSON.stringify(response.primitives)
+            body: response.primitives
         });
     }
     catch(e){

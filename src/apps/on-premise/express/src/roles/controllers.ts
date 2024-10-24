@@ -27,7 +27,7 @@ export async function searchRoles(req: Request, res: Response) {
 
     res.setHeader(CONTENT_TYPE, APPLICATION_JSON);
     res.status(200).send({
-        body: JSON.stringify({ result: result.primitives })
+        body: { result: result.primitives }
     });
 }
 
@@ -46,7 +46,7 @@ export async function findRole(req: Request, res: Response) {
 
         res.setHeader(CONTENT_TYPE, APPLICATION_JSON);
         res.status(200).send({
-            body: JSON.stringify(response.primitives)
+            body: response.primitives
         });
     }
     catch(e){
