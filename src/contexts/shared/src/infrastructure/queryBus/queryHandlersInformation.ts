@@ -30,4 +30,13 @@ export default class QueryHandlersInformation {
 
         return queryHandler;
     }
+
+    addQueryHandlers(queryHandlers: Array<QueryHandler<Query, Response>>) {
+        queryHandlers.forEach((queryHandler) => {
+            this.queryHandlersMap.set(
+                queryHandler.subscribedTo(),
+                queryHandler
+            )
+        })
+    }
 }
