@@ -15,7 +15,7 @@ const ARRANGER = "arranger";
 const LITERALS = { HANDLERS, REPOSITORIES, ARRANGER };
 export default LITERALS;
 
-const client = MongoClientFactory.createClient('roles', { 
+const client = MongoClientFactory.createClient('customers', { 
     url: process.env.MONGODB_URI || 'mongodb://localhost:27018/' 
 });    
 const arranger = new MongoEnvironmentArranger(client);
@@ -24,11 +24,11 @@ const repository = new CustomerMongoRepository(client as unknown as MongoClient)
 
 const dependencies = new Map();
 
-const roleFinder = new CustomerFinder(repository);
-const rolesSearcher = new CustomersSearcher(repository);
+const customerFinder = new CustomerFinder(repository);
+const customerSearcher = new CustomersSearcher(repository);
 
-const findCustomerQueryHandler =  new FindCustomerQueryHandler(roleFinder);
-const searchCustomerQueryHandler = new SearchCustomersQueryHandler(rolesSearcher);
+const findCustomerQueryHandler =  new FindCustomerQueryHandler(customerFinder);
+const searchCustomerQueryHandler = new SearchCustomersQueryHandler(customerSearcher);
 
 const queryHandlers = new Map<any, any>();
 queryHandlers.set(FindCustomerQuery, findCustomerQueryHandler);
