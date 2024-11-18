@@ -1,8 +1,27 @@
 import Token from "@src/domain/session/token";
-import TokenGenerator from "@src/domain/session/tokenGenerator";
-import User from "@src/domain/user";
+import TokenGenerator, { TokenPayload } from "@src/domain/session/tokenator";
+import { UserPrimitives } from "@src/domain/user";
+import { JwtPayload } from "jsonwebtoken";
 
 export default class TokenGeneratorMock implements TokenGenerator {
+    generateAccessToken(user: UserPrimitives): string {
+        throw new Error("Method not implemented."+user);
+    }
+    generateRefreshToken(user: UserPrimitives): string {
+        throw new Error("Method not implemented."+user);
+    }
+    timeToLife(token: JwtPayload): number {
+        throw new Error("Method not implemented."+token);
+    }
+
+    verify(token: string): { payload: TokenPayload | null, isValid: boolean } {
+        throw new Error("Method not implemented."+token);
+    }
+
+    validate(token: Token) {
+        throw new Error("Method not implemented."+token);
+    }
+    
     private mockGenerateClearToken = jest.fn();
     private mockGenerate = jest.fn();
     private mockIsValid = jest.fn();
@@ -20,7 +39,7 @@ export default class TokenGeneratorMock implements TokenGenerator {
         expect(this.mockGenerateClearToken).toHaveBeenCalled();
     }
 
-    generate(user: User) {
+    generate(user: UserPrimitives) {
         return this.mockGenerate(user);
     }
 
@@ -28,7 +47,7 @@ export default class TokenGeneratorMock implements TokenGenerator {
         this.mockGenerate.mockReturnValue(token);
     }
 
-    isValid(token: Token) {
+    isValid(token: string) {
         return this.mockIsValid(token);
     }
 

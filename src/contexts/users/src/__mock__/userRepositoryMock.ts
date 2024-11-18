@@ -1,4 +1,4 @@
-import { Nullable } from "@context/shared/domain/nullable";
+
 import UserRepository from "@src/domain/userRepository";
 import User from "@src/domain/user";
 import { omit } from 'lodash';
@@ -6,10 +6,12 @@ import Username from "@src/domain/username";
 import { SearchUsersQueryParams } from "@src/application/search/searchUsersQuery";
 import Users from "@src/domain/users";
 import Token from "@src/domain/session/token";
+import { Nullable } from "@context/shared/domain/nullable";
 
 export default class UserRepositoryMock implements UserRepository {
     private mockCreate = jest.fn();
     private mockFindByUsername = jest.fn();
+    private mockFindByRoleId = jest.fn();
     private mockLogin = jest.fn();
     private mockGetSession = jest.fn();
     private mockDeleteSession = jest.fn();
@@ -37,6 +39,10 @@ export default class UserRepositoryMock implements UserRepository {
         return this.mockFindByUsername(username);
     }
 
+    async findByRole(roleId: string): Promise<Nullable<User>> {
+        return this.mockFindByRoleId(roleId);
+    }
+    
     async whenFindByUsernameThenReturn(user: Nullable<User>): Promise<void> {
         this.mockFindByUsername.mockReturnValue(Promise.resolve(user));
     }

@@ -18,12 +18,11 @@ export default class PasswordGenerator implements InterfacePasswordGenerator {
         return `${algorithm}$${iterations}$${salt}$${hash.toString('base64')}`;
     }
 
-
     generate(password: string): Password {
         const salt = crypto.randomBytes(16).toString('base64'),
             iterations = 24000,
             algorithm = 'pbkdf2_sha256',
-            encoded = this.encode(password, algorithm, iterations, salt );
+            encoded = this.encode(password, algorithm, iterations, salt);
 
         return new Password(encoded);
     }
@@ -37,5 +36,4 @@ export default class PasswordGenerator implements InterfacePasswordGenerator {
 
         return `${Math.floor(random * diff) + PasswordGenerator.MIN_LENGTH_PASSWORD}`;
     }
-
 }

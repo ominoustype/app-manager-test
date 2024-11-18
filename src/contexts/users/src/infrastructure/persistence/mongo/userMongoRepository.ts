@@ -15,7 +15,9 @@ import Users from '@src/domain/users';
 import UserStatus from '@src/domain/userStatus';
 
 const TO_SEARCH_PARAMS_DICT = Object.freeze({
-    search: ['_id','username','name']
+    search: ['_id','username','name'],
+    environment: 'environment',
+    customer: 'customer'
 });
 
 const DEFAULT_PAGE_SIZE = 50;
@@ -51,10 +53,6 @@ export default class UserMongoRepository extends MongoRepository<User> implement
         await this.persist(user.id.value, user);
     }
 
-    // async find(id: UserId): Promise<Nullable<User>> {
-    //     return this.byId(id.value, User.fromPrimitives);
-    // }
-
     async findByUsername(username: Username): Promise<Nullable<User>> {
         const result = await this.byField(
             'username',
@@ -63,6 +61,23 @@ export default class UserMongoRepository extends MongoRepository<User> implement
         );
 
         return result.length ? result[0] : null;
+    }
+
+    async findByRole(roleId: string): Promise<Nullable<User>> {
+        const find = {
+                    'role.id': {
+                        $eq: roleId
+                    }
+                };
+
+        const collection = (await this.collection());
+        
+        const users = collection.find(find);
+        const items = (await users.toArray()).map((user) => 
+            this.getParsedUser(user)
+        );
+        
+        return items.length ? new User(items[0].toPrimitives()) : null;
     }
 
     async search(params: SearchUsersQueryParams = {}): Promise<Users> {
@@ -110,8 +125,6 @@ export default class UserMongoRepository extends MongoRepository<User> implement
             this.getParsedUser(user)
         );
 
-        // const count = collection.countDocuments(find);
-
         return new Users(
             items.length <= 0 ? [] : items.map((i) => i.toPrimitives())
         );
@@ -129,25 +142,6 @@ export default class UserMongoRepository extends MongoRepository<User> implement
         return this.rawPersist(user.id.value, {
             ...user.toPrimitives(),
             session: token
-        });
-    }
-
-    async getSession(username: Username): Promise<Nullable<Token>> {
-        const user = await this.findByUsername(username);
-
-        return user?.session ?? null;
-    }
-
-    async deleteSession(username: Username): Promise<void> {
-        const user = await this.findByUsername(username);
-
-        if (!user) {
-            return;
-        }
-
-        return this.rawPersist(user.id.value, {
-            ...user.toPrimitives(),
-            session: null
         });
     }
 }

@@ -11,11 +11,9 @@ interface UserRepository {
 
     findByUsername(username: Username): Promise<Nullable<User>>;
 
+    findByRole(roleId: string): Promise<Nullable<User>>;
+
     login(user: User, token: Token): Promise<void>;
-
-    getSession(username: Username): Promise<Nullable<Token>>;
-
-    deleteSession(username: Username): Promise<void>;
 
     delete(user: User): Promise<void>;
 

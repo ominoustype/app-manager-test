@@ -19,17 +19,17 @@ export default class PasswordValidator implements InterfacePasswordValidator {
         const [algorithm, iterations, salt, hash] = encoded.split('$');
 
         return {
-            algorithm,
-            hash,
+            algorithm: algorithm,
+            hash: hash,
             iterations: parseInt(iterations, 10),
-            salt
+            salt: salt
         };
     }
 
     validate(password: Password, otherPassword: Password): boolean {
         const decoded = this.decode(otherPassword.value);
         const encodedPassword = this.encode(password.value, decoded.algorithm, decoded.iterations, decoded.salt);
-
+    
         return (otherPassword.toString() === encodedPassword.toString()) as boolean;
     }
 }

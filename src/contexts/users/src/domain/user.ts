@@ -12,7 +12,6 @@ import UserUpdatedDomainEvent from './domainEvents/userUpdatedDomainEvent';
 import UserRemovedDomainEvent from './domainEvents/userRemovedDomainEvent';
 import Email from './email';
 import UserStatus from './userStatus';
-import Token, { TokenPrimitives } from './session/token';
 
 export type UserPrimitives = {
     id: string,
@@ -23,8 +22,7 @@ export type UserPrimitives = {
     password?: string,
     customer: CustomerPrimitives,
     role: RolePrimitives,
-    status: UserStatus,
-    session?: TokenPrimitives
+    status: UserStatus
 };
 
 export default class User extends AggregateRoot {
@@ -37,7 +35,6 @@ export default class User extends AggregateRoot {
     readonly customer: Customer;
     readonly role: Role;
     status: UserStatus;
-    session?: Token;
 
     constructor(primitives: UserPrimitives) {
         super();
@@ -50,10 +47,9 @@ export default class User extends AggregateRoot {
         this.customer = new Customer(primitives.customer);
         this.role = new Role(primitives.role);
         this.status = primitives.status;
-        this.session = primitives.session ? new Token(primitives.session) : undefined;
     }
 
-    toPrimitives(): Omit<UserPrimitives, 'password'> {
+    toPrimitives(): UserPrimitives {
         return {
             createdAt: this.createdAt.toString(),
             id: this.id.toString(),
@@ -63,7 +59,6 @@ export default class User extends AggregateRoot {
             customer: this.customer.toPrimitives(),
             role: this.role.toPrimitives(),
             status: this.status,
-            session: this.session?.toPrimitives()
         };
     }
 
@@ -78,20 +73,11 @@ export default class User extends AggregateRoot {
         return new User(primitives);
     }
 
-    getLoginResponse(): Partial<UserPrimitives> {
-        return {
-            id: this.id.toString(),
-            name: this.name.toString(),
-            email: this.email.toString(),
-            username: this.username.toString(),
-            role: this.role.toPrimitives()
-        };
-    }
-
-    static create(primitives: Omit<UserPrimitives, 'createdAt' | 'id'>) {
+    static create(primitives: Omit<UserPrimitives, 'createdAt' | 'id' | 'status' >) {
         const newUser = new User({
             createdAt: new Datetime().toString(),
             id: Uuid.random().toString(),
+            status: UserStatus.ACTIVE,
             ...primitives
         });
 
