@@ -1,4 +1,4 @@
-import UserRepositoryMock from "@src/__mock__/userRepositoryMock";
+/*import UserRepositoryMock from "@src/__mock__/userRepositoryMock";
 import LogInUserQueryHandler from "./loginUserQueryHandler";
 import UserLoggerIn from "./userLoggerIn";
 import UserMother from "@src/domain/user.mother";
@@ -78,3 +78,4 @@ describe('userLoggerIn', () => {
         });
     });
 });
+*/

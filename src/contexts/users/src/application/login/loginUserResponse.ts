@@ -1,22 +1,14 @@
 import { Response } from '@context/shared/domain/queryBus/response';
 import Token from '@src/domain/session/token';
-import User from '@src/domain/user';
 
 export default class LogInUserResponse implements Response {
-    readonly token: string;
+    readonly accessToken: string;
     readonly refreshToken: string;
-    readonly username: string;
-    readonly email: string;
-    readonly name: string;
-    readonly role: string;
-    
-    constructor(token: Token, user: User) {
+    readonly username: string
+
+    constructor(token: Token, username: string) {
+        this.accessToken = token.token;
         this.refreshToken = token.refreshToken;
-        this.token = token.token;
-        const {username,email,name,role} = user.getLoginResponse();
-        this.username = username!;
-        this.email = email!;
-        this.name = name!;
-        this.role = role!.id;
+        this.username = username;
     }
 }

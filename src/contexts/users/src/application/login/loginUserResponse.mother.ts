@@ -1,15 +1,13 @@
-import User from '@src/domain/user';
 import LogInUserResponse from './loginUserResponse';
 
 export default class LoginUserResponseMother {
-    static create(user: User, token: any) {
+    static create(token: any, username: string) {
         return new LogInUserResponse(
-            token,
-            user
+            token, username
         );
     }
 
-    static fromUser(user: User, token: any) {
-        return LoginUserResponseMother.create(user, token);
+    static fromUser(token: any, username: string) {
+        return LoginUserResponseMother.create(token, username);
     }
 }

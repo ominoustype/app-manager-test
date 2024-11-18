@@ -22,6 +22,7 @@ export default class PasswordChanger {
     async run(command: ChangePasswordCommand): Promise<void> {
         const user = await this.finder.find(command.username);
 
+        // TODO check not found user
         if(user.password) {
             const isValid = this.passwordValidator.validate(
                 new Password(command.oldPassword),
@@ -29,11 +30,12 @@ export default class PasswordChanger {
             );
 
             if (!isValid) {
+                console.log("The given password does not match the one stored in the BBDD")
                 throw new InvalidPasswordError(command.username);
             }
         }
 
-        const password = await this.passwordGenerator.generate(
+        const password = this.passwordGenerator.generate(
             command.newPassword
         );
 
@@ -44,5 +46,3 @@ export default class PasswordChanger {
         await this.repository.update(userUpdated);
     }
 }
-
-module.exports = PasswordChanger;

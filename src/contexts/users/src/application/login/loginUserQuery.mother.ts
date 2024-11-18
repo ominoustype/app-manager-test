@@ -9,13 +9,15 @@ export default class LoginUserQueryMother {
 
     static random(): LogInUserQuery {
         return LoginUserQueryMother.create({
-            username: UsernameMother.random().toString()
+            username: UsernameMother.random().toString(),
+            password: UsernameMother.random().toString()
         })
     }
 
     static fromUser(user: User) {
         return LoginUserQueryMother.create({
-            username: user.username.value
+            username: user.username.value,
+            password: UsernameMother.random().toString()
         });
     }
 }
