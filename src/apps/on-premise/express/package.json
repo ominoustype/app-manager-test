@@ -32,19 +32,22 @@
         "build": "yarn build:clean && yarn build:tsc",
         "build:clean": "rm -r dist; exit 0",
         "build:tsc": "tsc && tscpaths -p tsconfig.json -s ./src -o ./dist",
-        "build:prod": "yarn build:clean && yarn build:tsc",
-        "serve": "nodemon src/index.ts"
+        "serve": "nodemon src/index.ts",
+        "serve:dev": "ts-node src/index.ts"
+
     },
     "dependencies": {
         "@context/deploymentConfigs": "^1.0.1",
         "@context/documents": "^1.0.1",
         "@context/environments": "^1.0.1",
-        "@context/users": "^1.0.1",
         "@context/roles": "^1.0.1",
         "@context/customers": "^1.0.1",
         "@context/shared": "^1.0.1",
+        "@context/users": "^1.0.1",
         "express": "^4.19.2",
-        "http-terminator": "^3.2.0"
+        "express-jwt-permissions": "^1.3.7",
+        "lodash": "^4.17.21",
+        "moment": "^2.29.1"
     },
     "devDependencies": {
         "@cspell/dict-es-es": "3.0.0",
