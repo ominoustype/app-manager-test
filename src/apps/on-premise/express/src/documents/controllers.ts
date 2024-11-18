@@ -1,15 +1,12 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import CreateDocumentCommand from '@context/documents/application/create/createDocumentCommand'
 import FindDocumentQuery from '@context/documents/application/find/findDocumentQuery'
 import SearchDocumentsQuery from '@context/documents/application/search/searchDocumentsQuery'
 import UpdateDocumentCommand from '@context/documents/application/update/updateDocumentCommand'
 import RemoveDocumentCommand from '@context/documents/application/delete/removeDocumentCommand'
 
-import { BUSES, dependencies } from './application.di'
-import SearchByEnvironmentDocumentsQuery from '@context/documents/application/searchByEnvironment/searchByEnvironmentDocumentsQuery'
-import MoveDocumentCommand from '@context/documents/application/move/moveDocumentCommand'
-import FindEnvironmentQuery from '@context/environments/application/find/findEnvironmentQuery'
-import InMemoryQueryBus from '@context/shared/infrastructure/queryBus/inMemoryQueryBus'
+import { dependencies } from './application.di'
+import { TokenPayload } from '@context/users/domain/session/tokenator'
 
 // You will export functions that will be the controllers for the rest services
 export async function searchDocuments(req: Request, res: Response) {
@@ -59,6 +56,8 @@ export async function findDocument(req: Request, res: Response) {
     const handler = dependencies.get('handlers').query.get(FindDocumentQuery);
 
     console.log('Id to find', id)
+
+    //const environmentIds = (req as CustomRequest).payload.permissions.environmentIds;
 
     try {
         const response = await handler.handle(
@@ -159,4 +158,22 @@ export async function deleteDocument(req: Request, res: Response) {
     } catch (e) {
         return e;
     }
+}
+
+export async function checkWritePermission(req: Request, res: Response, next: NextFunction) {
+    const { environment } = req.body;
+
+    if(!environment.id)
+        res.status(401).send("Error. Environment not found");
+    
+    const environmentIds = (req as CustomRequest).payload.permissions.environmentIds;
+
+    if(environment in environmentIds) {
+        next();
+    }
+    else res.status(401).send("403 Forbiden");
+}
+
+export interface CustomRequest extends Request {
+    payload: TokenPayload
 }
