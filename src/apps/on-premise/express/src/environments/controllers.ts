@@ -31,7 +31,7 @@ export async function searchEnvironments(req: Request, res: Response) {
 
     res.header(CONTENT_TYPE, APPLICATION_JSON);
     res.status(200).send({
-        body: JSON.stringify({ result: result.environments })
+        body: { result: result.environments }
     });
 }
 
@@ -50,7 +50,7 @@ export async function findEnvironment(req: Request, res: Response) {
 
         res.header(CONTENT_TYPE, APPLICATION_JSON);
         res.status(200).send({
-            body: JSON.stringify(response.primitives)
+            body: response.primitives
         });
     }
     catch(e){

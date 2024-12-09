@@ -2,7 +2,7 @@ import EventBusMock from "@context/shared/__mocks__/eventBus.mock";
 import DeploymentConfigsRepositoryMock from "@src/__mock__/deploymentConfigsRepository";
 import RemoveDeploymentConfigsCommandHandler from "./removeDeploymentConfigsCommandHandler";
 import RemoveDeploymentConfigsCommandMother from "./removeDeploymentConfigsCommand.mother";
-import DeploymentConfigsRemovedDomainEventMother from "@src/domain/deploymentConfigsRemovedDomainEvent.mother";
+import DeploymentConfigsRemovedDomainEventMother from "@src/domain/events/deploymentConfigsRemovedDomainEvent.mother";
 import DeploymentConfigsRemover from "./deploymentConfigsRemover";
 
 describe('deploymentConfigsRemover', () => {

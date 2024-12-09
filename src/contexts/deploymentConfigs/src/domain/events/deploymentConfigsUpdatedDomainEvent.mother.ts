@@ -1,5 +1,5 @@
-import DeploymentConfigs, { DeploymentConfigsPrimitives } from "./deploymentConfigs";
-import DeploymentConfigsMother from "./deploymentConfigs.mother";
+import DeploymentConfigs, { DeploymentConfigsPrimitives } from "../deploymentConfigs";
+import DeploymentConfigsMother from "../deploymentConfigs.mother";
 import DeploymentConfigsUpdatedDomainEvent from "./deploymentConfigsUpdatedDomainEvent";
 
 export default class DeploymentConfigsUpdatedDomainEventMother{

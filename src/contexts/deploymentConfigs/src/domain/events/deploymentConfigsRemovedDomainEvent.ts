@@ -1,5 +1,5 @@
 import { DomainEvent } from "@context/shared/domain/eventBus/domainEvent";
-import { DeploymentConfigsPrimitives } from "./deploymentConfigs";
+import { DeploymentConfigsPrimitives } from "../deploymentConfigs";
 
 type DeploymentConfigsRemovedDomainEventArgs =
                 Readonly<DeploymentConfigsPrimitives & { eventId? : string; occurredOn? : Date}>;

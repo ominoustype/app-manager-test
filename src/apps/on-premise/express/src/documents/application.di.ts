@@ -29,6 +29,10 @@ import MoveDocumentCommand from '@context/documents/application/move/moveDocumen
 import DocumentsByEnvironmentSearcher from '@context/documents/application/searchByEnvironment/documentsByEnvironmentSearcher';
 import SearchByEnvironmentDocumentsQueryHandler from '@context/documents/application/searchByEnvironment/searchByEnvironmentDocumentsQueryHandler';
 import SearchByEnvironmentDocumentsQuery from '@context/documents/application/searchByEnvironment/searchByEnvironmentDocumentsQuery';
+import FindEnvironmentQueryHandler from '@context/environments/application/find/findEnvironmentQueryHandler';
+import EnvironmentMongoRepository from '@context/environments/infrastructure/environmentMongoRepository';
+import EnvironmentFinder from '@context/environments/application/find/environmentFinder';
+import FindEnvironmentQuery from '@context/environments/application/find/findEnvironmentQuery';
 
 export const BUSES = "buses"
 
@@ -38,6 +42,12 @@ const client = MongoClientFactory.createClient('documents', {
     url: process.env.MONGODB_URI  || 'mongodb://localhost:27018/'
 });
 const documentRepository = new DocumentMongoRepository(client as unknown as MongoClient);
+
+const clientEnvironment = MongoClientFactory.createClient('environments', {
+    url: process.env.MONGODB_URI  || 'mongodb://localhost:27018/'
+});
+const environmentRepository = new EnvironmentMongoRepository(clientEnvironment as unknown as MongoClient);
+
 const eventBus = new InMemorySyncEventBus();
 const queryBus = new InMemoryQueryBus(new QueryHandlersInformation([]));
 
@@ -61,6 +71,12 @@ const searchByEnvironmentDocumentsQueryHandler = new SearchByEnvironmentDocument
 
 const commandHandlers = new Map<Command, any>();
 const queryHandlers = new Map<any, any>();
+
+//
+const environmentFinder = new EnvironmentFinder(environmentRepository);
+const findEnviromentQueryHandler = new FindEnvironmentQueryHandler(environmentFinder);
+queryHandlers.set(FindEnvironmentQuery, findEnviromentQueryHandler);
+//
 
 commandHandlers.set(CreateDocumentCommand, createDocumentCommandHandler);
 commandHandlers.set(UpdateDocumentCommand, updateDocumentCommandHandler);

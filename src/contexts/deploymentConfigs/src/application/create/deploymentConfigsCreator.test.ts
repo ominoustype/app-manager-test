@@ -3,7 +3,7 @@ import DeploymentConfigsRepositoryMock from "@src/__mock__/deploymentConfigsRepo
 import CreateDeploymentConfigsCommandHandler from "./createDeploymentConfigsCommandHandler";
 import DeploymentConfigsCreator from "./deploymentConfigsCreator";
 import CreateDeploymentConfigsCommandMother from "./createDeploymentConfigsCommand.mother";
-import NewDeploymentConfigsCreatedDomainEventMother from "@src/domain/newDeploymentConfigsCreatedDomainEvent.mother";
+import NewDeploymentConfigsCreatedDomainEventMother from "@src/domain/events/newDeploymentConfigsCreatedDomainEvent.mother";
 import DeploymentConfigsAlreadyExistsError from "@src/domain/errors/deploymentConfigsAlreadyExistsError";
 
 describe('deploymentConfigsCreator', () => {

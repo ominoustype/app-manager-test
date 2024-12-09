@@ -4,7 +4,7 @@ import UpdateDeploymentConfigsCommandHandler from "./updateDeploymentConfigsComm
 import DeploymentConfigsUpdater from "./deploymentConfigsUpdater";
 import UpdateDeploymentConfigsCommandMother from "./updateDeploymentConfigsCommand.mother";
 import DeploymentConfigsMother from "@src/domain/deploymentConfigs.mother";
-import DeploymentConfigsUpdatedDomainEventMother from "@src/domain/deploymentConfigsUpdatedDomainEvent.mother";
+import DeploymentConfigsUpdatedDomainEventMother from "@src/domain/events/deploymentConfigsUpdatedDomainEvent.mother";
 
 describe('deploymentConfigsUpdater', () => {
     
