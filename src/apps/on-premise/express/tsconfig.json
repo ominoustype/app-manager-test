@@ -30,7 +30,7 @@
   "include": [
     "src/**/*.ts",
     "tests/**/*.ts"
-  ],
+, "src/middleware"  ],
   "exclude": [
     "../../../node_modules",
     "node_modules"

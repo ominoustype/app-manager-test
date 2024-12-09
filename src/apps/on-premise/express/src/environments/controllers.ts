@@ -26,12 +26,14 @@ export async function searchEnvironments(req: Request, res: Response) {
 
     const result = await handler.handle(
         new SearchEnvironmentsQuery({
-            ...req.query
+            ...req.query,
+            page_size: req.query.page_size ? parseInt(req.query.page_size as string) : undefined,
+            page: req.query.page ? parseInt(req.query.page as string) : undefined
     }));
 
     res.header(CONTENT_TYPE, APPLICATION_JSON);
     res.status(200).send({
-        body: { result: result.environments }
+        body: ({ result: result.environments })
     });
 }
 
@@ -50,7 +52,7 @@ export async function findEnvironment(req: Request, res: Response) {
 
         res.header(CONTENT_TYPE, APPLICATION_JSON);
         res.status(200).send({
-            body: response.primitives
+            body: (response.primitives)
         });
     }
     catch(e){

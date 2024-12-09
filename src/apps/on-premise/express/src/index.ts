@@ -1,14 +1,23 @@
 import ExpressServer from 'express'
+//import GuardFactory from 'express-jwt-permissions'
 
 import loadDocuments from './documents/routes'
-import errorHandler from './errorMiddleware'
+import errorHandler from './middleware/error'
 import loadDeploymentConfigs from './deploymentConfigs/routes'
 import loadEnvironments from './environments/routes'
 import loadRoles from './roles/routes'
+import loadUsers from './users/routes'
 
 const app = ExpressServer()
-const port = process.env.PORT || 4000
+
+const port = process.env.PORT || 3333
 const deployment = process.env.DEPLOYMENT_MESSAGE || "Local use"
+/*
+const guard = GuardFactory({
+  requestProperty: 'payload',
+  permissionsProperty: 'permissions'
+})
+  */
 
 app.use(ExpressServer.json())
 app.use(ExpressServer.urlencoded({ extended: true }))
@@ -17,8 +26,19 @@ loadDocuments(app)
 loadDeploymentConfigs(app)
 loadEnvironments(app)
 loadRoles(app)
+loadUsers(app)
 
 app.use(errorHandler)
+
+/*
+redisClient.on('connect', () => {
+  console.log(`Redis listening at ${redisHost}:${redisPort}`)
+})
+
+redisClient.on('error', (error) => {
+  console.log(error)
+})
+*/
 
 app.get('/', (_req, res) => {
   res.send(title+art+deployment_text+footer)
