@@ -5,23 +5,23 @@ import Datetime from "@context/shared/domain/datetime";
 
 export type PrevDeployPrimitives = {
     id: string,
-    createdAt: string
+    deployedAt: string
 }
 
 export default class PrevDeploy extends AggregateRoot  {
     readonly id: PrevDeployId;
-    readonly createdAt: Datetime;
+    readonly deployedAt: Datetime;
 
     constructor(primitives: PrevDeployPrimitives) {
         super();
         this.id = new CustomerId(primitives.id);
-        this.createdAt = new Datetime(primitives.createdAt);
+        this.deployedAt = new Datetime(primitives.deployedAt);
     }
 
     toPrimitives(): PrevDeployPrimitives {
         return {
             id: this.id.toString(),
-            createdAt: this.createdAt.toString(),
+            deployedAt: this.deployedAt.toString(),
         };
     }
 
@@ -31,6 +31,6 @@ export default class PrevDeploy extends AggregateRoot  {
 
     equalsTo(other: PrevDeploy): boolean {
         return ((!this.id) || (!other.id) || (this.id && other.id && this.id.equalsTo(other.id))) &&
-        ((!this.createdAt) || (!other.createdAt) || (this.createdAt && other.createdAt && this.createdAt.equalsTo(other.createdAt)))
+        ((!this.deployedAt) || (!other.deployedAt) || (this.deployedAt && other.deployedAt && this.deployedAt.equalsTo(other.deployedAt)))
     }
 }

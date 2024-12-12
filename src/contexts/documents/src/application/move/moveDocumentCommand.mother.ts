@@ -25,4 +25,14 @@ export default class MoveDocumentCommandMother {
             }
         })
     }
+
+    static applyCommandRightValues(command: MoveDocumentCommand): Document {
+        return DocumentMother.randomNotReady({
+            id: command.documentId,
+            environment: {
+                id: command.newEnvironmentId,
+                name: MotherCreator.word()
+            }
+        })
+    }
 }

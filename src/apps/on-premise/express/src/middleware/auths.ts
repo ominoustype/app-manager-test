@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import TokenatorInterface, { TokenPayload } from '@context/users/domain/session/tokenator';
 import { dependencies } from './application.di';
-import RedisService from '@context/shared/infrastructure/redis/redis';
+import TokenRepository from '@context/users/infrastructure/persistence/redis/tokenRedisRespository';
 
 export interface CustomRequest extends Request {
     payload: TokenPayload
@@ -17,7 +17,7 @@ export interface CustomRequest extends Request {
 */
 export async function auth(req: Request, res: Response, next: NextFunction) {
     const tokenator = dependencies.get('tokenGenerator') as TokenatorInterface;
-    const redis = dependencies.get('repositories') as RedisService;
+    const redisClient = dependencies.get('tokenRepository') as TokenRepository;
 
     try {
         const accessToken = req.header('Authorization')?.replace('Bearer ', '');
@@ -26,7 +26,7 @@ export async function auth(req: Request, res: Response, next: NextFunction) {
             throw new Error("No token!");
         }
 
-        const cached = await redis.get(accessToken);
+        const cached = await redisClient.find(accessToken);
 
         if(cached){
             throw new Error("Blacklisted token")
@@ -45,6 +45,7 @@ export async function auth(req: Request, res: Response, next: NextFunction) {
         next();
     }
     catch (e) {
+        console.log("f*ck "+e);
         res.status(401).send({ error: e });
     }
 }

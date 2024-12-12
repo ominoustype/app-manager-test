@@ -7,10 +7,11 @@ import loadDeploymentConfigs from './deploymentConfigs/routes'
 import loadEnvironments from './environments/routes'
 import loadRoles from './roles/routes'
 import loadUsers from './users/routes'
+import loadCustomers from './customers/routes'
 
 const app = ExpressServer()
-
-const port = process.env.PORT || 3333
+const PORT = process.env.PORT || 4000
+let PORT_CONTAINER = process.env.PORT_CONTAINER || 3000
 const deployment = process.env.DEPLOYMENT_MESSAGE || "Local use"
 /*
 const guard = GuardFactory({
@@ -19,6 +20,9 @@ const guard = GuardFactory({
 })
   */
 
+if(PORT == 4000)
+  PORT_CONTAINER = PORT;
+
 app.use(ExpressServer.json())
 app.use(ExpressServer.urlencoded({ extended: true }))
 
@@ -26,6 +30,7 @@ loadDocuments(app)
 loadDeploymentConfigs(app)
 loadEnvironments(app)
 loadRoles(app)
+loadCustomers(app)
 loadUsers(app)
 
 app.use(errorHandler)
@@ -44,8 +49,8 @@ app.get('/', (_req, res) => {
   res.send(title+art+deployment_text+footer)
 })
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+app.listen(PORT_CONTAINER, () => {
+  console.log(`Example app listening at http://localhost:${PORT}`)
 })
 
 const art:string  = `<pre>

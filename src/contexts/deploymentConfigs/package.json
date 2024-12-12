@@ -39,7 +39,8 @@
     "dependencies": {
         "@azure/identity": "^4.4.1",
         "@azure/storage-blob": "^12.25.0",
-        "@context/shared": "^1.0.1"
+        "@context/shared": "^1.0.1",
+        "@context/environments": "^1.0.1"
     },
     "devDependencies": {
         "@cspell/dict-es-es": "3.0.0",

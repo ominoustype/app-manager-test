@@ -5,18 +5,21 @@ import DeploymentConfigs from '@src/domain/deploymentConfigs';
 import DeploymentsConfigs from '@src/domain/deploymentsConfigs';
 import DeploymentConfigsRepository from '@src/domain/deploymentConfigsRepository';
 import { SearchDeploymentsConfigsQueryParams } from '@src/application/search/searchDeploymentsConfigsQuery';
+import { SearchByEnvironmentIsDeployedDeploymentConfigsQueryParams } from '@src/application/searchByEnvironmentIsDeployed/searchByEnvironmentIsDeployedDeploymentConfigsQuery';
 
 export default class DeploymentConfigsRepositoryMock implements DeploymentConfigsRepository {
     private mockCreate = jest.fn();
     private mockFind = jest.fn();
+    private mockSearchByEnvironmentIsDeployed = jest.fn();
     private mockDelete = jest.fn();
     private mockUpdate = jest.fn();
     private mockSearch = jest.fn();
+    private mockDeploy = jest.fn();
 
     async find(id: Uuid): Promise<Nullable<DeploymentConfigs>> {
         return this.mockFind(id);
     }
-
+    
     create(deploymentConfigs: DeploymentConfigs) {
         return this.mockCreate(deploymentConfigs);
     }
@@ -31,6 +34,14 @@ export default class DeploymentConfigsRepositoryMock implements DeploymentConfig
 
     async search(params: SearchDeploymentsConfigsQueryParams): Promise<DeploymentsConfigs> {
         return this.mockSearch(params);
+    }
+
+    async searchByEnvironmentIsDeployed(params: SearchByEnvironmentIsDeployedDeploymentConfigsQueryParams): Promise<DeploymentsConfigs> {
+        return this.mockSearchByEnvironmentIsDeployed(params);
+    }
+    
+    deploy(deploymentConfigs: DeploymentConfigs): Promise<void> {
+        return this.mockDeploy(deploymentConfigs);
     }
 
     assertCreateHasBeenCalledWith(deploymentConfigs: DeploymentConfigs, exclusions: Array<string>) {
@@ -61,11 +72,31 @@ export default class DeploymentConfigsRepositoryMock implements DeploymentConfig
         expect(this.mockUpdate).toHaveBeenCalledWith(deploymentConfigs);
     }
 
+    async assertDeployHasBeenCalledWith(deploymentConfigs: DeploymentConfigs, exclusions: Array<string>): Promise<void> {
+        const { mock } = this.mockDeploy,
+        lastDeploymentConfigsDeployed = mock.calls[mock.calls.length - 1][0],
+        lastDeploymentConfigsDeployedPrimitives = omit(
+            lastDeploymentConfigsDeployed.toPrimitives(),
+            exclusions ?? []
+        ),
+        expectedBody = omit(deploymentConfigs.toPrimitives(), exclusions ?? []);
+
+        expect(lastDeploymentConfigsDeployedPrimitives).toStrictEqual(expectedBody);
+    }
+
     async whenSearchThenReturn(deploymentsConfigs: DeploymentsConfigs): Promise<void> {
         this.mockSearch.mockReturnValue(deploymentsConfigs);
     }
 
+    async whenSearchByEnvironmentIsDeployedThenReturn(deploymentsConfigs: DeploymentsConfigs) {
+        this.mockSearchByEnvironmentIsDeployed.mockReturnValue(deploymentsConfigs);
+    }
+
     async assertSearchHasBeenCalledWith(params: SearchDeploymentsConfigsQueryParams): Promise<void> {
         expect(this.mockSearch).toHaveBeenCalledWith(params);
+    }
+
+    async assertSearchByEnvironmentIsDeployedHasBeenCalledWith(params: SearchByEnvironmentIsDeployedDeploymentConfigsQueryParams): Promise<void> {
+        expect(this.mockSearchByEnvironmentIsDeployed).toHaveBeenCalledWith(params);
     }
 }

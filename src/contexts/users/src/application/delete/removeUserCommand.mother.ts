@@ -9,7 +9,7 @@ export default class RemoveUserCommandMother {
 
     static random(): RemoveUserCommand {
         return RemoveUserCommandMother.create(
-            UserMother.random().fullToPrimitives()
+            UserMother.random().toPrimitives()
         );
     }
 

@@ -1,4 +1,3 @@
-
 import UserRepository from "@src/domain/userRepository";
 import User from "@src/domain/user";
 import { omit } from 'lodash';
@@ -39,12 +38,20 @@ export default class UserRepositoryMock implements UserRepository {
         return this.mockFindByUsername(username);
     }
 
+    async find(username: Username): Promise<Nullable<User>> {
+        return this.mockFindByUsername(username);
+    }
+
     async findByRole(roleId: string): Promise<Nullable<User>> {
         return this.mockFindByRoleId(roleId);
     }
     
     async whenFindByUsernameThenReturn(user: Nullable<User>): Promise<void> {
         this.mockFindByUsername.mockReturnValue(Promise.resolve(user));
+    }
+
+    async whenFindByRoleThenReturn(user: Nullable<User>): Promise<void> {
+        this.mockFindByRoleId.mockReturnValue(Promise.resolve(user));
     }
 
     async assertFindByUsernameHasBeenCalledWith(username: Username): Promise<void> {

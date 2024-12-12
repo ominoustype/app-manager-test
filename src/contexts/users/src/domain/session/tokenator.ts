@@ -2,13 +2,15 @@ import { JwtPayload } from "jsonwebtoken";
 import { UserPrimitives } from "../user";
 import { RolePrimitives } from "@context/roles/domain/role";
 
-export interface TokenPayload {
+export type TokenPayload = {
     id: string,
     username: string,
-    role: string,
+    name: string,
+    roleId: string,
     permissions: {
-        id: string,
-        environmentIds: string[]
+        roleName: string,
+        environmentIds: Array<string>,
+        customerId: string
     }
 }
 

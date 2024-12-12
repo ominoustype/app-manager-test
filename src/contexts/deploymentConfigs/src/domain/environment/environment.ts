@@ -2,7 +2,6 @@ import AggregateRoot from "@context/shared/domain/aggregateRoot";
 import EnvironmentId from "./environmentId";
 import EnvironmentName from "./environmentName";
 
-
 export type  EnvironmentPrimitives = {
     id: string,
     name: string

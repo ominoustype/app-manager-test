@@ -12,7 +12,7 @@ export default class PrevDeployMother {
     static random(primitives?: Partial<PrevDeployPrimitives>): PrevDeploy {
         return PrevDeployMother.create({
             id: UuidMother.random().value,
-            createdAt: DatetimeMother.random().toString(),
+            deployedAt: DatetimeMother.random().toString(),
             ...primitives
         })
     }

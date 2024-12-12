@@ -103,4 +103,13 @@ export default class Environment extends AggregateRoot {
         
         return newEnvironment;
     }
+
+    deploy(primitives: Partial<EnvironmentPrimitives>, deploymentConfigsId: string): Environment {
+        primitives.prevDeploys?.push({
+            id: deploymentConfigsId,
+            deployedAt: new Datetime().toString()
+        });
+
+        return this.update(primitives);
+    }
 }

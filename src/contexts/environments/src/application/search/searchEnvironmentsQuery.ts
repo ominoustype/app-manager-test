@@ -4,6 +4,7 @@ export type SearchEnvironmentsQueryParams = {
     page_size?: number;
     page?: number;
     search?: string;
+    customer?: string;
 };
 
 export default class SearchEnvironmentsQuery extends Query {

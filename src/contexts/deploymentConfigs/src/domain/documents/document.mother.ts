@@ -9,6 +9,7 @@ import DocumentIdMother from "./documentId.mother";
 import PropertiesMother from "./properties/properties.mother";
 import CustomerMother from "./customer/customer.mother";
 import EnvironmentMother from "./environment/environment.mother";
+import DocumentStatusMother from "./documentStatus.mother";
 
 export default class DocumentMother {
     static create(primitives: DocumentPrimitives): Document {
@@ -19,9 +20,11 @@ export default class DocumentMother {
         return DocumentMother.create({
             id: DocumentIdMother.random().value,
             createdAt: DatetimeMother.random().toString(),
+            savedAt: DatetimeMother.random().toString(),
             name: DocumentNameMother.random().toString(),
             type: DocumentTypeMother.random(),
             version: DocumentVersionMother.random().toString(),
+            status: DocumentStatusMother.random(),
             properties: PropertiesMother.random().toPrimitives(),
             customer: CustomerMother.random().toPrimitives(),
             environment: EnvironmentMother.random().toPrimitives(),

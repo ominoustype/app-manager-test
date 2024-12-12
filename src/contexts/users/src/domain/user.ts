@@ -45,6 +45,7 @@ export default class User extends AggregateRoot {
         this.email = new Email(primitives.email);
         this.password = primitives.password ? new Password(primitives.password) : undefined;
         this.customer = new Customer(primitives.customer);
+        //console.log("custom "+this.customer.id.value);
         this.role = new Role(primitives.role);
         this.status = primitives.status;
     }
@@ -56,16 +57,17 @@ export default class User extends AggregateRoot {
             name: this.name.toString(),
             username: this.username.toString(),
             email: this.email.toString(),
+            password: this.password?.value,
             customer: this.customer.toPrimitives(),
             role: this.role.toPrimitives(),
-            status: this.status,
+            status: this.status
         };
     }
 
-    fullToPrimitives(): UserPrimitives {
+    safeToPrimitives(): UserPrimitives {
         return {
             ...this.toPrimitives(),
-            password: this.password?.value
+            password: undefined
         };
     }
 
@@ -73,7 +75,7 @@ export default class User extends AggregateRoot {
         return new User(primitives);
     }
 
-    static create(primitives: Omit<UserPrimitives, 'createdAt' | 'id' | 'status' >) {
+    static create(primitives: Omit<UserPrimitives, 'createdAt' | 'id' | 'status' >): User{
         const newUser = new User({
             createdAt: new Datetime().toString(),
             id: Uuid.random().toString(),
@@ -81,7 +83,7 @@ export default class User extends AggregateRoot {
             ...primitives
         });
 
-        newUser.record(new NewUserCreatedDomainEvent(newUser.fullToPrimitives()));
+        newUser.record(new NewUserCreatedDomainEvent(newUser.toPrimitives()));
 
         return newUser;
     }
@@ -100,24 +102,24 @@ export default class User extends AggregateRoot {
     }
 
     merge(toMerge: Partial<UserPrimitives>): UserPrimitives {
-        return merge(this.fullToPrimitives(), toMerge);
+        return merge(this.toPrimitives(), toMerge);
     }
 
     update(primitives: Partial<UserPrimitives>): User {
         const newUser = new User(this.merge(primitives));
 
-        newUser.record(new UserUpdatedDomainEvent(newUser.fullToPrimitives()));
+        newUser.record(new UserUpdatedDomainEvent(newUser.toPrimitives()));
 
         return newUser;
     }
 
     delete() {
-        this.record(new UserRemovedDomainEvent(this.fullToPrimitives()));
+        this.record(new UserRemovedDomainEvent(this.toPrimitives()));
     }
 
     disable() {
         this.status = UserStatus.DISABLED;
 
-        return this.toPrimitives();
+        return this.safeToPrimitives();
     }
 }

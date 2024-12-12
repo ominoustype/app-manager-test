@@ -13,7 +13,8 @@ import { FilterOperator } from "@context/shared/domain/criteria/filterOperator";
 import Orders from "@context/shared/domain/criteria/orders";
 
 const TO_SEARCH_PARAMS_DICT = Object.freeze({
-    search: ['name']
+    search: ['_id','name'],
+    customer: 'customer'
 });
 
 const DEFAULT_PAGE_SIZE = 50;
@@ -79,6 +80,19 @@ implements EnvironmentRepository{
             find = { ...find, ...orConversions.find };
 
             delete copyParams.search;
+        }
+
+        if (copyParams.customer && typeof(copyParams.customer) === 'string') {
+            find = {
+                ...find,
+                ...{
+                    'customer.name': {
+                        $in: copyParams.customer.split(';')
+                    }
+                }
+            };
+
+            delete copyParams.customer;
         }
 
         const collection = await this.collection();

@@ -38,7 +38,7 @@ it('should update an user', async () => {
             command = DisableUserCommandMother.create({
                 username: user.username.toString()
             }),
-            disabledUser = UserMother.disabled(user.fullToPrimitives());
+            disabledUser = UserMother.disabled(user.toPrimitives());
 
         repository.whenFindByUsernameThenReturn(user);
 

@@ -5,7 +5,7 @@ import DocumentFinder from "@src/domain/documentFinder";
 import { QueryBus } from "@context/shared/domain/queryBus/queryBus";
 import FindEnvironmentQuery from "@context/environments/application/find/findEnvironmentQuery";
 import EnvironmentResponse from "@context/environments/application/find/findEnvironmentResponse";
-
+import DocumentPreviousReadyError from "@src/domain/errors/documentPreviousReadyError";
 export default class DocumentMover {
     private readonly repository: DocumentRepository;
     
@@ -35,16 +35,14 @@ export default class DocumentMover {
             return;
         }
 
-/*        if (document.status !== DRAFT) {
-            //status: DRAFT | READY | DEPLOYED | DELETED
-            throw Error
-        }
-*/
         const environment = await this.queryBus.ask(
             new FindEnvironmentQuery({ id: newEnvironmentId })
-        ) as unknown as EnvironmentResponse;
+        ) as EnvironmentResponse;
 
         const newDocument = document.move(environment.primitives);
+        if (newDocument === null) {
+            throw new DocumentPreviousReadyError(documentId, newEnvironmentId);
+        }
 
         await this.repository.update(newDocument);
 

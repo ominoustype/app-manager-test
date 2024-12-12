@@ -18,13 +18,13 @@ describe('documentUpdater', () => {
             command = UpdateDocumentCommandMother.random(),
             document = UpdateDocumentCommandMother.applyCommand(command),
             oldDocument = DocumentMother.random(),
-            expected = DocumentMother.merge(oldDocument,document);
+            expected = oldDocument.update(document.toPrimitives()); // TODO is it ok?
 
         repository.whenFindThenReturn(oldDocument);
 
         await handler.handle(command);
 
-        repository.assertUpdateHasBeenCalledWith(expected)
+        repository.assertUpdateHasBeenCalledWith(expected, ['savedAt']);
     });
     
     it('should publish a DocumentUpdatedDomainEvent', async () => {
@@ -38,7 +38,8 @@ describe('documentUpdater', () => {
             command = UpdateDocumentCommandMother.random(),
             document = UpdateDocumentCommandMother.applyCommand(command),
             oldDocument = DocumentMother.random(),
-            expected = DocumentMother.merge(oldDocument,document);
+            expected = oldDocument.update(document.toPrimitives());
+
 
         repository.whenFindThenReturn(oldDocument);
 
@@ -46,7 +47,10 @@ describe('documentUpdater', () => {
         eventBus.assertLastPublishedEventIs(
             DocumentUpdatedDomainEventMother.create(
                 expected.toPrimitives()
-            )
+            ),
+            [
+                'body.savedAt',
+            ]
         )
     });
 });

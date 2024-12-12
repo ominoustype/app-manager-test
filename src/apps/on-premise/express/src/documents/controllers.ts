@@ -4,8 +4,20 @@ import FindDocumentQuery from '@context/documents/application/find/findDocumentQ
 import SearchDocumentsQuery from '@context/documents/application/search/searchDocumentsQuery'
 import UpdateDocumentCommand from '@context/documents/application/update/updateDocumentCommand'
 import RemoveDocumentCommand from '@context/documents/application/delete/removeDocumentCommand'
+import { BUSES, dependencies } from './application.di'
+import SearchByEnvironmentDocumentsQuery from '@context/documents/application/searchByEnvironment/searchByEnvironmentDocumentsQuery'
+import MoveDocumentCommand from '@context/documents/application/move/moveDocumentCommand'
+import FindEnvironmentQuery from '@context/environments/application/find/findEnvironmentQuery'
+import PushDocumentCommand from '@context/documents/application/push/pushDocumentCommand'
+import DeployDeploymentConfigsCommand from '@context/deploymentConfigs/application/deploy/deployDeploymentConfigsCommand'
+import DeployDocumentCommand from '@context/documents/application/deploy/deployDocumentCommand'
+import RestoreDocumentCommand from '@context/documents/application/restore/restoreDocumentCommand'
+import CreateDeploymentConfigsCommand from '@context/deploymentConfigs/application/create/createDeploymentConfigsCommand'
+import UpdateDeploymentConfigsCommand from '@context/deploymentConfigs/application/update/updateDeploymentConfigsCommand'
+import SearchByEnvironmentIsDeployedDeploymentConfigsQuery from '@context/deploymentConfigs/application/searchByEnvironmentIsDeployed/searchByEnvironmentIsDeployedDeploymentConfigsQuery'
+import DeployEnvironmentCommand from '@context/environments/application/deploy/deployEnvironmentCommand'
+import UndoPushDocumentCommand from '@context/documents/application/undoPush/undoPushDocumentCommand'
 
-import { dependencies } from './application.di'
 import { TokenPayload } from '@context/users/domain/session/tokenator'
 
 // You will export functions that will be the controllers for the rest services
@@ -34,12 +46,15 @@ export async function searchDocuments(req: Request, res: Response) {
 export async function searchByEnvironmentDocuments(req: Request, res: Response) {
     console.log('Request for searchByEnvironmentDocuments Triggered')
 
+    const { environmentId } = req.query;
+
     const handler = dependencies.get('handlers').query.get(SearchByEnvironmentDocumentsQuery);
 
-    const result = await handler.handle(
+    console.log('Id to find ByEnvironment', environmentId)
+
+    const result = await handler.manolito(
         new SearchByEnvironmentDocumentsQuery({
-            ...req.query,
-            environment: req.query.environment?.toString() ?? "",
+            environment: environmentId?.toString() ?? ""
         })
     );
 
@@ -77,7 +92,7 @@ export async function createDocument(req: Request, res: Response) {
     console.log('Request for createDocument Triggered')
     
     const handler = dependencies.get('handlers').command.get(CreateDocumentCommand);
-
+        
     try {
         await handler.handle(new CreateDocumentCommand(req.body));
 
@@ -135,6 +150,7 @@ export async function moveDocument(req: Request, res: Response) {
 
         res.status(204).send()
     } catch (e) {
+        res.status(500).send(e)
         return e;
     }
 }
@@ -151,6 +167,130 @@ export async function deleteDocument(req: Request, res: Response) {
         await handler.handle(
             new RemoveDocumentCommand({
                 id: id
+            })
+        );
+
+        res.status(204).send()
+    } catch (e) {
+        return e;
+    }
+}
+
+export async function pushDocument(req: Request, res: Response) {
+    console.log("Request for pushDocument triggered");
+
+    const { id } = req.params;
+
+    const queryBus = dependencies.get(BUSES).query;
+    const commandBus = dependencies.get(BUSES).command;
+
+    const deploymentConfigsByEnvironmentSearcher = dependencies.get("handlers").query.get(SearchByEnvironmentIsDeployedDeploymentConfigsQuery);
+    queryBus.addQueryHandlers([deploymentConfigsByEnvironmentSearcher]);
+
+    const deploymentcConfigsCreator = dependencies.get("handlers").command.get(CreateDeploymentConfigsCommand);
+    commandBus.addCommandHandlers([deploymentcConfigsCreator]);
+
+    const deploymentConfigsUpdater = dependencies.get("handlers").command.get(UpdateDeploymentConfigsCommand);
+    commandBus.addCommandHandlers([deploymentConfigsUpdater]);
+
+    const command = dependencies.get("handlers").command.get(PushDocumentCommand);
+
+    console.log("Id to push: ", id);
+
+    try{
+        await command.handle(new PushDocumentCommand({
+            id: id
+        }));
+
+        res.status(204).send();
+    }
+    catch(e){
+        return e;
+    }
+}
+
+export async function undoPushDocument(req: Request, res: Response) {
+    console.log("Request for undoPushDocument triggered");
+
+    const { id } = req.params;
+
+    const queryBus = dependencies.get(BUSES).query;
+    const commandBus = dependencies.get(BUSES).command;
+
+    const deploymentConfigsByEnvironmentSearcher = dependencies.get("handlers").query.get(SearchByEnvironmentIsDeployedDeploymentConfigsQuery);
+    queryBus.addQueryHandlers([deploymentConfigsByEnvironmentSearcher]);
+
+    const deploymentConfigsUpdater = dependencies.get("handlers").command.get(UpdateDeploymentConfigsCommand);
+    commandBus.addCommandHandlers([deploymentConfigsUpdater]);
+
+    const command = dependencies.get("handlers").command.get(UndoPushDocumentCommand);
+
+    console.log("Id to undoPush: ", id);
+
+    try{
+        await command.handle(new UndoPushDocumentCommand({
+            id: id
+        }));
+
+        res.status(204).send();
+    }
+    catch(e){
+        return e;
+    }
+}
+
+export async function deployDocuments(req: Request, res: Response) {
+    console.log("Request for documents triggered");
+
+    const { environmentId } = req.params;
+
+    const queryBus = dependencies.get(BUSES).query;
+    const commandBus = dependencies.get(BUSES).command;
+
+    /* Environment & DeploymentConfigs finders */
+    const deploymentConfigsByEnvironmentFinder = dependencies.get("handlers").query.get(SearchByEnvironmentIsDeployedDeploymentConfigsQuery);
+    queryBus.addQueryHandlers([deploymentConfigsByEnvironmentFinder]);
+
+    const environmentFinder = dependencies.get("handlers").query.get(FindEnvironmentQuery);
+    queryBus.addQueryHandlers([environmentFinder]);
+
+    /* Deploy deploymentConfigs & update environment (also update docs) */
+    const environmentDeployer = dependencies.get("handlers").command.get(DeployEnvironmentCommand);
+    commandBus.addCommandHandlers([environmentDeployer])
+
+    const deployDeploymentConfigs = dependencies.get("handlers").command.get(DeployDeploymentConfigsCommand);
+    commandBus.addCommandHandlers([deployDeploymentConfigs]);
+
+    const command = dependencies.get("handlers").command.get(DeployDocumentCommand);
+
+    console.log("Id of the environment to deploy: ", environmentId);
+
+    try{
+        await command.handle(new DeployDocumentCommand({
+            environmentId: environmentId
+        }));
+
+        res.status(204).send();
+    }
+    catch(e){
+        return e;
+    }
+}
+
+export async function restoreDocument(req: Request, res: Response) {
+    console.log('Request for restoreDocument Triggered')
+
+    const { id, version } = req.params
+
+    const handler = dependencies.get('handlers').command.get(RestoreDocumentCommand);
+
+    console.log('Id to restore ', id)
+
+    try {
+        await handler.handle(
+            new RestoreDocumentCommand({
+                id: id,
+                version: version
             })
         );
 

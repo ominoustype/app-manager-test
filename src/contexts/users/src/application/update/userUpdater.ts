@@ -2,6 +2,12 @@ import { EventBus } from "@context/shared/domain/eventBus/eventBus";
 import UpdateUserCommand from "./updateUserCommand";
 import UserRepository from "../../domain/userRepository";
 import UserByUsernameFinder from "@src/domain/userByUsernameFinder";
+import { QueryBus } from "@context/shared/domain/queryBus/queryBus";
+import { CommandBus } from "@context/shared/domain/commandBus/commandBus";
+import UpdateRoleCommand from "@context/roles/application/update/updateRoleCommand";
+import UserNotFoundError from "@src/domain/errors/userNotFoundError";
+import FindRoleQuery from "@context/roles/application/find/findRoleQuery";
+import FindRoleResponse from "@context/roles/application/find/findRoleResponse";
 
 export default class UserUpdater {
     private readonly repository: UserRepository;
@@ -10,29 +16,61 @@ export default class UserUpdater {
 
     private readonly finder: UserByUsernameFinder;
 
-    constructor(repository: UserRepository, eventBus: EventBus) {
+    private readonly queryBus: QueryBus;
+
+    private readonly commandBus: CommandBus;
+
+    constructor(repository: UserRepository, eventBus: EventBus, queryBus: QueryBus, commandBus: CommandBus) {
         this.repository = repository;
         this.eventBus = eventBus;
         this.finder = new UserByUsernameFinder(repository);
+        this.queryBus = queryBus;
+        this.commandBus = commandBus;
     }
 
     async run(command: UpdateUserCommand): Promise<void> {
-        if (!command.data.username) {
+        const { 
+            user: userPrimitives, 
+            role: rolePrimitives, 
+            username: username
+        } = command.data;
+
+        if (!username) {
             return;
         }
         
-        const user = await this.finder.find(command.data.username);
+        const user = await this.finder.find(username);
 
-        const updUser = user.update(command.data);
+        if(!user) {
+            throw new UserNotFoundError(username);
+        }
+
+        const updUser = user.update(userPrimitives);
 
         if (!updUser) {
             return;
         }
 
+        /* Find Role */
+        const roleResponse = await this.queryBus.ask(
+            new FindRoleQuery({
+                 id: user.role?.id.value 
+            })
+        ) as FindRoleResponse;
+
+        if(!roleResponse?.primitives) {
+            throw new Error("LOL");
+        }
+
         await this.repository.update(updUser);
 
         await this.eventBus.publish(updUser.pullDomainEvents());
+
+        /* Update Role */
+        await this.commandBus.dispatch(
+            new UpdateRoleCommand({
+                ...rolePrimitives
+            }
+        ));
     }
 }
-
-module.exports = UserUpdater;

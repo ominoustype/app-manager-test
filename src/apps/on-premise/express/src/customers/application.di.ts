@@ -33,10 +33,9 @@ const searchCustomerQueryHandler = new SearchCustomersQueryHandler(customerSearc
 const queryHandlers = new Map<any, any>();
 queryHandlers.set(FindCustomerQuery, findCustomerQueryHandler);
 queryHandlers.set(SearchCustomersQuery, searchCustomerQueryHandler);
-queryHandlers.set(FindCustomerQuery, findCustomerQueryHandler);
 
 dependencies.set(HANDLERS, { query: queryHandlers });
-dependencies.set(REPOSITORIES, repository);
+dependencies.set(REPOSITORIES, { repository: repository });
 dependencies.set(ARRANGER, arranger);
 
 export { dependencies, HANDLERS };

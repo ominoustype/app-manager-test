@@ -22,7 +22,7 @@
         "lint:contexts": "npx lerna run lint --scope @context/* --since $(git describe --tags --abbrev=0) --stream",
         "lint:apps": "npx lerna run lint --scope @app/* --since $(git describe --tags --abbrev=0) --stream",
         "build": "npx lerna run build --scope @context/* --since $(git describe --tags --abbrev=0)",
-        "build:lol": "yarn build:documents && yarn run build:deploymentConfigs && yarn run build:environments && yarn run build:roles && yarn run build:roles && yarn run build:customers && yarn run build:shared",
+        "build:all": "yarn build:documents && yarn run build:deploymentConfigs && yarn run build:environments && yarn run build:roles && yarn run build:roles && yarn run build:customers && yarn run build:shared",
         "build:documents": "cd src/contexts/documents && yarn build",
         "build:deploymentConfigs": "cd src/contexts/deploymentConfigs && yarn build",
         "build:environments": "cd src/contexts/environments && yarn build",

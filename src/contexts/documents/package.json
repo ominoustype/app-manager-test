@@ -41,6 +41,7 @@
         "@commitlint/config-conventional": "^16.2.1",
         "@context/shared": "^1.0.1",
         "@context/environments": "^1.0.1",
+        "@context/deploymentConfigs": "^1.0.1",
         "aws-sdk": "^2.1082.0",
         "aws-xray-sdk": "^3.3.4",
         "dynamodb-onetable": "^2.3.6",

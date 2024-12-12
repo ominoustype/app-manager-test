@@ -17,7 +17,7 @@ export default class LoginUserQueryMother {
     static fromUser(user: User) {
         return LoginUserQueryMother.create({
             username: user.username.value,
-            password: UsernameMother.random().toString()
+            password: user.password!.value
         });
     }
 }
