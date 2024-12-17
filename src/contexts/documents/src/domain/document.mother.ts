@@ -6,11 +6,11 @@ import DocumentTypeMother from "./documentType.mother";
 import DocumentNameMother from "./documentName.mother";
 import DocumentVersionMother from "./documentVersion.mother";
 import DocumentIdMother from "./documentId.mother";
-import UpdatesByMother from "./updates/updatesBy.mother";
 import PropertiesMother from "./properties/properties.mother";
 import CustomerMother from "./customer/customer.mother";
 import EnvironmentMother from "./environment/environment.mother";
 import DocumentStatusMother from "./documentStatus.mother";
+import PreviousesMother from "./previous/previouses.mother";
 
 export default class DocumentMother {
     static create(primitives: DocumentPrimitives): Document {
@@ -21,6 +21,7 @@ export default class DocumentMother {
         return DocumentMother.create({
             id: DocumentIdMother.random().value,
             createdAt: DatetimeMother.random().toString(),
+            savedAt: DatetimeMother.random().toString(),
             name: DocumentNameMother.random().toString(),
             type: DocumentTypeMother.random(),
             version: DocumentVersionMother.random().toString(),
@@ -28,9 +29,23 @@ export default class DocumentMother {
             properties: PropertiesMother.random().toPrimitives(),
             customer: CustomerMother.random().toPrimitives(),
             environment: EnvironmentMother.random().toPrimitives(),
-            updatedBy: UpdatesByMother.random().toPrimitives(),
+            previous: PreviousesMother.random().toPrimitives(),
             ...primitives
         })
+    }
+
+    static randomNotReady(primitives?: Partial<DocumentPrimitives>): Document {
+        return DocumentMother.random({
+            ...primitives,
+            previous: PreviousesMother.randomNotReady().toPrimitives()
+        });
+    }
+
+    static randomReady(primitives?: Partial<DocumentPrimitives>): Document {
+        return DocumentMother.random({
+            ...primitives,
+            previous: PreviousesMother.randomReady().toPrimitives()
+        });
     }
 
     static randomList() {

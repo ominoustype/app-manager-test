@@ -9,11 +9,11 @@ export default class NewUserCreatedDomainEventMother {
 
     static random(): NewUserCreatedDomainEvent {
         return NewUserCreatedDomainEventMother.create(
-            UserMother.random().fullToPrimitives()
+            UserMother.random().toPrimitives()
         )
     }
 
     static fromUser(user: User): NewUserCreatedDomainEvent {
-        return NewUserCreatedDomainEventMother.create(user.fullToPrimitives());
+        return NewUserCreatedDomainEventMother.create(user.toPrimitives());
     }
 }

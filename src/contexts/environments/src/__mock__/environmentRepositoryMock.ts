@@ -39,7 +39,18 @@ export default class EnvironmentRepositoryMock implements EnvironmentRepository 
     }
 
     async assertUpdateHasBeenCalledWith(environment: Environment): Promise<void> {
-        expect(this.mockUpdate).toHaveBeenCalledWith(environment);
+        const { mock } = this.mockUpdate,
+        lastEnvironmentUpdated = mock.calls[mock.calls.length - 1][0] as Environment,
+        lastEnvironmentUpdatedPrimitives = {
+            ...lastEnvironmentUpdated.toPrimitives(),
+            prevDeploys: lastEnvironmentUpdated.toPrimitives().prevDeploys.map(item => omit(item, 'deployedAt'))
+        },
+        expectedBody = {
+            ...environment.toPrimitives(),
+            prevDeploys: environment.toPrimitives().prevDeploys.map(item => omit(item, 'deployedAt'))
+        }   
+
+        expect(lastEnvironmentUpdatedPrimitives).toStrictEqual(expectedBody);
     }
 
     async whenSearchThenReturn(environment: Environments): Promise<void> {

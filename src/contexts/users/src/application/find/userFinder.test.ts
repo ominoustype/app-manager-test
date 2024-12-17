@@ -21,7 +21,7 @@ describe('userFinder', () => {
 
         await handler.handle(query);
 
-        repository.assertFindByUsernameHasBeenCalledWith(new Username(query.username))
+            repository.assertFindByUsernameHasBeenCalledWith(new Username(query.username))
     });
 
     it('should find an user', async () => {

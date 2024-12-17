@@ -4,7 +4,9 @@
     "cacheDirectory": ".tmp/jestCache",
     "moduleNameMapper": {
         "@src/(.*)$": "<rootDir>/src/$1",
-        "@context/shared/(.*)$": "<rootDir>/../shared/dist/$1"
+        "@context/shared/(.*)$": "<rootDir>/../shared/dist/$1",
+        "@context/roles/(.*)$": "<rootDir>/../roles/dist/$1"
+
     },
     "coverageDirectory": "./reports/coverage",
     "coverageReporters": ["lcov", "text-summary"],

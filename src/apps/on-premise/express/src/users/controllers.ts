@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import CreateUserCommand from '@context/users/application/create/createUserCommand'
 import FindUserQuery from '@context/users/application/find/findUserQuery'
 import SearchUsersQuery from '@context/users/application/search/searchUsersQuery'
@@ -14,8 +14,12 @@ import RefreshTokenQuery from '@context/users/application/refreshToken/refreshTo
 import RefreshTokenResponse from '@context/users/application/refreshToken/refreshTokenResponse'
 import InMemoryQueryBus from '@context/shared/infrastructure/queryBus/inMemoryQueryBus'
 import FindRoleQuery from '@context/roles/application/find/findRoleQuery'
-import InMemoryCommandBus from '@context/shared/infrastructure/commandBus/inMemoryCommandBus'
 import RemoveRoleCommand from '@context/roles/application/delete/removeRoleCommand'
+import InMemoryCommandBus from '@context/shared/infrastructure/commandBus/inMemoryCommandBus'
+import CreateRoleQuery from '@context/roles/application/create/createRoleQuery'
+import { CustomRequest } from '@src/middleware/auths'
+import UpdateRoleCommand from '@context/roles/application/update/updateRoleCommand'
+import RefreshTokenQueryHandler from '@context/users/application/refreshToken/refreshTokenQueryHandler'
 
 
 export async function searchUsers(req: Request, res: Response) {
@@ -64,14 +68,17 @@ export async function findUser(req: Request, res: Response) {
 export async function createUser(req: Request, res: Response) {
     console.log('Request for createUser Triggered')
 
-    const queryBus = dependencies.get('buses').query.get(InMemoryQueryBus);
-    const commandBus = dependencies.get('buses').command.get(InMemoryCommandBus);
+    const queryBus = dependencies.get('buses').query as InMemoryQueryBus;
+    const commandBus = dependencies.get('buses').command as InMemoryCommandBus;
 
     const roleFinder = dependencies.get('handlers').query.get(FindRoleQuery);
-    queryBus.addHandlers(roleFinder);
+    queryBus.addQueryHandlers([roleFinder]);
 
+    const roleCreator = dependencies.get('handlers').query.get(CreateRoleQuery);
+    queryBus.addQueryHandlers([roleCreator]);
+    
     const roleRemover = dependencies.get('handlers').command.get(RemoveRoleCommand);
-    commandBus.addHandlers(roleRemover);
+    commandBus.addCommandHandlers([roleRemover]);
     
     const handler = dependencies.get('handlers').command.get(CreateUserCommand);
 
@@ -88,6 +95,15 @@ export async function updateUser(req: Request, res: Response) {
     console.log('Request for updateUser Triggered')
 
     const { username } = req.params
+
+    const queryBus = dependencies.get('buses').query as InMemoryQueryBus;
+    const commandBus = dependencies.get('buses').command as InMemoryCommandBus;
+
+    const roleFinder = dependencies.get('handlers').query.get(FindRoleQuery);
+    queryBus.addQueryHandlers([roleFinder]);
+
+    const roleUpdater = dependencies.get('handlers').command.get(UpdateRoleCommand);
+    commandBus.addCommandHandlers([roleUpdater]);
 
     const handler = dependencies.get('handlers').command.get(UpdateUserCommand);
 
@@ -178,10 +194,10 @@ export async function logInUser(req: Request, res: Response) {
     console.log('Request for logInUser Triggered')
     const { username, password } = req.body
 
-    const queryBus = dependencies.get('buses').query.get(InMemoryQueryBus);
+    const queryBus = dependencies.get('buses').query as InMemoryQueryBus;
 
     const roleFinder = dependencies.get('handlers').query.get(FindRoleQuery);
-    queryBus.addHandlers(roleFinder);
+    queryBus.addQueryHandlers([ roleFinder ]);
 
     const handler = dependencies.get('handlers').query.get(LogInUserQuery);
     console.log('Username to login', username)
@@ -235,12 +251,12 @@ export async function refreshToken(req: Request, res: Response) {
 
     const { refreshToken } = req.body
 
-    const queryBus = dependencies.get('buses').query.get(InMemoryQueryBus);
+    const queryBus = dependencies.get('buses').query as InMemoryQueryBus;
 
     const roleFinder = dependencies.get('handlers').query.get(FindRoleQuery);
-    queryBus.addHandlers(roleFinder);
+    queryBus.addQueryHandlers([roleFinder]);
     
-    const handler = dependencies.get('handlers').query.get(RefreshTokenQuery);
+    const handler = await dependencies.get('handlers').query.get(RefreshTokenQuery) as RefreshTokenQueryHandler;
 
     console.log('Refresh token to be used', refreshToken);
 
@@ -254,6 +270,28 @@ export async function refreshToken(req: Request, res: Response) {
         });
     }
     catch(e) {
+        console.log(e);
         res.status(500).send({ error: e });
+    }
+}
+
+export async function checkPrivileges(req: Request, res: Response, next: NextFunction) {
+    const payload = (req as CustomRequest).payload;
+
+    const role = payload.permissions.roleName;
+    
+    const newRole = req.body.role.name;
+
+    try {
+        if(newRole === "ROOT")
+            throw new Error("Access forbiden");
+    
+        if(newRole === "MANAGER" && role !== "ROOT")
+            throw new Error("Access forbiden");
+
+        next();
+    }
+    catch(e) {
+        res.status(403).send({ error: e });
     }
 }

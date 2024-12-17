@@ -5,11 +5,12 @@ import UserByUsernameFinder from '@src/domain/userByUsernameFinder';
 import UserRepository from '@src/domain/userRepository';
 import LogInUserQuery from './loginUserQuery';
 import LogInUserResponse from './loginUserResponse';
-
-import PasswordValidator from '@src/infrastructure/persistence/mongo/passwordValidator';
 import Password from '@src/domain/password/password';
 import Tokenator from '@src/infrastructure/persistence/mongo/tokenator';
 import Token from '@src/domain/session/token';
+import PasswordValidator from '@src/domain/password/passwordValidator';
+import UserNotFoundError from '@src/domain/errors/userNotFoundError';
+import InvalidPasswordError from '@src/domain/errors/invalidPasswordError';
 
 export default class UserLoggerIn {
     private readonly finder: UserByUsernameFinder;
@@ -25,18 +26,20 @@ export default class UserLoggerIn {
     }
 
     async run(query: LogInUserQuery): Promise<LogInUserResponse> {
-        const user = await this.finder.find(query.username);
+        const { username, password } = query;
 
-        if(!user.password)
-            return Promise.reject("User not found");
+        const user = await this.finder.find(username);
+
+        if(!user?.password)
+            throw new UserNotFoundError(username);
 
         const isValid = this.validator.validate(
-            new Password(query.password), 
+            new Password(password), 
             user.password
         );
 
         if(!isValid)
-            return Promise.reject("Wrong password");
+            throw new InvalidPasswordError(username);
 
         const role = (await this.queryBus.ask(
             new FindRoleQuery({ 
@@ -44,7 +47,7 @@ export default class UserLoggerIn {
             }))) as FindRoleResponse;
 
         if(!role)
-            return Promise.reject("Role not found");
+            throw new Error("Role not found");
 
         const accessToken = this.generator.generateAccessToken(user.toPrimitives(), role.primitives);
         const refreshToken = this.generator.generateRefreshToken(user.toPrimitives());

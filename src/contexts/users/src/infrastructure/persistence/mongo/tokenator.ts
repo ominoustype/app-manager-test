@@ -4,7 +4,7 @@ import { UserPrimitives } from '@src/domain/user';
 import { JwtPayload, Secret, sign, TokenExpiredError, verify } from 'jsonwebtoken';
 
 export const SECRET_KEY: Secret = 'appmanager';
-export const ACCESS_EXPIRES_IN = 300;
+export const ACCESS_EXPIRES_IN = 60;
 export const REFRESH_EXPIRES_IN = '14 days';
 
 export default class Tokenator implements InterfaceTokenator {
@@ -16,12 +16,14 @@ export default class Tokenator implements InterfaceTokenator {
         const accessToken = sign({
             id: user.id, 
             username: user.username,
-            //source: 'ADMIN_UI_WEB', //? 
+            name: user.name,
+            roleId: role.id,
             permissions: {
-                id: user.role?.name,
-                environmentIds: [role.environmentIds]
+                roleName: role.name,
+                customerId: role.customerId,
+                environmentIds: role.environments?.map((role)  => role.id)
             }
-        },
+        } as TokenPayload,
             SECRET_KEY,
         { 
             expiresIn: ACCESS_EXPIRES_IN
@@ -54,7 +56,7 @@ export default class Tokenator implements InterfaceTokenator {
 
             return { payload: payload, isValid: true };
         }
-        catch(e){
+        catch(e) {
             if (e instanceof TokenExpiredError) { 
                 console.log("Expired Token!");
             }

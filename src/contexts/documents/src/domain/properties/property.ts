@@ -14,13 +14,13 @@ export default class Property extends AggregateRoot {
     constructor(primitives: PropertyPrimitives) {
         super();
         this.key = new PropertyKey(primitives.key);
-        this.value = new PropertyValue(JSON.stringify(primitives.value));
+        this.value = new PropertyValue(primitives.value);
     }
 
     toPrimitives(): PropertyPrimitives {
         return {
             key: this.key.toString(),
-            value: JSON.parse(this.value.value),
+            value: this.value.toString(),
         };
     }
 

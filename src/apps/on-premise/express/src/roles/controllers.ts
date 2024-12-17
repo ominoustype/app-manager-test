@@ -2,14 +2,14 @@ import { Request, Response } from "express";
 import { dependencies, HANDLERS } from './application.di'
 import FindRoleQuery from "@context/roles/application/find/findRoleQuery";
 import FindRoleQueryHandler from "@context/roles/application/find/findRoleQueryHandler";
-import CreateRoleCommand from "@context/roles/application/create/createRoleCommand";
-import CreateRoleCommandHandler from "@context/roles/application/create/createRoleCommandHandler";
 import UpdateRoleCommand from "@context/roles/application/update/updateRoleCommand";
 import UpdateRoleCommandHandler from "@context/roles/application/update/updateRoleCommandHandler";
 import RemoveRoleCommand from "@context/roles/application/delete/removeRoleCommand";
 import RemoveRoleCommandHandler from "@context/roles/application/delete/removeRoleCommandHandler";
 import SearchRolesQueryHandler from "@context/roles/application/search/searchRolesQueryHandler";
 import SearchRolesQuery from "@context/roles/application/search/searchRolesQuery";
+import CreateRoleQueryHandler from "@context/roles/application/create/createRoleQueryHandler";
+import CreateRoleQuery from "@context/roles/application/create/createRoleQuery";
 
 const CONTENT_TYPE = 'content-type';
 const APPLICATION_JSON = 'application/json';
@@ -57,12 +57,12 @@ export async function findRole(req: Request, res: Response) {
 export async function createRole(req: Request, res: Response) {
     console.log("Request for createRole triggered");
 
-    const handler = dependencies.get(HANDLERS).command.get(CreateRoleCommand) as 
-        CreateRoleCommandHandler;
+    const handler = dependencies.get(HANDLERS).query.get(CreateRoleQuery) as 
+        CreateRoleQueryHandler;
 
     try{
-        await handler.handle(new CreateRoleCommand(req.body));
-        res.status(201).send();
+        const newRole = await handler.handle(new CreateRoleQuery(req.body));
+        res.status(201).send({ result: newRole});
     }
     catch(e){
         return e;

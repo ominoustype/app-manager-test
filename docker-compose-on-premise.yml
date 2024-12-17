@@ -10,6 +10,19 @@ services:
             - 27017:27017
         command: mongod --quiet --logpath /dev/null
 
+    #Redis Cache Services
+    redis_cache:
+        image:  redis:latest
+        container_name: redis_cache
+        restart: always
+        volumes:
+            - redis_cache:/data/cache
+        ports:
+            - 6379:6379
+        command: redis-server --save 20 1 --loglevel warning
+        depends_on:
+            - mongo_db
+
     #Node Express Services
     express:
         build: .
@@ -21,12 +34,15 @@ services:
             - PORT_CONTAINER=3000
             - MONGODB_URI=mongodb://mongo_db:27017/
             - DEPLOYMENT_MESSAGE=Dockerized for on-premise
+            - REDIS_HOST=redis_cache
+            - REDIS_PORT=6379
         depends_on: 
             - mongo_db
         # TODO healthchecks
 
 volumes: 
     mongo_db: {}
+    redis_cache: {}
 
 networks:
     default:

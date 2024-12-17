@@ -3,21 +3,21 @@ import Username from "@src/domain/username";
 import RefreshTokenQuery from "./refreshTokenQuery";
 import RefreshTokenResponse from "./refreshTokenResponse";
 import Tokenator from "@src/domain/session/tokenator";
-import RedisService from "@context/shared/infrastructure/redis/redis";
 import { QueryBus } from "@context/shared/domain/queryBus/queryBus";
 import FindRoleQuery from "@context/roles/application/find/findRoleQuery";
 import FindRoleResponse from "@context/roles/application/find/findRoleResponse";
+import TokenRepository from "@src/infrastructure/persistence/redis/tokenRedisRespository";
 
 export default class TokenRefresher {
     private readonly repository: UserRepository;
     private readonly tokenator: Tokenator;
-    private readonly redisService: RedisService;
+    private readonly tokenRepository: TokenRepository;
     private readonly queryBus: QueryBus;
 
-    constructor(repository: UserRepository, tokenator: Tokenator, redisService: RedisService, queryBus: QueryBus) {
+    constructor(repository: UserRepository, tokenator: Tokenator, tokenRepository: TokenRepository, queryBus: QueryBus) {
         this.repository = repository;
         this.tokenator = tokenator;
-        this.redisService = redisService;
+        this.tokenRepository = tokenRepository;
         this.queryBus = queryBus;
     }
 
@@ -34,7 +34,7 @@ export default class TokenRefresher {
 
         const ttl = this.tokenator.timeToLife(payload!);
 
-        this.redisService.setEx(refreshToken, ttl);
+        await this.tokenRepository.create(refreshToken, ttl);
 
         const user = await this.repository.findByUsername(
             new Username(payload!.username)
@@ -45,13 +45,15 @@ export default class TokenRefresher {
 
         const role = (await this.queryBus.ask(
             new FindRoleQuery({ 
-                id:user.role.id.value 
+                id: user.role.id.value 
             }))) as FindRoleResponse;
 
         if(!role)
-            return Promise.reject("Role not found");
+            throw new Error("Role not found");
 
         const accessToken = this.tokenator.generateAccessToken(user.toPrimitives(), role.primitives);
+
+        console.log("nuevo access "+accessToken);
 
         return new RefreshTokenResponse(accessToken);
     }

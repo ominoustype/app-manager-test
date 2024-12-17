@@ -8,6 +8,7 @@ import DocumentUpdatedDomainEventMother from "@src/domain/documentUpdatedDomainE
 import QueryBusMock from "@context/shared/__mocks__/queryBus.mock";
 import FindEnvironmentResponseMother from "@context/environments/application/find/findEnvironmentResponse.mother";
 import EnvironmentMother from "@src/domain/environment/environment.mother";
+import DocumentPreviousReadyError from "@src/domain/errors/documentPreviousReadyError";
 
 describe('documentMover', () => {
     it('should call the repository with the correct parameters', async () => {
@@ -20,22 +21,23 @@ describe('documentMover', () => {
                 new DocumentMover(repository,eventBus,queryBus)
             ),
             command = MoveDocumentCommandMother.random(),
-            document = MoveDocumentCommandMother.applyCommand(command),
+            document = MoveDocumentCommandMother.applyCommandRightValues(command),
             oldDocument = DocumentMother.create({
                 ...document.toPrimitives(),
                 environment: EnvironmentMother.random().toPrimitives()
             }),
-            expected = DocumentMother.merge(oldDocument,document);
+            //expected = DocumentMother.merge(oldDocument,document);
+            expected = oldDocument.move(document.environment.toPrimitives());
+
 
         repository.whenFindThenReturn(oldDocument);
         queryBus.whenAskThenReturn(
             FindEnvironmentResponseMother.random(document.environment.toPrimitives())
         );
 
-
         await handler.handle(command);
 
-        repository.assertUpdateHasBeenCalledWith(expected)
+        repository.assertUpdateHasBeenCalledWith(expected!, ['savedAt']);
     });
     
     it('should publish a documentUpdatedDomainEvent', async () => {
@@ -48,12 +50,14 @@ describe('documentMover', () => {
                 new DocumentMover(repository,eventBus,queryBus)
             ),
             command = MoveDocumentCommandMother.random(),
-            document = MoveDocumentCommandMother.applyCommand(command),
+            document = MoveDocumentCommandMother.applyCommandRightValues(command),
             oldDocument = DocumentMother.create({
                 ...document.toPrimitives(),
                 environment: EnvironmentMother.random().toPrimitives()
             }),
-            expected = DocumentMother.merge(oldDocument,document);
+            //expected = DocumentMother.merge(oldDocument,document);
+            expected = oldDocument.move(document.environment.toPrimitives());
+
 
         repository.whenFindThenReturn(oldDocument);
         queryBus.whenAskThenReturn(
@@ -63,8 +67,31 @@ describe('documentMover', () => {
         await handler.handle(command);
         eventBus.assertLastPublishedEventIs(
             DocumentUpdatedDomainEventMother.create(
-                expected.toPrimitives()
+                expected!.toPrimitives()
             )
         )
+    });
+
+    it('should throw a DocumentPreviousReadyError', async () => {
+        const repository = new DocumentRepositoryMock(),
+            eventBus = new EventBusMock(),
+            queryBus = new QueryBusMock(),
+            handler = new MoveDocumentCommandHandler(
+                new DocumentMover(repository,eventBus, queryBus)
+            ),
+            command = MoveDocumentCommandMother.random(),
+            document = MoveDocumentCommandMother.applyCommand(command);
+
+        repository.whenFindThenReturn(document);
+        queryBus.whenAskThenReturn(
+            FindEnvironmentResponseMother.random(document.environment.toPrimitives())
+        );
+
+        try{
+            await handler.handle(command);
+        }
+        catch(e){
+            expect(e).toBeInstanceOf(DocumentPreviousReadyError);
+        }
     });
 });

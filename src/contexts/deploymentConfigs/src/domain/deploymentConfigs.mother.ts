@@ -25,6 +25,8 @@ export default class DeploymentConfigsMother{
             deviceType: DeploymentConfigsDeviceTypeMother.random(),
             path: DeploymentConfigsPathMother.random().toString(),
             documents: DocumentsMother.random().toPrimitives(),
+            isDeployed: MotherCreator.boolean(),
+            deployedAt: DatetimeMother.random().toString(),
             ...primitives
         });
     }

@@ -9,8 +9,6 @@ import RemoveDeploymentConfigsCommandHandler from "@context/deploymentConfigs/ap
 import CreateEnvironmentCommandHandler from "@context/environments/application/create/createEnvironmentCommandHandler";
 import FindEnvironmentQueryHandler from "@context/environments/application/find/findEnvironmentQueryHandler";
 import SearchEnvironmentsQueryHandler from "@context/environments/application/search/searchEnvironmentsQueryHandler";
-import UpdateEnvironmentCommandHandler from "@context/environments/application/update/updateEnvironmentCommandHandler";
-import SearchByEnvironmentDocumentsQueryHandler from "@context/documents/application/searchByEnvironment/searchByEnvironmentDocumentsQueryHandler";
 import SearchByEnvironmentDocumentsQuery from "@context/documents/application/searchByEnvironment/searchByEnvironmentDocumentsQuery";
 import UpdateDocumentCommand from "@context/documents/application/update/updateDocumentCommand";
 import UpdateDocumentCommandHandler from "@context/documents/application/update/updateDocumentCommandHandler";
@@ -83,16 +81,14 @@ export async function updateEnvironment(req: Request, res: Response) {
     const queryBus = dependencies.get(BUSES).query;
     const commandBus = dependencies.get(BUSES).command;
 
-    const finder = dependencies.get(HANDLERS).query.get(SearchByEnvironmentDocumentsQuery) as 
-        SearchByEnvironmentDocumentsQueryHandler;
+    const finder = dependencies.get(HANDLERS).query.get(SearchByEnvironmentDocumentsQuery);
     queryBus.addQueryHandlers([finder]);
 
-    const updater = dependencies.get(HANDLERS).command.get(UpdateDocumentCommand) as 
-        UpdateDocumentCommandHandler;
-    commandBus.addQueryHandlers([updater]);
+    const updater = dependencies.get(HANDLERS).command.get(UpdateDocumentCommand);
+    commandBus.addCommandHandlers([updater]);
 
-    const handler = dependencies.get(HANDLERS).command.get(UpdateEnvironmentCommand) as 
-        UpdateEnvironmentCommandHandler;
+    const handler = dependencies.get(HANDLERS).command.get(UpdateEnvironmentCommand) as
+        UpdateDocumentCommandHandler;
 
     console.log("Id to update: "+id);
 

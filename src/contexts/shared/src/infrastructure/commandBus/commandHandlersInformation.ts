@@ -29,4 +29,11 @@ export default class CommandHandlersInformation {
 
         return commandHandler;
     }
+
+    addCommandHandlers(commandHandlers: Array<CommandHandler<Command>>) {
+        commandHandlers.forEach((commandHandler) => {
+            this.commandHandlersMap.set(
+                commandHandler.subscribedTo(), commandHandler)
+        })
+    }
 }

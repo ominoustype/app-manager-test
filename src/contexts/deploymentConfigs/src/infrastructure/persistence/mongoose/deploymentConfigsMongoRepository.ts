@@ -7,6 +7,7 @@ import Orders from "@context/shared/domain/criteria/orders";
 import { Nullable } from "@context/shared/domain/nullable";
 import MongoRepository from "@context/shared/infrastructure/mongo/mongoRepository"
 import { SearchDeploymentsConfigsQueryParams } from "@src/application/search/searchDeploymentsConfigsQuery";
+import { SearchByEnvironmentIsDeployedDeploymentConfigsQueryParams } from "@src/application/searchByEnvironmentIsDeployed/searchByEnvironmentIsDeployedDeploymentConfigsQuery";
 import DeploymentConfigs from "@src/domain/deploymentConfigs"
 import DeploymentConfigsId from "@src/domain/deploymentConfigsId";
 import DeploymentConfigsRepository from "@src/domain/deploymentConfigsRepository";
@@ -46,6 +47,10 @@ export default class DeploymentConfigsMongoRepository extends
 
     async update(deploymentConfigs: DeploymentConfigs): Promise<void> {
         await this.persist(deploymentConfigs.id.value, deploymentConfigs);
+    }
+
+    async deploy(deploymentConfigs: DeploymentConfigs): Promise<void> {
+        await this.persist(deploymentConfigs.id.value, deploymentConfigs)
     }
 
     async search(params: SearchDeploymentsConfigsQueryParams = {}): Promise<DeploymentsConfigs> {
@@ -93,9 +98,32 @@ export default class DeploymentConfigsMongoRepository extends
             items.length <= 0 ? [] : items.map((i) => i.toPrimitives())
         );
     }
+    
+    async searchByEnvironmentIsDeployed(params: SearchByEnvironmentIsDeployedDeploymentConfigsQueryParams): Promise<DeploymentsConfigs> {
+        const { environmentId, isDeployed } = params;
+
+        const find = {
+            'environment.id': {
+                $eq: environmentId
+            },
+            'isDeployed': {
+                $eq: isDeployed
+            }
+        };
+
+        const collection = (await this.collection());
+
+        const documents = collection.find(find);
+        const items = (await documents.toArray()).map((deploymentConfigs) => 
+            this.getParsed(deploymentConfigs)
+        );
+        
+        return new DeploymentsConfigs(items.length <= 0 ? [] : items.map((i) => i.toPrimitives()));
+    }
 
     getParsed(deploymentConfigs: any): DeploymentConfigs{
         return DeploymentConfigs.fromPrimitives({
+            
             ...deploymentConfigs,
             id: deploymentConfigs._id
         });

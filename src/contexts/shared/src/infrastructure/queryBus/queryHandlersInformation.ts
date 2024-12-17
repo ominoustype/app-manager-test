@@ -27,7 +27,7 @@ export default class QueryHandlersInformation {
         if (!queryHandler) {
             throw new QueryNotRegisteredError(query);
         }
-
+    
         return queryHandler;
     }
 

@@ -15,7 +15,9 @@ RUN yarn install --force --frozen-lockfile
 COPY . ./
 
 # Build up the project
-RUN yarn build:all:prod
+RUN yarn build:all
+RUN yarn build:apps
+
     # yarn build:all is also OK, although slower since tests are also transpiled&compiled
     
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

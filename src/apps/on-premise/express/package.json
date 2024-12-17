@@ -32,9 +32,9 @@
         "build": "yarn build:clean && yarn build:tsc",
         "build:clean": "rm -r dist; exit 0",
         "build:tsc": "tsc && tscpaths -p tsconfig.json -s ./src -o ./dist",
+        "build:prod": "yarn build:clean && yarn build:tsc",
         "serve": "nodemon src/index.ts",
         "serve:dev": "ts-node src/index.ts"
-
     },
     "dependencies": {
         "@context/deploymentConfigs": "^1.0.1",

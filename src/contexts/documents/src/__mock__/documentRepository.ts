@@ -70,8 +70,18 @@ export default class DocumentRepositoryMock implements DocumentRepository {
         return this.mockUpdate(document);
     }
 
-    async assertUpdateHasBeenCalledWith(document: Document): Promise<void> {
-        expect(this.mockUpdate).toHaveBeenCalledWith(document);
+    async assertUpdateHasBeenCalledWith(document: Document, exclusions: Array<string>): Promise<void> {
+        const { mock } = this.mockUpdate,
+            lastDocumentUpdated = mock.calls[mock.calls.length - 1][0],
+            lastDocumentUpdatedPrimitives = omit(
+                lastDocumentUpdated.toPrimitives(),
+                exclusions ?? []
+            ),
+            expectedBody = omit(document.toPrimitives(), exclusions ?? []);
+        
+        expect(expectedBody).toStrictEqual(lastDocumentUpdatedPrimitives);
+
+        //expect(this.mockUpdate).toHaveBeenCalledWith(omit(document.toPrimitives(), exclusions));
     }
 
     delete(document: Document): Promise<void> {

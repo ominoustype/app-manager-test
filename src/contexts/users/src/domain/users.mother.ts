@@ -13,13 +13,13 @@ export default class UsersMother {
 
     static random(): Users {
         return UsersMother.create(
-            UserMother.randomList().map((d: User) => d.fullToPrimitives())
+            UserMother.randomList().map((d: User) => d.toPrimitives())
         );
     }
 
     static randomWithSize(size: number): Users {
         return UsersMother.create(
-            UserMother.randomListWithSize(size).map((d: User) => d.fullToPrimitives())
+            UserMother.randomListWithSize(size).map((d: User) => d.toPrimitives())
         );
     }
 }

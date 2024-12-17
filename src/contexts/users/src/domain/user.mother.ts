@@ -48,7 +48,7 @@ export default class UserMother {
 
     static merge(oldUser: User, newUser: User) {
         return UserMother.create({
-            ...oldUser.merge(newUser.fullToPrimitives())
+            ...oldUser.merge(newUser.toPrimitives())
         });
     }
 

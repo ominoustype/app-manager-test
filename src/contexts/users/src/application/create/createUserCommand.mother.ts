@@ -1,7 +1,8 @@
-import UuidMother from "@context/shared/domain/uuid.mother";
+import RoleMother from "@context/roles/domain/role.mother";
 import User from "../../domain/user";
 import UserMother from "../../domain/user.mother";
 import CreateUserCommand, { CreateUserCommandData } from "./createUserCommand";
+import UsernameMother from "@src/domain/username.mother";
 
 export default class CreateUserCommandMother {
     static create(data: CreateUserCommandData): CreateUserCommand {
@@ -10,13 +11,14 @@ export default class CreateUserCommandMother {
 
     static random(): CreateUserCommand {
         return CreateUserCommandMother.create({
-            userPrimitives: UserMother.random().fullToPrimitives(),
-            roleId: UuidMother.random().value
+            user: UserMother.random().toPrimitives(),
+            role: RoleMother.random().toPrimitives(),
+            username: UsernameMother.random.toString()
         });
     }
 
     static applyCommand(command: CreateUserCommand): User {
-        return UserMother.random(command.data.userPrimitives);
+        return UserMother.random(command.data.user);
     }
 }
 

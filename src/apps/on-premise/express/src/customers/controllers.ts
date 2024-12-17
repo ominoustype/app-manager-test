@@ -18,7 +18,7 @@ export async function searchCustomers(req: Request, res: Response) {
         new SearchCustomersQuery({
             ...req.query
     }));
-    console.log(result);
+
     res.header(CONTENT_TYPE, APPLICATION_JSON);
     res.status(200).send({
         body: { result: result.customers }
