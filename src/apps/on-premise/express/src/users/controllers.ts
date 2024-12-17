@@ -258,9 +258,6 @@ export async function refreshToken(req: Request, res: Response) {
     
     const handler = await dependencies.get('handlers').query.get(RefreshTokenQuery) as RefreshTokenQueryHandler;
 
-    if(!handler)
-        console.log("epero queeeeeee");
-
     console.log('Refresh token to be used', refreshToken);
 
     try{
