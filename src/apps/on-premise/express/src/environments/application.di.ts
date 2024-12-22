@@ -1,5 +1,5 @@
 import InMemorySyncEventBus from "@context/shared/infrastructure/eventBus/inMemorySyncEventBus";
-import EnvironmentMongoRepository from "../../../../../contexts/environments/dist/infrastructure/environmentMongoRepository";
+import EnvironmentMongoRepository from '@context/environments/infrastructure/environmentMongoRepository';
 import MongoClientFactory from "@context/shared/infrastructure/mongo/mongoClientFactory";
 import { MongoClient } from 'mongodb'
 import CreateEnvironmentCommandHandler from "@context/environments/application/create/createEnvironmentCommandHandler";
@@ -40,11 +40,11 @@ export const BUSES = "buses"
 const dependencies = new Map();
 
 const client = MongoClientFactory.createClient('environments', {
-    url: process.env.MONGODB_URI  || 'mongodb://localhost:27018/'
+    url: process.env.MONGODB_URI  || 'mongodb://localhost:27028/'
 });
 
 const clientDocuments = MongoClientFactory.createClient('documents', {
-    url: process.env.MONGODB_URI  || 'mongodb://localhost:27018/'
+    url: process.env.MONGODB_URI  || 'mongodb://localhost:27028/'
 });
 
 const environmentRepository = new EnvironmentMongoRepository(client as unknown as MongoClient);

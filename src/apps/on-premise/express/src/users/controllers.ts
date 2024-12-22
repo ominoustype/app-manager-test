@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express'
+import { Request, Response } from 'express'
 import CreateUserCommand from '@context/users/application/create/createUserCommand'
 import FindUserQuery from '@context/users/application/find/findUserQuery'
 import SearchUsersQuery from '@context/users/application/search/searchUsersQuery'
@@ -17,7 +17,6 @@ import FindRoleQuery from '@context/roles/application/find/findRoleQuery'
 import RemoveRoleCommand from '@context/roles/application/delete/removeRoleCommand'
 import InMemoryCommandBus from '@context/shared/infrastructure/commandBus/inMemoryCommandBus'
 import CreateRoleQuery from '@context/roles/application/create/createRoleQuery'
-import { CustomRequest } from '@src/middleware/auths'
 import UpdateRoleCommand from '@context/roles/application/update/updateRoleCommand'
 import RefreshTokenQueryHandler from '@context/users/application/refreshToken/refreshTokenQueryHandler'
 
@@ -275,6 +274,7 @@ export async function refreshToken(req: Request, res: Response) {
     }
 }
 
+/*
 export async function checkPrivileges(req: Request, res: Response, next: NextFunction) {
     const payload = (req as CustomRequest).payload;
 
@@ -295,3 +295,4 @@ export async function checkPrivileges(req: Request, res: Response, next: NextFun
         res.status(403).send({ error: e });
     }
 }
+*/

@@ -60,11 +60,11 @@ import { RedisClientType } from "redis";
 const dependencies = new Map();
 
 const client = MongoClientFactory.createClient('users', {
-    url: process.env.MONGODB_URI  || 'mongodb://localhost:27018/'
+    url: process.env.MONGODB_URI  || 'mongodb://localhost:27028/'
 });
 
 const roleClient = MongoClientFactory.createClient('roles', {
-    url: process.env.MONGODB_URI  || 'mongodb://localhost:27018/'
+    url: process.env.MONGODB_URI  || 'mongodb://localhost:27028/'
 });
 
 const redisHost = process.env.REDIS_HOST || 'localhost';

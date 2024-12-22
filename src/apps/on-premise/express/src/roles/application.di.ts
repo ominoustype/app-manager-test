@@ -23,7 +23,7 @@ const HANDLERS = "handlers";
 export const REPOSITORIES = "repositories"
 
 const client = MongoClientFactory.createClient('roles', { 
-    url: process.env.MONGODB_URI || 'mongodb://localhost:27018/' 
+    url: process.env.MONGODB_URI || 'mongodb://localhost:27028/' 
 });    
 
 const eventBus = new InMemorySyncEventBus;

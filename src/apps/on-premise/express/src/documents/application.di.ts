@@ -70,15 +70,15 @@ export const BUSES = "buses"
 const dependencies = new Map();
 
 const client = MongoClientFactory.createClient('documents', {
-    url: process.env.MONGODB_URI  || 'mongodb://localhost:27018/'
+    url: process.env.MONGODB_URI  || 'mongodb://localhost:27028/'
 });
 
 const environmentClient = MongoClientFactory.createClient('environments', {
-    url: process.env.MONGODB_URI  || 'mongodb://localhost:27018/'
+    url: process.env.MONGODB_URI  || 'mongodb://localhost:27028/'
 });
 
 const deploymentConfigsClient = MongoClientFactory.createClient('deploymentConfigs', {
-    url: process.env.MONGODB_URI  || 'mongodb://localhost:27018/'
+    url: process.env.MONGODB_URI  || 'mongodb://localhost:27028/'
 });
 
 const documentRepository = new DocumentMongoRepository(client as unknown as MongoClient);

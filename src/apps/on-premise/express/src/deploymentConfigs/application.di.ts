@@ -40,11 +40,11 @@ export const BUSES = "buses";
 const dependencies = new Map();
 
 const client = MongoClientFactory.createClient('deploymentConfigs', {
-    url: process.env.MONGODB_URI  || 'mongodb://localhost:27018/'
+    url: process.env.MONGODB_URI  || 'mongodb://localhost:27028/'
 });
 
 const clientEnvironment = MongoClientFactory.createClient('environments', {
-    url: process.env.MONGODB_URI  || 'mongodb://localhost:27018/'
+    url: process.env.MONGODB_URI  || 'mongodb://localhost:27028/'
 });
 
 const deploymentConfigsRepository = new DeploymentConfigsMongoRepository(client as unknown as MongoClient);

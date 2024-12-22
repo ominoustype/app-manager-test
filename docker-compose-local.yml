@@ -3,17 +3,17 @@ services:
     mongo_local_db:
         image: mongo:latest
         container_name: mongo_local_db
-        restart: always
+        restart: unless-stopped
         volumes:
             - mongo_local_db:/data/db
         ports:
-            - 27018:27017
+            - 27028:27017
 
     #Redis Cache Services
     redis_local_cache:
         image:  redis:latest
         container_name: redis_local_cache
-        restart: always
+        restart: unless-stopped
         volumes:
             - redis_local_cache:/data/cache
         ports:

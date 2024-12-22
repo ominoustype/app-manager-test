@@ -5,8 +5,12 @@ import DocumentRepository from "@src/domain/documentRepository";
 import { omit } from 'lodash';
 import { SearchDocumentsQueryParams } from '@src/application/search/searchDocumentsQuery';
 import Documents from '@src/domain/documents';
+import DocumentId from '@src/domain/documentId';
 
 export default class DocumentRepositoryMock implements DocumentRepository {
+    findByIdAndEnvironmentIds(documentId: DocumentId, environmentIds: string[]): Promise<Nullable<Document>> {
+        throw new Error('Method not implemented.'+documentId+environmentIds.toString());
+    }
     private mockCreate = jest.fn();
     private mockFind = jest.fn();
     private mockSearch = jest.fn();

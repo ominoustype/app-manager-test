@@ -16,7 +16,7 @@ const LITERALS = { HANDLERS, REPOSITORIES, ARRANGER };
 export default LITERALS;
 
 const client = MongoClientFactory.createClient('customers', { 
-    url: process.env.MONGODB_URI || 'mongodb://localhost:27018/' 
+    url: process.env.MONGODB_URI || 'mongodb://localhost:27028/' 
 });    
 const arranger = new MongoEnvironmentArranger(client);
 
