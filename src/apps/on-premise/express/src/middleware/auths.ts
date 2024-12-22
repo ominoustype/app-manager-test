@@ -1,10 +1,14 @@
 import { NextFunction, Request, Response } from 'express'
-import TokenatorInterface, { TokenPayload } from '@context/users/domain/session/tokenator';
+import TokenatorInterface from '@context/users/domain/session/tokenator';
 import { dependencies } from './application.di';
 import TokenRepository from '@context/users/infrastructure/persistence/redis/tokenRedisRespository';
 
 export interface CustomRequest extends Request {
-    payload: TokenPayload
+    user: {
+        permissions: {
+            environmentIds: Array<string>
+        }
+    }
 }
 
 /* 
@@ -38,7 +42,7 @@ export async function auth(req: Request, res: Response, next: NextFunction) {
         const { payload, isValid } = tokenator.verify(accessToken);
 
         if(isValid)
-            (req as CustomRequest).payload = payload!;
+            (req as CustomRequest).user.permissions.environmentIds = payload?.permissions.environmentIds!;
         else 
             throw new Error("Invalid token");
 
