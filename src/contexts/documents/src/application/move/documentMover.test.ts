@@ -21,7 +21,7 @@ describe('documentMover', () => {
                 new DocumentMover(repository,eventBus,queryBus)
             ),
             command = MoveDocumentCommandMother.random(),
-            document = MoveDocumentCommandMother.applyCommandRightValues(command),
+            document = MoveDocumentCommandMother.applyCommand(command),
             oldDocument = DocumentMother.create({
                 ...document.toPrimitives(),
                 environment: EnvironmentMother.random().toPrimitives()
@@ -50,7 +50,7 @@ describe('documentMover', () => {
                 new DocumentMover(repository,eventBus,queryBus)
             ),
             command = MoveDocumentCommandMother.random(),
-            document = MoveDocumentCommandMother.applyCommandRightValues(command),
+            document = MoveDocumentCommandMother.applyCommand(command),
             oldDocument = DocumentMother.create({
                 ...document.toPrimitives(),
                 environment: EnvironmentMother.random().toPrimitives()

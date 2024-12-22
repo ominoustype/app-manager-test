@@ -23,7 +23,7 @@ describe('documentUndoPusher', () => {
             queryBus = new QueryBusMock(),
             commandBus = new CommandBusMock(),
             handler = new UndoPushDocumentCommandHandler(
-                new DocumentUndoPusher(repository,eventBus, queryBus, commandBus)
+                new DocumentUndoPusher(repository,eventBus, queryBus, commandBus, )
             ),
             command = UndoPushDocumentCommandMother.random(),
             document = UndoPushDocumentCommandMother.applyCommandDocumentReady(command); // DocumentStatus to READY

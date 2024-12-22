@@ -10,8 +10,9 @@ export default class DocumentFinder {
         this.documentRepository = documentRepository;
     }
 
-    async find(id: string): Promise<Document> {
-        const document = await this.documentRepository.find(new DocumentId(id));
+    async find(id: string, environmentIds: string[] = []): Promise<Document> {
+        
+        const document = await this.documentRepository.findByIdAndEnvironmentIds(new DocumentId(id), environmentIds);
 
         if (!document) {
             throw new DocumentNotFoundError(id);

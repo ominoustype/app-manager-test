@@ -32,11 +32,13 @@ export default class DocumentPusher {
     }
 
     async run(command: PushDocumentCommand): Promise<void> {
-        if (!command.data.id) {
+        const { data, permissions } = command;
+
+        if (!data.id) {
             return;
         }
         
-        const document = await this.finder.find(command.data.id);
+        const document = await this.finder.find(data.id, permissions.environmentIds);
 
         if (document === null) {
             return;
@@ -52,7 +54,7 @@ export default class DocumentPusher {
             new SearchByEnvironmentIsDeployedDeploymentConfigsQuery({ 
                 environmentId: document.environment.id.value, 
                 isDeployed: false 
-            })) as unknown as SearchByEnvironmentIsDeployedDeploymentConfigsResponse;
+            })) as SearchByEnvironmentIsDeployedDeploymentConfigsResponse;
 
         if(deploymentsConfigs === null )
             return;

@@ -31,15 +31,15 @@ export default class DocumentDeployer {
     }
 
     async run(command: DeployDocumentCommand): Promise<void> {
-        const { environmentId } = command.data;
+        const { data, permissions } = command;
 
-        if(!environmentId)
+        if(!data.environmentId)
             return;
 
         /* Get the deploymentConfigs linked to the given environmentId with attribute 'isDeployed = false' */
         const deploymentConfigs = await this.queryBus.ask(
             new SearchByEnvironmentIsDeployedDeploymentConfigsQuery({ 
-                environmentId: environmentId, 
+                environmentId: data.environmentId, 
                 isDeployed: false 
             })
         ) as unknown as SearchByEnvironmentIsDeployedDeploymentConfigsResponse;
@@ -53,7 +53,11 @@ export default class DocumentDeployer {
         for await(const doc of deploymentConfigsPrimitives.documents) {
             const id = doc.id;
 
-            const document = await this.finder.find(id);
+            const document = await this.finder.find(id, permissions.environmentIds);
+
+            if(!document) {
+                return
+            }
 
             const newDocument = document.deploy();
 
@@ -64,11 +68,14 @@ export default class DocumentDeployer {
 
         /* Get the environment */
         const environment = await this.queryBus.ask(
-            new FindEnvironmentQuery({ id: environmentId })
+            new FindEnvironmentQuery({ 
+                id: data.environmentId 
+            })
         ) as EnvironmentResponse;
 
-        if(environment === null)
-            return;
+        if(!environment){
+            return
+        };
 
         const environmentPrimitives = environment.primitives;
 
@@ -83,7 +90,7 @@ export default class DocumentDeployer {
 //3     /* Deploy the deploymentConfigs */
         await this.commandBus.dispatch(
             new DeployDeploymentConfigsCommand({ 
-                environmentId: environmentId, 
+                environmentId: data.environmentId, 
                 username: environmentPrimitives.credentials.username,
                 password: environmentPrimitives.credentials.password,
                 path: environmentPrimitives.path

@@ -17,11 +17,13 @@ export default class DocumentUpdater {
     }
 
     async run(command: UpdateDocumentCommand): Promise<void> {
-        if (!command.data.id) {
+        const { data, environmentIds } = command;
+
+        if (!data.id) {
             return;
         }
         
-        const document = await this.finder.find(command.data.id);
+        const document = await this.finder.find(data.id, environmentIds);
 
         if (document === null) {
             return;

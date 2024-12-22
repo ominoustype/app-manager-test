@@ -23,15 +23,19 @@ export default class DocumentMover {
     }
 
     async run(command: MoveDocumentCommand): Promise<void> {
-        const { documentId, newEnvironmentId } = command;
+        const { documentId, newEnvironmentId, environmentIds } = command;
 
         if (!documentId) {
             return;
         }
         
-        const document = await this.finder.find(documentId);
+        const document = await this.finder.find(documentId, environmentIds);
 
         if (document === null) {
+            return;
+        }
+
+        if(!environmentIds.includes(newEnvironmentId)) {
             return;
         }
 

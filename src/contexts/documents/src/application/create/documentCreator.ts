@@ -15,7 +15,13 @@ export default class DocumentCreator {
     }
 
     async run(command: CreateDocumentCommand): Promise<void> {
-        const newDocument = Document.create(command.data);
+        const { data, environmentIds } = command;
+
+        if(!environmentIds.includes(data.environment.id)) {
+            return;
+        }
+        
+        const newDocument = Document.create(data);
 
         const document = await this.repository.find(newDocument.id);
 
