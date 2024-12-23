@@ -24,6 +24,24 @@ export default class RoleMongoRepository extends MongoRepository<Role> implement
         return this.byId(id.value, Role.fromPrimitives);
     }
 
+    async findByCustomerAndName(name: string, customerId: string):  Promise<Nullable<Role>> {
+
+        const find = {
+            customerId: customerId,
+            name: name
+        };
+
+        const collection = (await this.collection());
+
+        const role = await collection.findOne(find);
+
+        if (!role) {
+            return null;
+        }
+
+        return this.getParsed(role);
+    }
+
     async create(role: Role): Promise<void>{
         await this.persist(role.id.value, role);
     }
