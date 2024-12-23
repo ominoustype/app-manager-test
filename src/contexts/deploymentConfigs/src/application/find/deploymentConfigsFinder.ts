@@ -11,6 +11,6 @@ export default class DeploymentConfigsFinder{
     }
 
     async run(query: FindDeploymentConfigsQuery): Promise<FindDeploymentConfigsResponse>{
-        return new FindDeploymentConfigsResponse(await this.finder.find(query.id));
+        return new FindDeploymentConfigsResponse(await this.finder.find(query.id, query.environmentIds));
     }
 }

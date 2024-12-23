@@ -6,11 +6,17 @@ export type SearchDeploymentsConfigsQueryParams = {
     search?: string;
 };
 
+export type SearchDeploymentConfigsQueryPermissions = {
+    environmentIds: Array<string>
+};
+
 export default class SearchDeploymentsConfigsQuery extends Query{
     readonly params: SearchDeploymentsConfigsQueryParams;
+    readonly permissions: SearchDeploymentConfigsQueryPermissions;
 
-    constructor(params: SearchDeploymentsConfigsQueryParams) {
+    constructor(params: SearchDeploymentsConfigsQueryParams, permissions: SearchDeploymentConfigsQueryPermissions) {
         super();
         this.params = params;
+        this.permissions = permissions;
     }
 }

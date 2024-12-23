@@ -8,6 +8,8 @@ import DeploymentsConfigs from '@src/domain/deploymentsConfigs';
 interface DeploymentConfigsRepository{
     find(id: DeploymentConfigsId): Promise<Nullable<DeploymentConfigs>>;
 
+    findByIdAndEnvironmentIds(id: DeploymentConfigsId, environmentIds: Array<string>):  Promise<Nullable<DeploymentConfigs>>;
+
     searchByEnvironmentIsDeployed(params: SearchByEnvironmentIsDeployedDeploymentConfigsQueryParams): Promise<DeploymentsConfigs>;
 
     create(deploymentConfigs: DeploymentConfigs): Promise<void>;
@@ -16,7 +18,7 @@ interface DeploymentConfigsRepository{
 
     update(deploymentConfigs: DeploymentConfigs): Promise<void>;
 
-    search(params: SearchDeploymentsConfigsQueryParams): Promise<DeploymentsConfigs>;
+    search(params: SearchDeploymentsConfigsQueryParams, environmentIds: Array<string>): Promise<DeploymentsConfigs>;
 
     deploy(deploymentConfigs: DeploymentConfigs): Promise<void>;
 }

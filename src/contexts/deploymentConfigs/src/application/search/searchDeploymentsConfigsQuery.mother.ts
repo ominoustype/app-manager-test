@@ -1,11 +1,15 @@
-import SearchDeploymentsConfigsQuery, { SearchDeploymentsConfigsQueryParams } from "./searchDeploymentsConfigsQuery";
+import EnvironmentIdMother from "@src/domain/environment/environmentId.mother";
+import SearchDeploymentsConfigsQuery, { SearchDeploymentConfigsQueryPermissions, SearchDeploymentsConfigsQueryParams } from "./searchDeploymentsConfigsQuery";
 
 export default class SearchDeploymentsConfigsQueryMother {
-    static create(params: SearchDeploymentsConfigsQueryParams): SearchDeploymentsConfigsQuery{
-        return new SearchDeploymentsConfigsQuery(params);
+    static create(params: SearchDeploymentsConfigsQueryParams, permissions: SearchDeploymentConfigsQueryPermissions): 
+        SearchDeploymentsConfigsQuery{
+        return new SearchDeploymentsConfigsQuery(params, permissions);
     }
 
     static random(): SearchDeploymentsConfigsQuery{
-        return SearchDeploymentsConfigsQueryMother.create({});
+        return SearchDeploymentsConfigsQueryMother.create({}, {
+                environmentIds: EnvironmentIdMother.randomList().map((id) => id.value)
+        });
     }
 }

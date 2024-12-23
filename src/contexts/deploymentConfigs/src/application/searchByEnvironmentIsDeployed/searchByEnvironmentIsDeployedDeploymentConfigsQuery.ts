@@ -5,11 +5,18 @@ export type SearchByEnvironmentIsDeployedDeploymentConfigsQueryParams = {
     isDeployed: boolean;
 };
 
+export type SearchByEnvironmentIsDeployedDeploymentConfigsQueryPermissions = {
+    environmentIds: Array<string>
+};
+
 export default class SearchByEnvironmentIsDeployedDeploymentConfigsQuery extends Query {
     readonly params: SearchByEnvironmentIsDeployedDeploymentConfigsQueryParams;
+    readonly permissions: SearchByEnvironmentIsDeployedDeploymentConfigsQueryPermissions;
 
-    constructor(params: SearchByEnvironmentIsDeployedDeploymentConfigsQueryParams) {
+    constructor(params: SearchByEnvironmentIsDeployedDeploymentConfigsQueryParams, 
+        permissions: SearchByEnvironmentIsDeployedDeploymentConfigsQueryPermissions) {
         super();
         this.params = params;
+        this.permissions = permissions;
     }
 }

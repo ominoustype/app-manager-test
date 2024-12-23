@@ -20,7 +20,8 @@ export default class DeploymentConfigsDeployer {
     }
 
     async run(command: DeployDeploymentConfigsCommand): Promise<void> {
-        const { environmentId, username, password, path } = command.data;
+        const { environmentId, username, password, path } = command.data,
+            { environmentIds } = command.permissions;
 
         if(!environmentId)
             return;
@@ -31,6 +32,10 @@ export default class DeploymentConfigsDeployer {
             throw new DeploymentConfigsNotFoundError(environmentId);
 
         const deploymentConfigs = deploymentsConfigs.find((() => true));
+
+        if(!environmentIds.includes(deploymentConfigs!.environment.id.value)) {
+            return;
+        }
 
         /* Deploy all documents to Azure Blob Storage */
         await this.deployDocuments(username, password, path, deploymentConfigs!.toPrimitives().documents);

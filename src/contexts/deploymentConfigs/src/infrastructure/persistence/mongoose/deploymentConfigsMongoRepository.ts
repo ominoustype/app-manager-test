@@ -37,6 +37,27 @@ export default class DeploymentConfigsMongoRepository extends
         return this.byId(id.value, DeploymentConfigs.fromPrimitives);
     }
 
+    async findByIdAndEnvironmentIds(id: DeploymentConfigsId, environmentIds: Array<string> = []):  
+        Promise<Nullable<DeploymentConfigs>> {
+
+        const find = {
+            _id: id.value as any,
+            'environment.id': { 
+                $in: environmentIds 
+            }
+        };
+
+        const collection = (await this.collection());
+
+        const document = await collection.findOne(find);
+
+        if (!document) {
+            return null;
+        }
+
+        return this.getParsed(document);
+    }
+
     async create(deploymentConfigs: DeploymentConfigs): Promise<void> {
         await this.persist(deploymentConfigs.id.value, deploymentConfigs)
     }
@@ -53,7 +74,7 @@ export default class DeploymentConfigsMongoRepository extends
         await this.persist(deploymentConfigs.id.value, deploymentConfigs)
     }
 
-    async search(params: SearchDeploymentsConfigsQueryParams = {}): Promise<DeploymentsConfigs> {
+    async search(params: SearchDeploymentsConfigsQueryParams = {},  environmentIds: Array<string> = []): Promise<DeploymentsConfigs> {
         const copyParams = { ...params };
         const limit = params.page_size ?? DEFAULT_PAGE_SIZE;
         const skip =
@@ -64,7 +85,10 @@ export default class DeploymentConfigsMongoRepository extends
         delete copyParams.page;
         delete copyParams.page_size;
 
-        let find = {};
+        let find = {           
+            'environment.id': { 
+            $in: environmentIds
+        }};
 
         if (copyParams.search) {
             const orFilters = new Filters(

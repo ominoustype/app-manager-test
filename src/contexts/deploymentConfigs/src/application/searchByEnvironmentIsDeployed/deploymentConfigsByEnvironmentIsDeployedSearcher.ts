@@ -10,6 +10,12 @@ export default class DeploymentConfigsByEnvironmentIsDeployedSearcher {
     }
 
     async run(query: SearchByEnvironmentIsDeployedDeploymentConfigsQuery): Promise<SearchByEnvironmentIsDeployedDeploymentConfigsResponse> {
+        const { params, permissions } = query;
+
+        if(!permissions.environmentIds.includes(params.environmentId)) {
+            throw new Error("401");
+        }
+
         const deploymentsConfigs = await this.repository.searchByEnvironmentIsDeployed(query.params);
 
         return new SearchByEnvironmentIsDeployedDeploymentConfigsResponse(deploymentsConfigs);
