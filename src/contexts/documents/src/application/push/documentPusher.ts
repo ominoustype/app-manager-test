@@ -54,6 +54,8 @@ export default class DocumentPusher {
             new SearchByEnvironmentIsDeployedDeploymentConfigsQuery({ 
                 environmentId: document.environment.id.value, 
                 isDeployed: false 
+            },{
+                environmentIds: permissions.environmentIds
             })) as SearchByEnvironmentIsDeployedDeploymentConfigsResponse;
 
         if(deploymentsConfigs === null )
@@ -71,6 +73,8 @@ export default class DocumentPusher {
                     environment: document.environment.toPrimitives(),
                     customer: document.customer.toPrimitives(), 
                     documents: new Array<DocumentPrimitives>(documentPrimitives)
+                },{
+                    environmentIds: permissions.environmentIds
                 }));
         }
         else {
@@ -94,6 +98,8 @@ export default class DocumentPusher {
                 await this.commandBus.dispatch(
                     new UpdateDeploymentConfigsCommand({
                         ...deploymentConfigs
+                    }, {
+                        environmentIds: permissions.environmentIds
                     }));
             }
             else{

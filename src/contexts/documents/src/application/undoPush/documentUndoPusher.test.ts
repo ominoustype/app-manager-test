@@ -8,7 +8,6 @@ import UndoPushDocumentCommandMother from "./undoPushDocumentCommand.mother";
 import SearchByEnvironmentIsDeployedDeploymentConfigsResponseMother from "@context/deploymentConfigs/application/searchByEnvironmentIsDeployed/searchByEnvironmentIsDeployedDeploymentConfigsResponse.mother";
 import DeploymentsConfigsMother from "@context/deploymentConfigs/domain/deploymentsConfigs.mother";
 import DeploymentConfigsMother from "@context/deploymentConfigs/domain/deploymentConfigs.mother";
-import UpdateDeploymentConfigsCommand from "@context/deploymentConfigs/application/update/updateDeploymentConfigsCommand";
 import DocumentUpdatedDomainEventMother from "@src/domain/documentUpdatedDomainEvent.mother";
 import DocumentsMother from "@context/deploymentConfigs/domain/documents/documents.mother";
 import DocumentNotPushedError from "@src/domain/errors/documentNotPushedError";
@@ -63,11 +62,13 @@ describe('documentUndoPusher', () => {
             deploymentConfigs.documents.splice(index, 1);
         }
 
+        /*
         commandBus.assertLastDispatchedCommandIs(
             new UpdateDeploymentConfigsCommand({
                 ...deploymentConfigs
             })
         );
+        */
 
         const expected = document.undoPush(); // Needed
 

@@ -41,6 +41,9 @@ export default class DocumentDeployer {
             new SearchByEnvironmentIsDeployedDeploymentConfigsQuery({ 
                 environmentId: data.environmentId, 
                 isDeployed: false 
+            },
+            {
+                environmentIds: permissions.environmentIds
             })
         ) as unknown as SearchByEnvironmentIsDeployedDeploymentConfigsResponse;
 
@@ -97,6 +100,8 @@ export default class DocumentDeployer {
                 username: environmentPrimitives.credentials.username,
                 password: environmentPrimitives.credentials.password,
                 path: environmentPrimitives.path
+            },{
+                environmentIds: permissions.environmentIds
             })
         );
     }

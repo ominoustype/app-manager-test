@@ -50,6 +50,8 @@ export default class DocumentUndoPusher {
             new SearchByEnvironmentIsDeployedDeploymentConfigsQuery({ 
                 environmentId: document.environment.id.value, 
                 isDeployed: false 
+            },{
+                environmentIds: permissions.environmentIds
             })
         ) as SearchByEnvironmentIsDeployedDeploymentConfigsResponse;
 
@@ -83,6 +85,8 @@ export default class DocumentUndoPusher {
         await this.commandBus.dispatch(
             new UpdateDeploymentConfigsCommand({
                 ...deploymentConfigs
+            },{
+                environmentIds: permissions.environmentIds
             })
         );
 
