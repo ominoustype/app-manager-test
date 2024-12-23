@@ -21,6 +21,9 @@ import UndoPushDocumentCommand from '@context/documents/application/undoPush/und
 import FindDocumentQueryHandler from '@context/documents/application/find/findDocumentQueryHandler'
 import { CustomRequest } from '@src/middleware/auths'
 
+const CONTENT_TYPE = 'content-type';
+const APPLICATION_JSON = 'application/json';
+
 export async function searchDocuments(req: Request, res: Response) {
     console.log('Request for searchDocuments Triggered')
 
@@ -39,7 +42,7 @@ export async function searchDocuments(req: Request, res: Response) {
         })
     );
 
-    res.header("content-type", 'application/json')
+    res.header(CONTENT_TYPE, APPLICATION_JSON)
     res.status(200).send({
         body:{ 
             result: result.documents,
@@ -68,7 +71,7 @@ export async function searchByEnvironmentDocuments(req: Request, res: Response) 
         })
     );
 
-    res.header("content-type", 'application/json')
+    res.header(CONTENT_TYPE, APPLICATION_JSON)
     res.status(200).send({
         body: result.documents
     });
@@ -94,7 +97,7 @@ export async function findDocument(req: Request, res: Response) {
             })
         );
 
-        res.header("content-type", 'application/json')
+        res.header(CONTENT_TYPE, APPLICATION_JSON)
         res.status(200).send({
             body: response.primitives
         });

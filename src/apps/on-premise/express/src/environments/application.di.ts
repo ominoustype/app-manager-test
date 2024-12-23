@@ -47,32 +47,35 @@ import RoleByCustomerAndNameFinder from "@context/roles/application/findByCustom
 import FindByCustomerAndNameRoleQuery from "@context/roles/application/findByCustomerAndName/findByCustomerAndNameRoleQuery";
 import FindByCustomerAndNameRoleQueryHandler from "@context/roles/application/findByCustomerAndName/findByCustomerAndNameRoleQueryHandler";
 
-export const HANDLERS = "handlers";
-export const REPOSITORIES = "repositories"
-export const BUSES = "buses"
-
 const dependencies = new Map();
 
+export const HANDLERS = "handlers";
+export const REPOSITORIES = "repositories";
+export const BUSES = "buses"
+
+const mongodbHost = process.env.MONGODB_HOST || 'localhost';
+const mongodbPort = process.env.MONGODB_PORT || 27028;
+
 const client = MongoClientFactory.createClient('environments', {
-    url: process.env.MONGODB_URI  || 'mongodb://localhost:27028/'
+    url: `mongodb://${mongodbHost}:${mongodbPort}`
 });
 
-const documentsClient = MongoClientFactory.createClient('documents', {
-    url: process.env.MONGODB_URI  || 'mongodb://localhost:27028/'
+const documentClient = MongoClientFactory.createClient('documents', {
+    url: `mongodb://${mongodbHost}:${mongodbPort}`
 });
 
-const rolesClient = MongoClientFactory.createClient('roles', {
-    url: process.env.MONGODB_URI  || 'mongodb://localhost:27028/'
+const roleClient = MongoClientFactory.createClient('roles', {
+    url: `mongodb://${mongodbHost}:${mongodbPort}`
 });
 
-const usersClient = MongoClientFactory.createClient('users', {
-    url: process.env.MONGODB_URI  || 'mongodb://localhost:27028/'
+const userClient = MongoClientFactory.createClient('users', {
+    url: `mongodb://${mongodbHost}:${mongodbPort}`
 });
 
 const environmentRepository = new EnvironmentMongoRepository(client as unknown as MongoClient);
-const documentRepository = new DocumentMongoRepository(documentsClient as unknown as MongoClient);
-const roleRepository = new RoleMongoRepository(rolesClient as unknown as MongoClient);
-const userRepository = new UserMongoRepository(usersClient as unknown as MongoClient);
+const documentRepository = new DocumentMongoRepository(documentClient as unknown as MongoClient);
+const roleRepository = new RoleMongoRepository(roleClient as unknown as MongoClient);
+const userRepository = new UserMongoRepository(userClient as unknown as MongoClient);
 
 const eventBus = new InMemorySyncEventBus();
 const queryBus = new InMemoryQueryBus(new QueryHandlersInformation([]));
@@ -122,7 +125,7 @@ queryHandlers.set(FindByCustomerAndNameRoleQuery, findByCustomerAndNameRoleQuery
 const roleUpdater = new RoleUpdater(roleRepository, eventBus);
 const updateRoleCommandHandler = new UpdateRoleCommandHandler(roleUpdater);
 commandHandlers.set(UpdateRoleCommand, updateRoleCommandHandler);
-//
+// end region
 
 commandHandlers.set(CreateEnvironmentCommand, createEnvironmentCommandHandler);
 commandHandlers.set(UpdateEnvironmentCommand, updateEnvironmentCommandHandler);

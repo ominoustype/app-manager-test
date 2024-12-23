@@ -20,6 +20,8 @@ import CreateRoleQuery from '@context/roles/application/create/createRoleQuery'
 import UpdateRoleCommand from '@context/roles/application/update/updateRoleCommand'
 import RefreshTokenQueryHandler from '@context/users/application/refreshToken/refreshTokenQueryHandler'
 
+const CONTENT_TYPE = 'content-type';
+const APPLICATION_JSON = 'application/json';
 
 export async function searchUsers(req: Request, res: Response) {
     console.log('Request for searchUsers Triggered')
@@ -34,7 +36,7 @@ export async function searchUsers(req: Request, res: Response) {
         })
     );
 
-    res.header("content-type", 'application/json')
+    res.header(CONTENT_TYPE, APPLICATION_JSON)
     res.status(200).send({
         body:({
             result: result.primitives
@@ -55,7 +57,7 @@ export async function findUser(req: Request, res: Response) {
             new FindUserQuery({ username })
         );
 
-        res.header("content-type", 'application/json')
+        res.header(CONTENT_TYPE, APPLICATION_JSON)
         res.status(200).send({ 
             body: response.primitives
         });
@@ -206,11 +208,11 @@ export async function logInUser(req: Request, res: Response) {
             new LogInUserQuery({ username, password })
         );
 
-        res.header("content-type", 'application/json')
+        res.header(CONTENT_TYPE, APPLICATION_JSON)
         res.status(200).send({
             body: { 
                 accessToken: response.accessToken, 
-                refreshToken: response.refreshToken 
+                refreshToken: response.refreshToken
             }
         });
     } catch (e) {

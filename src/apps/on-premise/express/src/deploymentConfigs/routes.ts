@@ -4,7 +4,7 @@ import { searchDeploymentConfigs, findDeploymentConfigs,
     deleteDeploymentConfigs,
     findByEnvironmentIsDeployedDeploymentConfigs } from './controllers';
 
-import { auth } from '@src/middleware/auths';
+import { auth } from '../middleware/auths';
 
 const BASE_URL = "/deploymentConfigs";
 

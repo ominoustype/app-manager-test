@@ -9,20 +9,23 @@ import MongoClientFactory from "@context/shared/infrastructure/mongo/mongoClient
 import MongoEnvironmentArranger from "@context/shared/infrastructure/mongo/mongoEnvironmentArranger";
 import SearchCustomersQuery from '@context/customers/application/search/searchCustomersQuery';
 
+const dependencies = new Map();
+
 const HANDLERS = "handlers";
 const REPOSITORIES = "repositories"
 const ARRANGER = "arranger";
 const LITERALS = { HANDLERS, REPOSITORIES, ARRANGER };
 export default LITERALS;
 
+const mongodbHost = process.env.MONGODB_HOST || 'localhost';
+const mongodbPort = process.env.MONGODB_PORT || 27028;
+
 const client = MongoClientFactory.createClient('customers', { 
-    url: process.env.MONGODB_URI || 'mongodb://localhost:27028/' 
+    url: `mongodb://${mongodbHost}:${mongodbPort}`
 });    
 const arranger = new MongoEnvironmentArranger(client);
 
 const repository = new CustomerMongoRepository(client as unknown as MongoClient);
-
-const dependencies = new Map();
 
 const customerFinder = new CustomerFinder(repository);
 const customerSearcher = new CustomersSearcher(repository);
@@ -38,4 +41,4 @@ dependencies.set(HANDLERS, { query: queryHandlers });
 dependencies.set(REPOSITORIES, { repository: repository });
 dependencies.set(ARRANGER, arranger);
 
-export { dependencies, HANDLERS };
+export { dependencies, LITERALS };
