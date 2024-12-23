@@ -32,6 +32,20 @@ import UpdateDocumentCommand from "@context/documents/application/update/updateD
 import DeployEnvironmentCommand from "@context/environments/application/deploy/deployEnvironmentCommand";
 import EnvironmentDeployer from "@context/environments/application/deploy/environmentDeployer";
 import DeployEnvironmentCommandHandler from "@context/environments/application/deploy/deployEnvironmentCommandHandler";
+import RoleMongoRepository from "@context/roles/infrastructure/persistence/mongo/roleMongoRepository";
+import RoleUpdater from "@context/roles/application/update/roleUpdater";
+import UpdateRoleCommandHandler from "@context/roles/application/update/updateRoleCommandHandler";
+import UpdateRoleCommand from "@context/roles/application/update/updateRoleCommand";
+import UserFinder from "@context/users/application/find/userFinder";
+import FindUserQueryHandler from "@context/users/application/find/findUserQueryHandler";
+import FindUserQuery from "@context/users/application/find/findUserQuery";
+import UserMongoRepository from "@context/users/infrastructure/persistence/mongo/userMongoRepository";
+import RoleFinder from "@context/roles/application/find/roleFinder";
+import FindRoleQuery from "@context/roles/application/find/findRoleQuery";
+import FindRoleQueryHandler from "@context/roles/application/find/findRoleQueryHandler";
+import RoleByCustomerAndNameFinder from "@context/roles/application/findByCustomerAndName/roleByCustomerAndNameFinder";
+import FindByCustomerAndNameRoleQuery from "@context/roles/application/findByCustomerAndName/findByCustomerAndNameRoleQuery";
+import FindByCustomerAndNameRoleQueryHandler from "@context/roles/application/findByCustomerAndName/findByCustomerAndNameRoleQueryHandler";
 
 export const HANDLERS = "handlers";
 export const REPOSITORIES = "repositories"
@@ -43,18 +57,28 @@ const client = MongoClientFactory.createClient('environments', {
     url: process.env.MONGODB_URI  || 'mongodb://localhost:27028/'
 });
 
-const clientDocuments = MongoClientFactory.createClient('documents', {
+const documentsClient = MongoClientFactory.createClient('documents', {
+    url: process.env.MONGODB_URI  || 'mongodb://localhost:27028/'
+});
+
+const rolesClient = MongoClientFactory.createClient('roles', {
+    url: process.env.MONGODB_URI  || 'mongodb://localhost:27028/'
+});
+
+const usersClient = MongoClientFactory.createClient('users', {
     url: process.env.MONGODB_URI  || 'mongodb://localhost:27028/'
 });
 
 const environmentRepository = new EnvironmentMongoRepository(client as unknown as MongoClient);
-const documentRepository = new DocumentMongoRepository(clientDocuments as unknown as MongoClient);
+const documentRepository = new DocumentMongoRepository(documentsClient as unknown as MongoClient);
+const roleRepository = new RoleMongoRepository(rolesClient as unknown as MongoClient);
+const userRepository = new UserMongoRepository(usersClient as unknown as MongoClient);
 
 const eventBus = new InMemorySyncEventBus();
 const queryBus = new InMemoryQueryBus(new QueryHandlersInformation([]));
 const commandBus = new InMemoryCommandBus(new CommandHandlersInformation([]));
 
-const environmentCreator = new EnvironmentCreator(environmentRepository, eventBus);
+const environmentCreator = new EnvironmentCreator(environmentRepository, eventBus, queryBus, commandBus);
 const environmentUpdater = new EnvironmentUpdater(environmentRepository, eventBus, queryBus, commandBus);
 const environmentRemover = new EnvironmentRemover(environmentRepository, eventBus);
 const environmentDeployer = new EnvironmentDeployer(environmentRepository, eventBus);
@@ -81,6 +105,23 @@ queryHandlers.set(SearchByEnvironmentDocumentsQuery, searchByEnvironmentDocument
 const documentUpdater = new DocumentUpdater(documentRepository, eventBus);
 const updateDocumentCommandHandler = new UpdateDocumentCommandHandler(documentUpdater);
 commandHandlers.set(UpdateDocumentCommand, updateDocumentCommandHandler);
+
+    //Find User, find Role, findByCustomerAndName Role, update Role
+const userFinder = new UserFinder(userRepository);
+const findUserQueryHandler = new FindUserQueryHandler(userFinder);
+queryHandlers.set(FindUserQuery, findUserQueryHandler);
+
+const roleFinder = new RoleFinder(roleRepository);
+const findRoleQueryHandler = new FindRoleQueryHandler(roleFinder);
+queryHandlers.set(FindRoleQuery, findRoleQueryHandler);
+
+const roleByCustomerAndNameFinder = new RoleByCustomerAndNameFinder(roleRepository);
+const findByCustomerAndNameRoleQueryHandler = new FindByCustomerAndNameRoleQueryHandler(roleByCustomerAndNameFinder);
+queryHandlers.set(FindByCustomerAndNameRoleQuery, findByCustomerAndNameRoleQueryHandler);
+
+const roleUpdater = new RoleUpdater(roleRepository, eventBus);
+const updateRoleCommandHandler = new UpdateRoleCommandHandler(roleUpdater);
+commandHandlers.set(UpdateRoleCommand, updateRoleCommandHandler);
 //
 
 commandHandlers.set(CreateEnvironmentCommand, createEnvironmentCommandHandler);
@@ -91,8 +132,8 @@ commandHandlers.set(DeployEnvironmentCommand, deployEnvironmentCommandHandler);
 queryHandlers.set(FindEnvironmentQuery, findEnvironmentQueryHandler);
 queryHandlers.set(SearchEnvironmentsQuery, searchEnvironmentsQueryHandler);
 
-dependencies.set(HANDLERS, {query: queryHandlers, command: commandHandlers });
+dependencies.set(HANDLERS, { query: queryHandlers, command: commandHandlers });
 dependencies.set(REPOSITORIES, { repository: environmentRepository });
-dependencies.set(BUSES, {query: queryBus, command: commandBus})
+dependencies.set(BUSES, { query: queryBus, command: commandBus });
 
 export { dependencies };

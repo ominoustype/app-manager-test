@@ -7,7 +7,8 @@ export interface CustomRequest extends Request {
     user: {
         permissions: {
             environmentIds: Array<string>
-        }
+        },
+        username: string
     }
 }
 
@@ -41,8 +42,18 @@ export async function auth(req: Request, res: Response, next: NextFunction) {
 
         const { payload, isValid } = tokenator.verify(accessToken);
 
-        if(isValid)
-            (req as CustomRequest).user.permissions.environmentIds = payload?.permissions.environmentIds!;
+        if(isValid){
+            console.log(JSON.stringify(payload));
+   
+            const user: CustomRequest["user"] = {
+                permissions: {
+                    environmentIds:  payload!.permissions.environmentIds
+                },
+                username: payload!.username
+            };
+
+            (req as CustomRequest).user = user;
+        }
         else 
             throw new Error("Invalid token");
 
