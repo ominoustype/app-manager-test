@@ -70,6 +70,9 @@ export default class DocumentDeployer {
         const environment = await this.queryBus.ask(
             new FindEnvironmentQuery({ 
                 id: data.environmentId 
+            },
+            {
+                environmentIds: permissions.environmentIds
             })
         ) as EnvironmentResponse;
 

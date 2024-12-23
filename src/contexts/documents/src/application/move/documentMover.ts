@@ -40,7 +40,12 @@ export default class DocumentMover {
         }
 
         const environment = await this.queryBus.ask(
-            new FindEnvironmentQuery({ id: newEnvironmentId })
+            new FindEnvironmentQuery({ 
+                    id: newEnvironmentId 
+                },
+                {
+                    environmentIds: environmentIds
+                })
         ) as EnvironmentResponse;
 
         const newDocument = document.move(environment.primitives);
