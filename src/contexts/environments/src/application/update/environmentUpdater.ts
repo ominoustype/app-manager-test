@@ -29,10 +29,16 @@ export default class EnvironmentUpdater {
     }
 
     async run(command: UpdateEnvironmentCommand): Promise<void>{
-        if(!command.data.id)
-            return;
+        const { data, permissions } = command;
 
-        const environment = await this.finder.find(command.data.id);
+        if(!data.id)
+            return;
+    
+        if(!permissions.environmentIds.includes(data.id)) {
+            return;
+        }
+
+        const environment = await this.finder.find(data.id);
 
         if(environment === null)
             return;
@@ -41,18 +47,24 @@ export default class EnvironmentUpdater {
 
         const response = await this.queryBus.ask(
             new SearchByEnvironmentDocumentsQuery({
-                environment: command.data.id
+                environment: data.id
+            },
+            {
+                environmentIds: permissions.environmentIds
             })
-        ) as unknown as SearchByEnvironmentDocumentsResponse;
+        )  as SearchByEnvironmentDocumentsResponse;
 
         response.documents.map(async (document: DocumentPrimitives) => {
             await this.commandBus.dispatch(
                 new UpdateDocumentCommand({
                     ...document,
                     environment: newEnvironment.toPrimitives()
+                },
+                {
+                    environmentIds: permissions.environmentIds
                 })
-            )
-        })
+            );
+        });
 
         await this.repository.update(newEnvironment);
         

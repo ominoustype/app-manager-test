@@ -48,7 +48,7 @@ implements EnvironmentRepository{
         await this.persist(environment.id.value, environment);
     }
 
-    async search(params: SearchEnvironmentsQueryParams): Promise<Environments> {
+    async search(params: SearchEnvironmentsQueryParams = {}, environmentIds: Array<string> = []): Promise<Environments> {
         const copyParams = { ...params };
         const limit = params.page_size ?? DEFAULT_PAGE_SIZE;
         const skip =
@@ -59,7 +59,11 @@ implements EnvironmentRepository{
         delete copyParams.page;
         delete copyParams.page_size;
 
-        let find = {};
+        let find = {           
+            '_id': { 
+                $in: environmentIds as any
+            }
+        };
 
         if (copyParams.search) {
             const orFilters = new Filters(

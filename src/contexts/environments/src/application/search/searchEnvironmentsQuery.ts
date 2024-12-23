@@ -7,11 +7,17 @@ export type SearchEnvironmentsQueryParams = {
     customer?: string;
 };
 
+export type SearchEnvironmentQueryPermissions = {
+    environmentIds: Array<string>
+};
+
 export default class SearchEnvironmentsQuery extends Query {
     readonly params: SearchEnvironmentsQueryParams;
+    readonly permissions: SearchEnvironmentQueryPermissions;
 
-    constructor(params: SearchEnvironmentsQueryParams) {
+    constructor(params: SearchEnvironmentsQueryParams, permissions: SearchEnvironmentQueryPermissions) {
         super();
         this.params = params;
+        this.permissions = permissions;
     }
 }

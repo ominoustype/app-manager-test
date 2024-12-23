@@ -9,7 +9,7 @@ interface EnvironmentRepository {
 
     find(id: EnvironmentId): Promise<Nullable<Environment>>;
 
-    search(params: SearchEnvironmentsQueryParams): Promise<Environments>;
+    search(params: SearchEnvironmentsQueryParams, environmentIds: Array<string>): Promise<Environments>;
 
     delete(environment: Environment): Promise<void>;
 

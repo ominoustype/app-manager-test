@@ -11,6 +11,12 @@ export default class EnvironmentFinder {
     }
 
     async run(query: FindEnvironmentQuery): Promise<FindEnvironmentResponse> {
+        const { id, environmentIds } = query;
+
+        if(!environmentIds.includes(id)) {
+            throw new Error("401");
+        }
+
         return new FindEnvironmentResponse(await this.finder.find(query.id));
     }
 }
