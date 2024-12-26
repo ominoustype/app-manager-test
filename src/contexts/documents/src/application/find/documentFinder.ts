@@ -11,6 +11,6 @@ export default class DocumentFinder {
     }
 
     async run(query: FindDocumentQuery): Promise<FindDocumentResponse> {
-        return new FindDocumentResponse(await this.finder.find(query.id));
+        return new FindDocumentResponse(await this.finder.find(query.id, query.environmentIds));
     }
 }

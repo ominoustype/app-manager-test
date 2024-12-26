@@ -65,20 +65,25 @@ import DocumentUndoPusher from '@context/documents/application/undoPush/document
 import UndoPushDocumentCommandHandler from '@context/documents/application/undoPush/undoPushDocumentCommandHandler';
 import UndoPushDocumentCommand from '@context/documents/application/undoPush/undoPushDocumentCommand';
 
-export const BUSES = "buses"
-
 const dependencies = new Map();
 
+export const HANDLERS = "handlers";
+export const REPOSITORIES = "repositories";
+export const BUSES = "buses"
+
+const mongodbHost = process.env.MONGODB_HOST || 'localhost';
+const mongodbPort = process.env.MONGODB_PORT || 27028;
+
 const client = MongoClientFactory.createClient('documents', {
-    url: process.env.MONGODB_URI  || 'mongodb://localhost:27018/'
+    url: `mongodb://${mongodbHost}:${mongodbPort}`
 });
 
 const environmentClient = MongoClientFactory.createClient('environments', {
-    url: process.env.MONGODB_URI  || 'mongodb://localhost:27018/'
+    url: `mongodb://${mongodbHost}:${mongodbPort}`
 });
 
 const deploymentConfigsClient = MongoClientFactory.createClient('deploymentConfigs', {
-    url: process.env.MONGODB_URI  || 'mongodb://localhost:27018/'
+    url: `mongodb://${mongodbHost}:${mongodbPort}`
 });
 
 const documentRepository = new DocumentMongoRepository(client as unknown as MongoClient);
@@ -96,7 +101,7 @@ const documentMover = new DocumentMover(documentRepository, eventBus, queryBus);
 const documentPusher = new DocumentPusher(documentRepository, eventBus, commandBus, queryBus);
 const documentDeployer = new DocumentDeployer(documentRepository, eventBus, queryBus, commandBus);
 const documentRestorer = new DocumentRestorer(documentRepository, eventBus);
-const documentUndoPusher = new DocumentUndoPusher(documentRepository, eventBus, queryBus, commandBus)
+const documentUndoPusher = new DocumentUndoPusher(documentRepository, eventBus, queryBus, commandBus);
 
 const createDocumentCommandHandler = new CreateDocumentCommandHandler(documentCreator);
 const updateDocumentCommandHandler = new UpdateDocumentCommandHandler(documentUpdater);
@@ -128,14 +133,15 @@ const deploymentConfigsByEnvironmentIsDeployedSearcher = new DeploymentConfigsBy
 const createDeploymentConfigsCommandHandler = new CreateDeploymentConfigsCommandHandler(deploymentConfigsCreator);
 const updateDeploymentConfigsCommandHandler = new UpdateDeploymentConfigsCommandHandler(deploymentConfigsUpdater);
 const deployDeploymentConfigsCommandHandler = new DeployDeploymentConfigsCommandHandler(deploymentConfigsDeployer);
-const searchByEnviromentIsDeployedDeploymentConfigsQueryHandler = new SearchByEnvironmentIsDeployedDeploymentConfigsQueryHandler(deploymentConfigsByEnvironmentIsDeployedSearcher);
+const searchByEnviromentIsDeployedDeploymentConfigsQueryHandler = 
+    new SearchByEnvironmentIsDeployedDeploymentConfigsQueryHandler(deploymentConfigsByEnvironmentIsDeployedSearcher);
 
     // Environments
 const environmentFinder = new EnvironmentFinder(environmentRepository);
 const findEnviromentQueryHandler = new FindEnvironmentQueryHandler(environmentFinder);
 const environmentDeployer = new EnvironmentDeployer(environmentRepository, eventBus);
 const deployEnvironmentCommandHandler = new DeployEnvironmentCommandHandler(environmentDeployer);
-//
+// end region
 
 commandHandlers.set(CreateDocumentCommand, createDocumentCommandHandler);
 commandHandlers.set(UpdateDocumentCommand, updateDocumentCommandHandler);
@@ -159,8 +165,8 @@ queryHandlers.set(SearchByEnvironmentDocumentsQuery, searchByEnvironmentDocument
 queryHandlers.set(FindEnvironmentQuery, findEnviromentQueryHandler);
 queryHandlers.set(SearchByEnvironmentIsDeployedDeploymentConfigsQuery, searchByEnviromentIsDeployedDeploymentConfigsQueryHandler);
 
-dependencies.set('handlers', { command: commandHandlers, query: queryHandlers });
-dependencies.set('repositories', { repository: documentRepository });
-dependencies.set(BUSES, {query: queryBus, command: commandBus})
+dependencies.set(HANDLERS, { command: commandHandlers, query: queryHandlers });
+dependencies.set(REPOSITORIES, { repository: documentRepository });
+dependencies.set(BUSES, {query: queryBus, command: commandBus })
 
 export { dependencies };

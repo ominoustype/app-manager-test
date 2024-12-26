@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express'
+import { Request, Response } from 'express'
 import CreateDocumentCommand from '@context/documents/application/create/createDocumentCommand'
 import FindDocumentQuery from '@context/documents/application/find/findDocumentQuery'
 import SearchDocumentsQuery from '@context/documents/application/search/searchDocumentsQuery'
@@ -18,23 +18,31 @@ import SearchByEnvironmentIsDeployedDeploymentConfigsQuery from '@context/deploy
 import DeployEnvironmentCommand from '@context/environments/application/deploy/deployEnvironmentCommand'
 import UndoPushDocumentCommand from '@context/documents/application/undoPush/undoPushDocumentCommand'
 
-import { TokenPayload } from '@context/users/domain/session/tokenator'
+import FindDocumentQueryHandler from '@context/documents/application/find/findDocumentQueryHandler'
+import { CustomRequest } from '@src/middleware/auths'
 
-// You will export functions that will be the controllers for the rest services
+const CONTENT_TYPE = 'content-type';
+const APPLICATION_JSON = 'application/json';
+
 export async function searchDocuments(req: Request, res: Response) {
     console.log('Request for searchDocuments Triggered')
 
     const handler = dependencies.get('handlers').query.get(SearchDocumentsQuery);
+
+    const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
 
     const result = await handler.handle(
         new SearchDocumentsQuery({
             ...req.query,
             page_size: req.query.page_size ? parseInt(req.query.page_size as string) : undefined,
             page: req.query.page ? parseInt(req.query.page as string) : undefined
+        },
+        {
+            environmentIds: environmentIds
         })
     );
 
-    res.header("content-type", 'application/json')
+    res.header(CONTENT_TYPE, APPLICATION_JSON)
     res.status(200).send({
         body:{ 
             result: result.documents,
@@ -46,19 +54,24 @@ export async function searchDocuments(req: Request, res: Response) {
 export async function searchByEnvironmentDocuments(req: Request, res: Response) {
     console.log('Request for searchByEnvironmentDocuments Triggered')
 
-    const { environmentId } = req.query;
+    const { environmentId }  = req.query;
 
     const handler = dependencies.get('handlers').query.get(SearchByEnvironmentDocumentsQuery);
 
     console.log('Id to find ByEnvironment', environmentId)
 
-    const result = await handler.manolito(
+    const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
+
+    const result = await handler.handle(
         new SearchByEnvironmentDocumentsQuery({
             environment: environmentId?.toString() ?? ""
+        },
+        {
+            environmentIds: environmentIds
         })
     );
 
-    res.header("content-type", 'application/json')
+    res.header(CONTENT_TYPE, APPLICATION_JSON)
     res.status(200).send({
         body: result.documents
     });
@@ -68,18 +81,23 @@ export async function findDocument(req: Request, res: Response) {
     console.log('Request for findDocument Triggered')
     const { id } = req.params
 
-    const handler = dependencies.get('handlers').query.get(FindDocumentQuery);
+    const handler = dependencies.get('handlers').query.get(FindDocumentQuery) as FindDocumentQueryHandler;
 
     console.log('Id to find', id)
 
-    //const environmentIds = (req as CustomRequest).payload.permissions.environmentIds;
+    const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
 
     try {
         const response = await handler.handle(
-            new FindDocumentQuery({ id })
+            new FindDocumentQuery({
+                id: id,
+            },
+            {
+                environmentIds: environmentIds
+            })
         );
 
-        res.header("content-type", 'application/json')
+        res.header(CONTENT_TYPE, APPLICATION_JSON)
         res.status(200).send({
             body: response.primitives
         });
@@ -92,9 +110,15 @@ export async function createDocument(req: Request, res: Response) {
     console.log('Request for createDocument Triggered')
     
     const handler = dependencies.get('handlers').command.get(CreateDocumentCommand);
+
+    const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
         
     try {
-        await handler.handle(new CreateDocumentCommand(req.body));
+        await handler.handle(new CreateDocumentCommand(
+            req.body,
+            {
+                environmentIds: environmentIds
+            }));
 
         res.status(201).send();
     } catch (e) {
@@ -111,11 +135,16 @@ export async function updateDocument(req: Request, res: Response) {
 
     console.log('Id to update', id)
 
+    const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
+
     try {
         await handler.handle(
             new UpdateDocumentCommand({
                 id: id,
                 ...req.body
+            },
+            {
+                environmentIds: environmentIds
             })
         );
 
@@ -139,12 +168,17 @@ export async function moveDocument(req: Request, res: Response) {
 
     console.log('Id to move', documentId)
 
+    const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
+
     try {
         await handler.handle(
             new MoveDocumentCommand({
                 documentId,
                 newEnvironmentId,
                 ...req.body
+            },
+            {
+                environmentIds: environmentIds
             })
         );
 
@@ -163,10 +197,15 @@ export async function deleteDocument(req: Request, res: Response) {
 
     console.log('Id to delete', id)
 
+    const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
+
     try {
         await handler.handle(
             new RemoveDocumentCommand({
                 id: id
+            },
+            {
+                environmentIds: environmentIds
             })
         );
 
@@ -197,10 +236,16 @@ export async function pushDocument(req: Request, res: Response) {
 
     console.log("Id to push: ", id);
 
+    const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
+
     try{
         await command.handle(new PushDocumentCommand({
             id: id
-        }));
+        },
+        {
+            environmentIds: environmentIds
+        })
+    );
 
         res.status(204).send();
     }
@@ -227,10 +272,16 @@ export async function undoPushDocument(req: Request, res: Response) {
 
     console.log("Id to undoPush: ", id);
 
+    const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
+
     try{
         await command.handle(new UndoPushDocumentCommand({
             id: id
-        }));
+        },
+        { 
+            environmentIds: environmentIds
+        })
+    );
 
         res.status(204).send();
     }
@@ -265,9 +316,14 @@ export async function deployDocuments(req: Request, res: Response) {
 
     console.log("Id of the environment to deploy: ", environmentId);
 
+    const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
+
     try{
         await command.handle(new DeployDocumentCommand({
             environmentId: environmentId
+        },
+        {
+            environmentIds: environmentIds
         }));
 
         res.status(204).send();
@@ -286,11 +342,16 @@ export async function restoreDocument(req: Request, res: Response) {
 
     console.log('Id to restore ', id)
 
+    const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
+
     try {
         await handler.handle(
             new RestoreDocumentCommand({
                 id: id,
                 version: version
+            },
+            {
+                environmentIds: environmentIds
             })
         );
 
@@ -300,20 +361,18 @@ export async function restoreDocument(req: Request, res: Response) {
     }
 }
 
+/*
 export async function checkWritePermission(req: Request, res: Response, next: NextFunction) {
     const { environment } = req.body;
 
     if(!environment.id)
         res.status(401).send("Error. Environment not found");
     
-    const environmentIds = (req as CustomRequest).payload.permissions.environmentIds;
+    const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
 
     if(environment in environmentIds) {
         next();
     }
     else res.status(401).send("403 Forbiden");
 }
-
-export interface CustomRequest extends Request {
-    payload: TokenPayload
-}
+*/

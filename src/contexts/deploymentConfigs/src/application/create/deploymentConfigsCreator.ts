@@ -3,21 +3,25 @@ import DeploymentConfigsRepository from "@src/domain/deploymentConfigsRepository
 import CreateDeploymentConfigsCommand from "./createDeploymentConfigsCommand";
 import DeploymentConfigs from "@src/domain/deploymentConfigs";
 import DeploymentConfigsAlreadyExistsError from "@src/domain/errors/deploymentConfigsAlreadyExistsError";
+import DeploymentConfigsFinder from "@src/domain/deploymentConfigsFinder";
 
 export default class DeploymentConfigsCreator{
     private readonly repository: DeploymentConfigsRepository;
 
     private readonly eventBus: EventBus;
+
+    private readonly finder: DeploymentConfigsFinder;
     
     constructor(repository: DeploymentConfigsRepository, eventBus: EventBus){
         this.repository = repository;
         this.eventBus = eventBus;
+        this.finder = new DeploymentConfigsFinder(repository);
     }
 
     async run (command: CreateDeploymentConfigsCommand): Promise<void>{
         const deploymentConfigs = DeploymentConfigs.create(command.data);
 
-        const aux = await this.repository.find(deploymentConfigs.id);
+        const aux = await this.finder.find(deploymentConfigs.id.value, command.permissions.environmentIds);
         if(aux !== null)
             throw new DeploymentConfigsAlreadyExistsError(deploymentConfigs.id.value);
 

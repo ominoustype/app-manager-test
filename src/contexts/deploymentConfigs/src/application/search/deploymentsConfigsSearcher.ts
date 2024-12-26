@@ -10,6 +10,6 @@ export default class DeploymentsConfigsSearcher{
     }
 
     async run(query: SearchDeploymentsConfigsQuery): Promise<SearchDeploymentsConfigsResponse> {
-        return new SearchDeploymentsConfigsResponse(await this.repository.search(query.params));
+        return new SearchDeploymentsConfigsResponse(await this.repository.search(query.params, query.permissions.environmentIds));
     }
 }

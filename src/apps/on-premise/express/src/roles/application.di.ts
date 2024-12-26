@@ -19,17 +19,21 @@ import FindRoleQuery from "@context/roles/application/find/findRoleQuery";
 import CreateRoleQueryHandler from "@context/roles/application/create/createRoleQueryHandler";
 import CreateRoleQuery from "@context/roles/application/create/createRoleQuery";
 
-const HANDLERS = "handlers";
+const dependencies = new Map();
+
+export const HANDLERS = "handlers";
 export const REPOSITORIES = "repositories"
+export const BUSES = "buses"
+
+const mongodbHost = process.env.MONGODB_HOST || 'localhost';
+const mongodbPort = process.env.MONGODB_PORT || 27028;
 
 const client = MongoClientFactory.createClient('roles', { 
-    url: process.env.MONGODB_URI || 'mongodb://localhost:27018/' 
+    url: `mongodb://${mongodbHost}:${mongodbPort}`
 });    
 
 const eventBus = new InMemorySyncEventBus;
 const repository = new RoleMongoRepository(client as unknown as MongoClient);
-
-const dependencies = new Map();
 
 const roleFinder = new RoleFinder(repository);
 const rolesSearcher = new RolesSearcher(repository);
@@ -55,4 +59,4 @@ commandHandlers.set(RemoveRoleCommand, removeRoleCommandHandler);
 dependencies.set(HANDLERS, { command: commandHandlers, query: queryHandlers });
 dependencies.set(REPOSITORIES, { repository: repository });
 
-export { dependencies, HANDLERS };
+export { dependencies };

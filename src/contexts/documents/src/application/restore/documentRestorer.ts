@@ -18,13 +18,15 @@ export default class DocumentRestorer {
     }
 
     async run(command: RestoreDocumentCommand): Promise<void> {
-        const { id, version } = command.data;
+        const { id, version } = command.data,
+            enviromentIds = command.environmentIds;
+
 
         if (!id || !version) {
             return;
         }
 
-        const document = await this.documentFinder.find(id);
+        const document = await this.documentFinder.find(id, enviromentIds);
 
         if (document === null) {
             return;

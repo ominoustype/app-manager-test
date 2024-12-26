@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express'
+import { Request, Response } from 'express'
 import CreateUserCommand from '@context/users/application/create/createUserCommand'
 import FindUserQuery from '@context/users/application/find/findUserQuery'
 import SearchUsersQuery from '@context/users/application/search/searchUsersQuery'
@@ -17,10 +17,11 @@ import FindRoleQuery from '@context/roles/application/find/findRoleQuery'
 import RemoveRoleCommand from '@context/roles/application/delete/removeRoleCommand'
 import InMemoryCommandBus from '@context/shared/infrastructure/commandBus/inMemoryCommandBus'
 import CreateRoleQuery from '@context/roles/application/create/createRoleQuery'
-import { CustomRequest } from '@src/middleware/auths'
 import UpdateRoleCommand from '@context/roles/application/update/updateRoleCommand'
 import RefreshTokenQueryHandler from '@context/users/application/refreshToken/refreshTokenQueryHandler'
 
+const CONTENT_TYPE = 'content-type';
+const APPLICATION_JSON = 'application/json';
 
 export async function searchUsers(req: Request, res: Response) {
     console.log('Request for searchUsers Triggered')
@@ -35,7 +36,7 @@ export async function searchUsers(req: Request, res: Response) {
         })
     );
 
-    res.header("content-type", 'application/json')
+    res.header(CONTENT_TYPE, APPLICATION_JSON)
     res.status(200).send({
         body:({
             result: result.primitives
@@ -53,15 +54,16 @@ export async function findUser(req: Request, res: Response) {
 
     try {
         const response = await handler.handle(
-            new FindUserQuery({ username })
+            new FindUserQuery({ username: username })
         );
 
-        res.header("content-type", 'application/json')
+        res.header(CONTENT_TYPE, APPLICATION_JSON)
         res.status(200).send({ 
             body: response.primitives
         });
     } catch (e) {
-        res.status(404).send({ error: e });
+        //res.status(404).send({ error: e });
+        //next()
     }
 }
 
@@ -207,11 +209,11 @@ export async function logInUser(req: Request, res: Response) {
             new LogInUserQuery({ username, password })
         );
 
-        res.header("content-type", 'application/json')
+        res.header(CONTENT_TYPE, APPLICATION_JSON)
         res.status(200).send({
             body: { 
                 accessToken: response.accessToken, 
-                refreshToken: response.refreshToken 
+                refreshToken: response.refreshToken
             }
         });
     } catch (e) {
@@ -275,6 +277,7 @@ export async function refreshToken(req: Request, res: Response) {
     }
 }
 
+/*
 export async function checkPrivileges(req: Request, res: Response, next: NextFunction) {
     const payload = (req as CustomRequest).payload;
 
@@ -295,3 +298,4 @@ export async function checkPrivileges(req: Request, res: Response, next: NextFun
         res.status(403).send({ error: e });
     }
 }
+*/

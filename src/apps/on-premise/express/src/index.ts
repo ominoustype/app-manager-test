@@ -35,16 +35,6 @@ loadUsers(app)
 
 app.use(errorHandler)
 
-/*
-redisClient.on('connect', () => {
-  console.log(`Redis listening at ${redisHost}:${redisPort}`)
-})
-
-redisClient.on('error', (error) => {
-  console.log(error)
-})
-*/
-
 app.get('/', (_req, res) => {
   res.send(title+art+deployment_text+footer)
 })

@@ -4,7 +4,7 @@ import { UserPrimitives } from '@src/domain/user';
 import { JwtPayload, Secret, sign, TokenExpiredError, verify } from 'jsonwebtoken';
 
 export const SECRET_KEY: Secret = 'appmanager';
-export const ACCESS_EXPIRES_IN = 60;
+export const ACCESS_EXPIRES_IN = '3 days';
 export const REFRESH_EXPIRES_IN = '14 days';
 
 export default class Tokenator implements InterfaceTokenator {

@@ -9,7 +9,9 @@ interface DocumentRepository {
     
     find(id: DocumentId): Promise<Nullable<Document>>;
 
-    search(params: SearchDocumentsQueryParams): Promise<[Documents, number]>;
+    findByIdAndEnvironmentIds(documentId: DocumentId, environmentIds: string[]):  Promise<Nullable<Document>>;
+
+    search(params: SearchDocumentsQueryParams, environmentIds: string[]): Promise<[Documents, number]>;
 
     searchByEnvironment(environment: string): Promise<Documents>;
 

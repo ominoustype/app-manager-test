@@ -17,10 +17,16 @@ export default class EnvironmentRemover {
     }
 
     async run(command: RemoveEnvironmentCommand): Promise<void>{
-        if(!command.data.id)
+        const { data, permissions } = command;
+
+        if(!data.id)
             return;
 
-        const environment = await this.finder.find(command.data.id);   
+        if(permissions.environmentIds.includes(data.id)) { 
+            return;
+        }
+
+        const environment = await this.finder.find(data.id);   
         if(environment===null)
             return;
 

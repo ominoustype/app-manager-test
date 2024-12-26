@@ -10,7 +10,7 @@ export default class DocumentsSearcher {
     }
 
     async run(query: SearchDocumentsQuery): Promise<SearchDocumentsResponse> {
-        const [documents, count] = await this.repository.search(query.params);
+        const [documents, count] = await this.repository.search(query.params, query.environmentIds);
         return new SearchDocumentsResponse(documents, count);
     }
 }

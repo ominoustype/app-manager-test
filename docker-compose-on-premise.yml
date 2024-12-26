@@ -3,18 +3,18 @@ services:
     mongo_db:
         image: mongo:latest
         container_name: mongo_db
-        restart: always
+        restart: unless-stopped
         volumes:
             - mongo_db:/data/db
         ports:
-            - 27017:27017
+            - 27027:27017
         command: mongod --quiet --logpath /dev/null
 
     #Redis Cache Services
     redis_cache:
         image:  redis:latest
         container_name: redis_cache
-        restart: always
+        restart: unless-stopped
         volumes:
             - redis_cache:/data/cache
         ports:
@@ -34,6 +34,8 @@ services:
             - PORT_CONTAINER=3000
             - MONGODB_URI=mongodb://mongo_db:27017/
             - DEPLOYMENT_MESSAGE=Dockerized for on-premise
+            - MONGODB_HOST=mongo_db
+            - MONGODB_PORT=27017
             - REDIS_HOST=redis_cache
             - REDIS_PORT=6379
         depends_on: 

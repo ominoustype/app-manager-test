@@ -45,7 +45,6 @@ export default class User extends AggregateRoot {
         this.email = new Email(primitives.email);
         this.password = primitives.password ? new Password(primitives.password) : undefined;
         this.customer = new Customer(primitives.customer);
-        //console.log("custom "+this.customer.id.value);
         this.role = new Role(primitives.role);
         this.status = primitives.status;
     }

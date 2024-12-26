@@ -7,6 +7,8 @@ import Roles from "./roles";
 export default interface RoleRepository {
     find(id: RoleId): Promise<Nullable<Role>>;
 
+    findByCustomerAndName(name: string, customerId: string):  Promise<Nullable<Role>>;
+
     create(role: Role): Promise<void>;
 
     delete(role: Role): Promise<void>;

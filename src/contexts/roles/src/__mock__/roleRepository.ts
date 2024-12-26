@@ -7,6 +7,9 @@ import Roles from '@src/domain/roles';
 import { omit } from 'lodash';
 
 export default class RoleRepositoryMock implements RoleRepository {
+    findByCustomerAndName(name: string, customerId: string): Promise<Nullable<Role>> {
+        throw new Error('Method not implemented.'+name+customerId);
+    }
     private mockFind = jest.fn();
     private mockCreate = jest.fn();
     private mockDelete = jest.fn();

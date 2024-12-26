@@ -63,7 +63,27 @@ export default class DocumentMongoRepository extends MongoRepository<Document> i
         return this.byId(id.value, Document.fromPrimitives);
     }
 
-    async search(params: SearchDocumentsQueryParams = {}): Promise<[Documents, count: number]> {
+    async findByIdAndEnvironmentIds(documentId: DocumentId, environmentIds: string[]):  Promise<Nullable<Document>> {
+
+        const find = {
+            _id: documentId.value as any,
+            'environment.id': { 
+                $in: environmentIds 
+            }
+        };
+
+        const collection = (await this.collection());
+
+        const document = await collection.findOne(find);
+
+        if (!document) {
+            return null;
+        }
+
+        return this.getParsed(document);
+    }
+
+    async search(params: SearchDocumentsQueryParams = {}, environmentIds: string[] = []): Promise<[Documents, count: number]> {
         const copyParams = { ...params };
         const limit: number = params.page_size && !isNaN(params.page_size) ? params.page_size : DEFAULT_PAGE_SIZE;
         const skip =
@@ -76,7 +96,10 @@ export default class DocumentMongoRepository extends MongoRepository<Document> i
         delete copyParams.page;
         delete copyParams.page_size;
 
-        let find = {};
+        let find = {           
+            'environment.id': { 
+            $in: environmentIds
+        }};
 
         const order = copyParams.order === 'true' ? 1 : -1;
 

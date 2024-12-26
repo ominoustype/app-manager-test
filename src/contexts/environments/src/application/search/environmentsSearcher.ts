@@ -10,6 +10,6 @@ export default class EnvironmentsSearcher {
     }
 
     async run(query: SearchEnvironmentsQuery): Promise<SearchEnvironmentsResponse> {
-        return new SearchEnvironmentsResponse(await this.repository.search(query.params));
+        return new SearchEnvironmentsResponse(await this.repository.search(query.params, query.permissions.environmentIds));
     }
 }

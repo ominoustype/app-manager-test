@@ -20,7 +20,7 @@ export default class DeploymentConfigsUpdater{
         if(!command.data.id)
             return
 
-        const deploymentConfigs = await this.finder.find(command.data.id);
+        const deploymentConfigs = await this.finder.find(command.data.id, command.permissions.environmentIds);
 
         if(deploymentConfigs===null)
             return;

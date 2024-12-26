@@ -53,26 +53,33 @@ import CreateRoleQuery from '@context/roles/application/create/createRoleQuery';
 import RoleUpdater from '@context/roles/application/update/roleUpdater';
 import UpdateRoleCommandHandler from '@context/roles/application/update/updateRoleCommandHandler';
 import UpdateRoleCommand from '@context/roles/application/update/updateRoleCommand';
-import RedisClientFactory, { RedisConfig } from '@context/shared/infrastructure/redis/redisClientFactory';
+import RedisClientFactory from '@context/shared/infrastructure/redis/redisClientFactory';
 import TokenRepository from '@context/users/infrastructure/persistence/redis/tokenRedisRespository';
 import { RedisClientType } from "redis";
 
 const dependencies = new Map();
 
-const client = MongoClientFactory.createClient('users', {
-    url: process.env.MONGODB_URI  || 'mongodb://localhost:27018/'
-});
+export const HANDLERS = "handlers";
+export const REPOSITORIES = "repositories"
+export const BUSES = "buses"
 
-const roleClient = MongoClientFactory.createClient('roles', {
-    url: process.env.MONGODB_URI  || 'mongodb://localhost:27018/'
-});
+const mongodbHost = process.env.MONGODB_HOST || 'localhost';
+const mongodbPort = process.env.MONGODB_PORT || 27028;
 
 const redisHost = process.env.REDIS_HOST || 'localhost';
 const redisPort = process.env.REDIS_PORT || 6378;
-const redisConfig: RedisConfig = { url: 
-    `redis://${redisHost}:${redisPort}`
-};
-const tokenClient = RedisClientFactory.createClient('tokens', redisConfig);
+
+const client = MongoClientFactory.createClient('users', {
+    url: `mongodb://${mongodbHost}:${mongodbPort}`
+});
+
+const roleClient = MongoClientFactory.createClient('roles', {
+    url: `mongodb://${mongodbHost}:${mongodbPort}`
+});
+
+const tokenClient = RedisClientFactory.createClient('tokens', {
+    url: `redis://${redisHost}:${redisPort}`
+});
 
 const userRepository = new UserMongoRepository(client as unknown as MongoClient);
 const roleRepository = new RoleMongoRepository(roleClient as unknown as MongoClient);
@@ -146,8 +153,8 @@ commandHandlers.set(RemoveRoleCommand, removeRoleCommandHandler);
 queryHandlers.set(CreateRoleQuery, createRoleQueryHandler);
 commandHandlers.set(UpdateRoleCommand, updateRoleCommandHandler);
 
-dependencies.set('handlers', { command: commandHandlers, query: queryHandlers });
-dependencies.set('repositories', { repository: userRepository });
-dependencies.set('buses', { query: queryBus, command: commandBus });
+dependencies.set(HANDLERS, { command: commandHandlers, query: queryHandlers });
+dependencies.set(REPOSITORIES, { repository: userRepository });
+dependencies.set(BUSES, { query: queryBus, command: commandBus });
 
 export { dependencies };

@@ -32,11 +32,13 @@ export default class DocumentPusher {
     }
 
     async run(command: PushDocumentCommand): Promise<void> {
-        if (!command.data.id) {
+        const { data, permissions } = command;
+
+        if (!data.id) {
             return;
         }
         
-        const document = await this.finder.find(command.data.id);
+        const document = await this.finder.find(data.id, permissions.environmentIds);
 
         if (document === null) {
             return;
@@ -52,7 +54,9 @@ export default class DocumentPusher {
             new SearchByEnvironmentIsDeployedDeploymentConfigsQuery({ 
                 environmentId: document.environment.id.value, 
                 isDeployed: false 
-            })) as unknown as SearchByEnvironmentIsDeployedDeploymentConfigsResponse;
+            },{
+                environmentIds: permissions.environmentIds
+            })) as SearchByEnvironmentIsDeployedDeploymentConfigsResponse;
 
         if(deploymentsConfigs === null )
             return;
@@ -69,6 +73,8 @@ export default class DocumentPusher {
                     environment: document.environment.toPrimitives(),
                     customer: document.customer.toPrimitives(), 
                     documents: new Array<DocumentPrimitives>(documentPrimitives)
+                },{
+                    environmentIds: permissions.environmentIds
                 }));
         }
         else {
@@ -92,6 +98,8 @@ export default class DocumentPusher {
                 await this.commandBus.dispatch(
                     new UpdateDeploymentConfigsCommand({
                         ...deploymentConfigs
+                    }, {
+                        environmentIds: permissions.environmentIds
                     }));
             }
             else{

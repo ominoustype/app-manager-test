@@ -6,8 +6,12 @@ import DeploymentsConfigs from '@src/domain/deploymentsConfigs';
 import DeploymentConfigsRepository from '@src/domain/deploymentConfigsRepository';
 import { SearchDeploymentsConfigsQueryParams } from '@src/application/search/searchDeploymentsConfigsQuery';
 import { SearchByEnvironmentIsDeployedDeploymentConfigsQueryParams } from '@src/application/searchByEnvironmentIsDeployed/searchByEnvironmentIsDeployedDeploymentConfigsQuery';
+import DeploymentConfigsId from '@src/domain/deploymentConfigsId';
 
 export default class DeploymentConfigsRepositoryMock implements DeploymentConfigsRepository {
+    findByIdAndEnvironmentIds(id: DeploymentConfigsId, environmentIds: Array<string>): Promise<Nullable<DeploymentConfigs>> {
+        throw new Error('Method not implemented.'+id+environmentIds);
+    }
     private mockCreate = jest.fn();
     private mockFind = jest.fn();
     private mockSearchByEnvironmentIsDeployed = jest.fn();

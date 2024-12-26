@@ -33,18 +33,21 @@ import SearchByEnvironmentIsDeployedDeploymentConfigsQueryHandler from '@context
 import SearchByEnvironmentIsDeployedDeploymentConfigsQuery from '@context/deploymentConfigs/application/searchByEnvironmentIsDeployed/searchByEnvironmentIsDeployedDeploymentConfigsQuery';
 import DeploymentConfigsByEnvironmentIsDeployedSearcher from '@context/deploymentConfigs/application/searchByEnvironmentIsDeployed/deploymentConfigsByEnvironmentIsDeployedSearcher';
 
-export const HANDLERS = "handlers";
-export const REPOSITORIES = "repositories";
-export const BUSES = "buses";
-
 const dependencies = new Map();
 
+export const HANDLERS = "handlers";
+export const REPOSITORIES = "repositories";
+export const BUSES = "buses"
+
+const mongodbHost = process.env.MONGODB_HOST || 'localhost';
+const mongodbPort = process.env.MONGODB_PORT || 27028;
+
 const client = MongoClientFactory.createClient('deploymentConfigs', {
-    url: process.env.MONGODB_URI  || 'mongodb://localhost:27018/'
+    url: `mongodb://${mongodbHost}:${mongodbPort}`
 });
 
 const clientEnvironment = MongoClientFactory.createClient('environments', {
-    url: process.env.MONGODB_URI  || 'mongodb://localhost:27018/'
+    url: `mongodb://${mongodbHost}:${mongodbPort}`
 });
 
 const deploymentConfigsRepository = new DeploymentConfigsMongoRepository(client as unknown as MongoClient);
@@ -88,9 +91,9 @@ commandHandlers.set(UpdateDeploymentConfigsCommand, updateDeploymentConfigsComma
 commandHandlers.set(RemoveDeploymentConfigsCommand, removeDeploymentConfigsCommandHandler);
 commandHandlers.set(DeployDeploymentConfigsCommand, deployDeploymentConfigsCommandHandler);
 
-dependencies.set(HANDLERS, {query: queryHandlers, command: commandHandlers});
+dependencies.set(HANDLERS, { query: queryHandlers, command: commandHandlers });
 dependencies.set(REPOSITORIES, { repository: deploymentConfigsRepository });
-dependencies.set(BUSES, { query: queryBus, command: commandBus});
+dependencies.set(BUSES, { query: queryBus, command: commandBus });
 
 export { dependencies };
 

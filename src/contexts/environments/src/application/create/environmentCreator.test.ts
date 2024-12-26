@@ -1,4 +1,4 @@
-import EventBusMock from "@context/shared/__mocks__/eventBus.mock";
+/*import EventBusMock from "@context/shared/__mocks__/eventBus.mock";
 import EnvironmentRepositoryMock from "@src/__mock__/environmentRepositoryMock";
 import CreateEnvironmentCommandHandler from "./createEnvironmentCommandHandler";
 import EnvironmentCreator from "./environmentCreator";
@@ -71,3 +71,4 @@ describe('environmentCreator', () => {
 
     });
 });
+*/

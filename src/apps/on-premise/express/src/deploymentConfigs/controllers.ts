@@ -18,6 +18,7 @@ import DeployDeploymentConfigsCommandHandler from '@context/deploymentConfigs/ap
 
 import SearchByEnvironmentIsDeployedDeploymentConfigsQuery from '@context/deploymentConfigs/application/searchByEnvironmentIsDeployed/searchByEnvironmentIsDeployedDeploymentConfigsQuery';
 import SearchByEnvironmentIsDeployedDeploymentConfigsQueryHandler from '@context/deploymentConfigs/application/searchByEnvironmentIsDeployed/searchByEnvironmentIsDeployedDeploymentConfigsQueryHandler';
+import { CustomRequest } from '@src/middleware/auths';
 
 const CONTENT_TYPE = "content-type";
 const APPLICATION_JSON = "application/json";
@@ -27,10 +28,15 @@ export async function searchDeploymentConfigs(req: Request, res: Response) {
 
     const handler = dependencies.get(HANDLERS).query.get(
         SearchDeploymentConfigsQuery) as SearchDeploymentsConfigsQueryHandler;
-
+    
+    const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
+        
     const result = await handler.handle(
-        new SearchDeploymentConfigsQuery(
-            { ...req.query })
+        new SearchDeploymentConfigsQuery({ 
+                ...req.query 
+            },{
+                environmentIds: environmentIds
+            })
         );
 
     res.header(CONTENT_TYPE, APPLICATION_JSON);
@@ -49,8 +55,15 @@ export async function findDeploymentConfigs(req: Request, res: Response) {
 
     console.log("Id to find: ", id);
 
+    const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
+
     try{    
-        const response = await handler.handle(new FindDeploymentConfigsQuery({id}));
+        const response = await handler.handle(new FindDeploymentConfigsQuery({
+                id: id 
+            },{
+                environmentIds: environmentIds
+            })
+        );
         res.header(CONTENT_TYPE, APPLICATION_JSON);
         res.status(200).send({
             body: response.primitives
@@ -71,11 +84,16 @@ export async function findByEnvironmentIsDeployedDeploymentConfigs(req: Request,
 
     console.log("ByEnvironmentId to find: ", environmentId+" and it is deployed "+isDeployed);
 
+    const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
+
     try{    
         const response = await handler.handle(new SearchByEnvironmentIsDeployedDeploymentConfigsQuery({
-            environmentId: environmentId,
-            isDeployed: isDeployed === 'true'? true : false
-        }));
+                environmentId: environmentId,
+                isDeployed: isDeployed === 'true'? true : false
+            },{
+                environmentIds: environmentIds
+            })
+        );
         res.header(CONTENT_TYPE, APPLICATION_JSON);
         res.status(200).send({
             body: response.primitives
@@ -89,11 +107,16 @@ export async function findByEnvironmentIsDeployedDeploymentConfigs(req: Request,
 export async function createDeploymentConfigs(req: Request, res: Response) {
     console.log("Request for createDeploymentConfigs triggered");
 
+    const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
+
     const command = dependencies.get(HANDLERS).command.get(
         CreateDeploymentConfigsCommand) as CreateDeploymentConfigsCommandHandler;
 
     try{
-        await command.handle(new CreateDeploymentConfigsCommand(req.body));
+        await command.handle(new CreateDeploymentConfigsCommand(req.body,{
+                environmentIds: environmentIds
+            }
+        ));
         res.status(201).send();
     }
     catch(e){
@@ -111,11 +134,16 @@ export async function updateDeploymentConfigs(req: Request, res: Response) {
 
     console.log("Id to update: ", id);
 
+    const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
+
     try{
         await command.handle(new UpdateDeploymentConfigsCommand({
-            id: id,
-            ...req.body
-        }));
+                id: id,
+                ...req.body
+            },{
+                environmentIds: environmentIds
+            })
+        );
 
         res.status(204).send();
     }
@@ -134,8 +162,15 @@ export async function deleteDeploymentConfigs(req: Request, res: Response) {
 
     console.log('Id to delete', id);
 
+    const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
+
     try{
-        await command.handle(new RemoveDeploymentConfigsCommand({id: id}));
+        await command.handle(new RemoveDeploymentConfigsCommand({
+                id: id
+            },{
+                environmentIds: environmentIds
+            })
+        );
         res.status(204).send();
     }
     catch(e){
@@ -153,11 +188,16 @@ export async function deployDeploymentConfigs(req: Request, res: Response) {
 
     console.log("Id to deploy: ", id);
 
+    const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
+
     try{
         await command.handle(new DeployDeploymentConfigsCommand({
-            id: id,
-            ...req.body
-        }));
+                id: id,
+                ...req.body
+            },{
+                environmentIds: environmentIds
+            })
+        );
 
         res.status(204).send();
     }
