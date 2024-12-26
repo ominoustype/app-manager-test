@@ -54,7 +54,7 @@ export async function findUser(req: Request, res: Response) {
 
     try {
         const response = await handler.handle(
-            new FindUserQuery({ username })
+            new FindUserQuery({ username: username })
         );
 
         res.header(CONTENT_TYPE, APPLICATION_JSON)
@@ -62,7 +62,8 @@ export async function findUser(req: Request, res: Response) {
             body: response.primitives
         });
     } catch (e) {
-        res.status(404).send({ error: e });
+        //res.status(404).send({ error: e });
+        //next()
     }
 }
 
