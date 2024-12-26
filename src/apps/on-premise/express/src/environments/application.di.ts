@@ -46,6 +46,13 @@ import FindRoleQueryHandler from "@context/roles/application/find/findRoleQueryH
 import RoleByCustomerAndNameFinder from "@context/roles/application/findByCustomerAndName/roleByCustomerAndNameFinder";
 import FindByCustomerAndNameRoleQuery from "@context/roles/application/findByCustomerAndName/findByCustomerAndNameRoleQuery";
 import FindByCustomerAndNameRoleQueryHandler from "@context/roles/application/findByCustomerAndName/findByCustomerAndNameRoleQueryHandler";
+import UserLoggerOut from "@context/users/application/logout/userLoggerOut";
+import LogOutUserCommandHandler from "@context/users/application/logout/logoutUserCommandHandler";
+import RedisClientFactory from '@context/shared/infrastructure/redis/redisClientFactory';
+import TokenRepository from '@context/users/infrastructure/persistence/redis/tokenRedisRespository';
+import { RedisClientType } from "redis";
+import Tokenator from "@context/users/infrastructure/persistence/mongo/tokenator";
+import LogoutUserCommand from "@context/users/application/logout/logoutUserCommand";
 
 const dependencies = new Map();
 
@@ -55,6 +62,9 @@ export const BUSES = "buses"
 
 const mongodbHost = process.env.MONGODB_HOST || 'localhost';
 const mongodbPort = process.env.MONGODB_PORT || 27028;
+
+const redisHost = process.env.REDIS_HOST || 'localhost';
+const redisPort = process.env.REDIS_PORT || 6378;
 
 const client = MongoClientFactory.createClient('environments', {
     url: `mongodb://${mongodbHost}:${mongodbPort}`
@@ -72,14 +82,21 @@ const userClient = MongoClientFactory.createClient('users', {
     url: `mongodb://${mongodbHost}:${mongodbPort}`
 });
 
+const tokenClient = RedisClientFactory.createClient('tokens', {
+    url: `redis://${redisHost}:${redisPort}`
+});
+
 const environmentRepository = new EnvironmentMongoRepository(client as unknown as MongoClient);
 const documentRepository = new DocumentMongoRepository(documentClient as unknown as MongoClient);
 const roleRepository = new RoleMongoRepository(roleClient as unknown as MongoClient);
 const userRepository = new UserMongoRepository(userClient as unknown as MongoClient);
+const tokenRepository = new TokenRepository(tokenClient as unknown as RedisClientType);
 
 const eventBus = new InMemorySyncEventBus();
 const queryBus = new InMemoryQueryBus(new QueryHandlersInformation([]));
 const commandBus = new InMemoryCommandBus(new CommandHandlersInformation([]));
+
+const tokenator = new Tokenator();
 
 const environmentCreator = new EnvironmentCreator(environmentRepository, eventBus, queryBus, commandBus);
 const environmentUpdater = new EnvironmentUpdater(environmentRepository, eventBus, queryBus, commandBus);
@@ -113,6 +130,10 @@ commandHandlers.set(UpdateDocumentCommand, updateDocumentCommandHandler);
 const userFinder = new UserFinder(userRepository);
 const findUserQueryHandler = new FindUserQueryHandler(userFinder);
 queryHandlers.set(FindUserQuery, findUserQueryHandler);
+
+const userLogout = new UserLoggerOut(tokenator, tokenRepository);
+const logoutUserCommandHandler = new LogOutUserCommandHandler(userLogout);
+commandHandlers.set(LogoutUserCommand, logoutUserCommandHandler);
 
 const roleFinder = new RoleFinder(roleRepository);
 const findRoleQueryHandler = new FindRoleQueryHandler(roleFinder);

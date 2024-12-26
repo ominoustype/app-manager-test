@@ -23,6 +23,8 @@ import FindUserQueryHandler from "@context/users/application/find/findUserQueryH
 import FindRoleQueryHandler from "@context/roles/application/find/findRoleQueryHandler";
 import FindByCustomerAndNameRoleQueryHandler from "@context/roles/application/findByCustomerAndName/findByCustomerAndNameRoleQueryHandler";
 import UpdateRoleCommandHandler from "@context/roles/application/update/updateRoleCommandHandler";
+import LogoutUserCommand from "@context/users/application/logout/logoutUserCommand";
+import LogOutUserCommandHandler from "@context/users/application/logout/logoutUserCommandHandler";
 
 const CONTENT_TYPE = 'content-type';
 const APPLICATION_JSON = 'application/json';
@@ -109,11 +111,17 @@ export async function createEnvironment(req: Request, res: Response, next: NextF
         UpdateRoleCommandHandler;
     commandBus.addCommandHandlers([ roleUpdater ]);
 
+    const userLogout  = dependencies.get(HANDLERS).command.get(LogoutUserCommand) as
+        LogOutUserCommandHandler;
+    commandBus.addCommandHandlers([ userLogout ]);
+
     const username = (req as CustomRequest).user.username;
+    const accessToken = (req as CustomRequest).user.accessToken;
 
     try{
         await handler.handle(new CreateEnvironmentCommand(req.body, { 
-            username: username 
+            username: username,
+            accessToken: accessToken
         }));
         res.status(201).send();
     }

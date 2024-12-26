@@ -16,6 +16,7 @@ type Permissions = {
 type User = {
     permissions: Permissions;
     username: string;
+    accessToken: string;
 };
 
 export async function auth(req: Request, res: Response, next: NextFunction) {
@@ -35,7 +36,8 @@ export async function auth(req: Request, res: Response, next: NextFunction) {
             permissions: {
                 environmentIds: response.environmentIds
             },
-            username: response.username
+            username: response.username,
+            accessToken: accessToken!
         };
         
         next();
