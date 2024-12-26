@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from 'express'
 import AuthUserQuery from '@context/users/application/auth/authUserQuery';
 import AuthUserQueryHandler from '@context/users/application/auth/authUserQueryHandler';
 import AuthUserResponse from '@context/users/application/auth/authUserResponse';
+import logger from '@context/shared/infrastructure/logger';
 
 export interface CustomRequest extends Request {
     user: User
@@ -18,7 +19,7 @@ type User = {
 };
 
 export async function auth(req: Request, res: Response, next: NextFunction) {
-    console.log("Request for authUser triggered");
+    logger.info("Request for authUser triggered");
 
     const handler = dependencies.get(HANDLERS).query.get(AuthUserQuery) as
         AuthUserQueryHandler;

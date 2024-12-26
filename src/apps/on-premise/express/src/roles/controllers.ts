@@ -10,12 +10,13 @@ import SearchRolesQueryHandler from "@context/roles/application/search/searchRol
 import SearchRolesQuery from "@context/roles/application/search/searchRolesQuery";
 import CreateRoleQueryHandler from "@context/roles/application/create/createRoleQueryHandler";
 import CreateRoleQuery from "@context/roles/application/create/createRoleQuery";
+import logger from "@context/shared/infrastructure/logger";
 
 const CONTENT_TYPE = 'content-type';
 const APPLICATION_JSON = 'application/json';
 
 export async function searchRoles(req: Request, res: Response) {
-    console.log("Request for searchRoles triggered");
+    logger.info("Request for searchRoles triggered");
 
     const handler = dependencies.get(HANDLERS).query.get(SearchRolesQuery) as 
         SearchRolesQueryHandler;
@@ -32,14 +33,14 @@ export async function searchRoles(req: Request, res: Response) {
 }
 
 export async function findRole(req: Request, res: Response, next: NextFunction) {
-    console.log("Request for findRole triggered");
+    logger.info("Request for findRole triggered");
 
     const { id } = req.params;
 
     const handler = dependencies.get(HANDLERS).query.get(FindRoleQuery) as
         FindRoleQueryHandler;
 
-    console.log("Id to find: "+id);
+    logger.info("Id to find: ", { id });
 
     try{
         const response = await handler.handle(new FindRoleQuery({id: id}));
@@ -55,7 +56,7 @@ export async function findRole(req: Request, res: Response, next: NextFunction) 
 }
 
 export async function createRole(req: Request, res: Response, next: NextFunction) {
-    console.log("Request for createRole triggered");
+    logger.info("Request for createRole triggered");
 
     const handler = dependencies.get(HANDLERS).query.get(CreateRoleQuery) as 
         CreateRoleQueryHandler;
@@ -70,14 +71,14 @@ export async function createRole(req: Request, res: Response, next: NextFunction
 }
 
 export async function updateRole(req: Request, res: Response, next: NextFunction) {
-    console.log("Request for updateRole triggered");
+    logger.info("Request for updateRole triggered");
 
     const { id } = req.params;
 
     const handler = dependencies.get(HANDLERS).command.get(UpdateRoleCommand) as 
         UpdateRoleCommandHandler;
 
-    console.log("Id to update: "+id);
+    logger.info("Id to update: ", { id });
 
     try{
         await handler.handle(new UpdateRoleCommand({ 
@@ -92,12 +93,14 @@ export async function updateRole(req: Request, res: Response, next: NextFunction
 }
 
 export async function deleteRole(req: Request, res: Response, next: NextFunction) {
-    console.log("Request for deleteRole triggered");
+    logger.info("Request for deleteRole triggered");
 
     const { id } = req.params;
 
     const handler = dependencies.get(HANDLERS).command.get(RemoveRoleCommand) as
         RemoveRoleCommandHandler;
+
+    logger.info('Id to delete', { id });
 
     try{
         await handler.handle(new RemoveRoleCommand({ id }));

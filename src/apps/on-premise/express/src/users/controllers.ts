@@ -32,12 +32,13 @@ import FindUserQueryHandler from '@context/users/application/find/findUserQueryH
 import CreateUserCommandHandler from '@context/users/application/create/createUserCommandHandler'
 import RemoveRoleCommandHandler from '@context/roles/application/delete/removeRoleCommandHandler'
 import CreateRoleQueryHandler from '@context/roles/application/create/createRoleQueryHandler'
+import logger from '@context/shared/infrastructure/logger'
 
 const CONTENT_TYPE = 'content-type';
 const APPLICATION_JSON = 'application/json';
 
 export async function searchUsers(req: Request, res: Response) {
-    console.log('Request for searchUsers Triggered');
+    logger.info('Request for searchUsers Triggered');
 
     const handler = dependencies.get(HANDLERS).query.get(SearchUsersQuery) as 
         SearchUsersQueryHandler;
@@ -59,13 +60,13 @@ export async function searchUsers(req: Request, res: Response) {
 }
 
 export async function findUser(req: Request, res: Response, next: NextFunction) {
-    console.log('Request for findUser Triggered');
+    logger.info('Request for findUser Triggered');
     const { username } = req.params;
 
     const handler = dependencies.get(HANDLERS).query.get(FindUserQuery) as 
         FindUserQueryHandler;
 
-    console.log('Username to find', username);
+    logger.info('Username to find', { username });
 
     try {
         const response = await handler.handle(
@@ -82,7 +83,7 @@ export async function findUser(req: Request, res: Response, next: NextFunction) 
 }
 
 export async function createUser(req: Request, res: Response, next: NextFunction) {
-    console.log('Request for createUser Triggered');
+    logger.info('Request for createUser Triggered');
 
     const queryBus = dependencies.get(BUSES).query as InMemoryQueryBus;
     const commandBus = dependencies.get(BUSES).command as InMemoryCommandBus;
@@ -113,7 +114,7 @@ export async function createUser(req: Request, res: Response, next: NextFunction
 }
 
 export async function updateUser(req: Request, res: Response, next: NextFunction) {
-    console.log('Request for updateUser Triggered');
+    logger.info('Request for updateUser Triggered');
 
     const { username } = req.params;
 
@@ -131,7 +132,7 @@ export async function updateUser(req: Request, res: Response, next: NextFunction
     const handler = dependencies.get(HANDLERS).command.get(UpdateUserCommand) as 
         UpdateUserCommandHandler;
 
-    console.log('Username to update', username);
+    logger.info('Username to update', { username });
 
     try {
         await handler.handle(
@@ -149,13 +150,13 @@ export async function updateUser(req: Request, res: Response, next: NextFunction
 }
 
 export async function deleteUser(req: Request, res: Response, next: NextFunction) {
-    console.log('Request for deleteUser Triggered');
+    logger.info('Request for deleteUser Triggered');
     const { username } = req.params;
 
     const handler = dependencies.get(HANDLERS).command.get(RemoveUserCommand) as 
         RemoveUserCommandHandler;
 
-    console.log('Username to delete', username);
+    logger.info('Username to delete', { username });
 
     try {
         await handler.handle(
@@ -172,14 +173,14 @@ export async function deleteUser(req: Request, res: Response, next: NextFunction
 }
 
 export async function disableUser(req: Request, res: Response, next: NextFunction) {
-    console.log('Request for disableUser Triggered');
+    logger.info('Request for disableUser Triggered');
 
     const { username } = req.params;
 
     const handler = dependencies.get(HANDLERS).command.get(DisableUserCommand) as 
         DisableUserCommandHandler;
 
-    console.log('Username to disable', username);
+    logger.info('Username to disable', { username });
 
     try {
         await handler.handle(
@@ -196,14 +197,14 @@ export async function disableUser(req: Request, res: Response, next: NextFunctio
 }
 
 export async function changePassword(req: Request, res: Response, next: NextFunction) {
-    console.log('Request for changePassword Triggered');
+    logger.info('Request for changePassword Triggered');
 
     const { username, oldPassword, newPassword } = req.body;
 
     const handler = dependencies.get(HANDLERS).command.get(ChangePasswordCommand) as 
         ChangePasswordCommandHandler;
 
-    console.log('Username to change password', username);
+    logger.info('Username to change password', { username });
 
     try {
         await handler.handle(
@@ -222,7 +223,7 @@ export async function changePassword(req: Request, res: Response, next: NextFunc
 }
 
 export async function logInUser(req: Request, res: Response, next: NextFunction) {
-    console.log('Request for logInUser Triggered');
+    logger.info('Request for logInUser Triggered');
 
     const { username, password } = req.body;
 
@@ -235,7 +236,7 @@ export async function logInUser(req: Request, res: Response, next: NextFunction)
     const handler = dependencies.get('handlers').query.get(LogInUserQuery) as 
         LogInUserQueryHandler;
 
-    console.log('Username to login', username);
+    logger.info('Username to login', { username });
 
     try {
         const response = await handler.handle(
@@ -255,7 +256,7 @@ export async function logInUser(req: Request, res: Response, next: NextFunction)
 }
 
 export async function logOutUser(req: Request, res: Response, next: NextFunction) {
-    console.log('Request for logOutUser Triggered');
+    logger.info('Request for logOutUser Triggered');
 
     const { username } = req.params;
 
@@ -265,7 +266,7 @@ export async function logOutUser(req: Request, res: Response, next: NextFunction
     const handler = dependencies.get(HANDLERS).command.get(LogoutUserCommand) as 
         LogOutUserCommandHandler;
 
-    console.log('Username to logout', username);
+    logger.info('Username to logout', { username });
 
     try {
         await handler.handle(
@@ -283,7 +284,7 @@ export async function logOutUser(req: Request, res: Response, next: NextFunction
 }
 
 export async function refreshToken(req: Request, res: Response, next: NextFunction) {
-    console.log('Request for refreshToken Triggered');
+    logger.info('Request for refreshToken Triggered');
 
     const { refreshToken } = req.body;
 
@@ -296,7 +297,7 @@ export async function refreshToken(req: Request, res: Response, next: NextFuncti
     const handler = await dependencies.get(HANDLERS).query.get(RefreshTokenQuery) as 
         RefreshTokenQueryHandler;
 
-    console.log('Refresh token to be used', refreshToken);
+    logger.info('Refresh token to be used', { refreshToken });
 
     try{
         const response = await handler.handle(new RefreshTokenQuery({

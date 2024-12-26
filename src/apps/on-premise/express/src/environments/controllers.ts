@@ -60,7 +60,7 @@ export async function findEnvironment(req: Request, res: Response, next: NextFun
     const handler = dependencies.get(HANDLERS).query.get(FindEnvironmentQuery) as
         FindEnvironmentQueryHandler;
 
-    console.log("Id to find: "+id);
+    console.log("Id to find: ", { id });
 
     const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
     
@@ -141,7 +141,7 @@ export async function updateEnvironment(req: Request, res: Response, next: NextF
     const handler = dependencies.get(HANDLERS).command.get(UpdateEnvironmentCommand) as
         UpdateEnvironmentCommandHandler;
 
-    console.log("Id to update: "+id);
+    console.log("Id to update: ", { id });
 
     const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
 
@@ -169,7 +169,7 @@ export async function deleteEnvironment(req: Request, res: Response, next: NextF
     const handler = dependencies.get(HANDLERS).command.get(RemoveEnvironmentCommand) as 
         RemoveDeploymentConfigsCommandHandler;
 
-    console.log("Id to delete: "+id);
+    console.log("Id to delete: ", { id });
 
     const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
 

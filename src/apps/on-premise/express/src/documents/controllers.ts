@@ -68,7 +68,7 @@ export async function searchByEnvironmentDocuments(req: Request, res: Response) 
     const handler = dependencies.get(HANDLERS).query.get(SearchByEnvironmentDocumentsQuery) as 
         SearchByEnvironmentDocumentsQueryHandler;
 
-    console.log('Id to find ByEnvironment', environmentId);
+    console.log('Id to find ByEnvironment', { environmentId });
 
     const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
 
@@ -94,7 +94,7 @@ export async function findDocument(req: Request, res: Response, next: NextFuncti
     const handler = dependencies.get(HANDLERS).query.get(FindDocumentQuery) as 
         FindDocumentQueryHandler;
 
-    console.log('Id to find', id);
+    console.log('Id to find', { id });
 
     const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
 
@@ -148,7 +148,7 @@ export async function updateDocument(req: Request, res: Response, next: NextFunc
     const handler = dependencies.get(HANDLERS).command.get(UpdateDocumentCommand) as 
         UpdateDocumentCommandHandler;
 
-    console.log('Id to update', id);
+    console.log('Id to update', { id });
 
     const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
 
@@ -184,7 +184,7 @@ export async function moveDocument(req: Request, res: Response, next: NextFuncti
     const handler = dependencies.get(HANDLERS).command.get(MoveDocumentCommand) as 
         MoveDocumentCommandHandler;
 
-    console.log('Id to move', documentId);
+    console.log('Id to move', { documentId });
 
     const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
 
@@ -214,7 +214,7 @@ export async function deleteDocument(req: Request, res: Response, next: NextFunc
     const handler = dependencies.get(HANDLERS).command.get(RemoveDocumentCommand)
         RemoveDocumentCommandHandler;
 
-    console.log('Id to delete', id);
+    console.log('Id to delete', { id });
 
     const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
 
@@ -254,7 +254,7 @@ export async function pushDocument(req: Request, res: Response, next: NextFuncti
 
     const command = dependencies.get("handlers").command.get(PushDocumentCommand);
 
-    console.log("Id to push: ", id);
+    console.log("Id to push: ", { id });
 
     const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
 
@@ -290,7 +290,7 @@ export async function undoPushDocument(req: Request, res: Response, next: NextFu
 
     const command = dependencies.get("handlers").command.get(UndoPushDocumentCommand);
 
-    console.log("Id to undoPush: ", id);
+    console.log("Id to undoPush: ", { id });
 
     const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
 
@@ -334,7 +334,7 @@ export async function deployDocuments(req: Request, res: Response, next: NextFun
 
     const command = dependencies.get("handlers").command.get(DeployDocumentCommand);
 
-    console.log("Id of the environment to deploy: ", environmentId);
+    console.log("Id of the environment to deploy: ", { environmentId });
 
     const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
 
@@ -361,7 +361,7 @@ export async function restoreDocument(req: Request, res: Response, next: NextFun
     const handler = dependencies.get(HANDLERS).command.get(RestoreDocumentCommand) as 
         RestoreDocumentCommandHandler;
 
-    console.log('Id to restore ', id)
+    console.log('Id to restore ', { id })
 
     const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
 
