@@ -5,7 +5,6 @@ import { searchEnvironments, findEnvironment, createEnvironment,
 
 import { auth } from '../middleware/auths';
 
-
 const BASE_URL = "/environments";
 
 export default function loadEnvironment(app: Express) {

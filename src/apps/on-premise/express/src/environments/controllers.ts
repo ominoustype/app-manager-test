@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { BUSES, dependencies, HANDLERS } from './application.di'
 import CreateEnvironmentCommand from "@context/environments/application/create/createEnvironmentCommand";
 import UpdateEnvironmentCommand from "@context/environments/application/update/updateEnvironmentCommand";
@@ -52,7 +52,7 @@ export async function searchEnvironments(req: Request, res: Response) {
     });
 }
 
-export async function findEnvironment(req: Request, res: Response) {
+export async function findEnvironment(req: Request, res: Response, next: NextFunction) {
     console.log("Request for findEnvironment triggered");
 
     const { id } = req.params;
@@ -79,11 +79,11 @@ export async function findEnvironment(req: Request, res: Response) {
         });
     }
     catch(e){
-        res.status(404).send({ error: e });
+        next(e);
     }
 }
 
-export async function createEnvironment(req: Request, res: Response) {
+export async function createEnvironment(req: Request, res: Response, next: NextFunction) {
     console.log("Request for createEnvironment triggered");
 
     const queryBus = dependencies.get(BUSES).query;
@@ -95,19 +95,19 @@ export async function createEnvironment(req: Request, res: Response) {
     /* Find user, find role, find by customer & name role, update role */
     const userFinder = dependencies.get(HANDLERS).query.get(FindUserQuery) as 
         FindUserQueryHandler;
-    queryBus.addQueryHandlers([userFinder]);
+    queryBus.addQueryHandlers([ userFinder ]);
 
     const roleFinder = dependencies.get(HANDLERS).query.get(FindRoleQuery) as
         FindRoleQueryHandler;
-    queryBus.addQueryHandlers([roleFinder]);
+    queryBus.addQueryHandlers([ roleFinder ]);
 
     const byCustomerAndNameRoleFinder = dependencies.get(HANDLERS).query.get(FindByCustomerAndNameRoleQuery) as
         FindByCustomerAndNameRoleQueryHandler;
-    queryBus.addQueryHandlers([byCustomerAndNameRoleFinder]);
+    queryBus.addQueryHandlers([ byCustomerAndNameRoleFinder ]);
 
     const roleUpdater  = dependencies.get(HANDLERS).command.get(UpdateRoleCommand) as
-        UpdateRoleCommandHandler;;
-    commandBus.addCommandHandlers([roleUpdater])
+        UpdateRoleCommandHandler;
+    commandBus.addCommandHandlers([ roleUpdater ]);
 
     const username = (req as CustomRequest).user.username;
 
@@ -118,11 +118,11 @@ export async function createEnvironment(req: Request, res: Response) {
         res.status(201).send();
     }
     catch(e){
-        return e;
+        next(e);
     }
 }
 
-export async function updateEnvironment(req: Request, res: Response) {
+export async function updateEnvironment(req: Request, res: Response, next: NextFunction) {
     console.log("Request for updateEnvironment triggered");
 
     const { id } = req.params;
@@ -157,11 +157,11 @@ export async function updateEnvironment(req: Request, res: Response) {
         res.status(204).send();
     }
     catch(e){
-        return e;
+        next(e);
     }
 }
 
-export async function deleteEnvironment(req: Request, res: Response) {
+export async function deleteEnvironment(req: Request, res: Response, next: NextFunction) {
     console.log("Request for deleteEnvironment triggered");
 
     const { id } = req.params;
@@ -174,7 +174,7 @@ export async function deleteEnvironment(req: Request, res: Response) {
     const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
 
     try{
-        await handler.handle(new RemoveEnvironmentCommand({ 
+        await handler.handle(new RemoveEnvironmentCommand({
                 id: id 
             }, 
             { 
@@ -184,6 +184,6 @@ export async function deleteEnvironment(req: Request, res: Response) {
         res.status(204).send();
     }
     catch(e){
-        return e;
+        next(e);
     }
 }

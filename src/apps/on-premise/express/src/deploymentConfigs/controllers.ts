@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { dependencies } from './application.di'
 import { HANDLERS } from './application.di';
 
@@ -45,7 +45,7 @@ export async function searchDeploymentConfigs(req: Request, res: Response) {
     });
 }
 
-export async function findDeploymentConfigs(req: Request, res: Response) {
+export async function findDeploymentConfigs(req: Request, res: Response, next: NextFunction) {
     console.log("Request for findDeploymentConfigs triggered");
 
     const { id } = req.params;
@@ -70,11 +70,11 @@ export async function findDeploymentConfigs(req: Request, res: Response) {
         });
     }
     catch(e){
-        res.status(404).send({ error: e });
+        next(e);
     }
 }
 
-export async function findByEnvironmentIsDeployedDeploymentConfigs(req: Request, res: Response) {
+export async function findByEnvironmentIsDeployedDeploymentConfigs(req: Request, res: Response, next: NextFunction) {
     console.log("Request for findByEnvironmentIsDeployedDeploymentConfigs triggered");
 
     const { environmentId, isDeployed } = req.params;
@@ -100,11 +100,11 @@ export async function findByEnvironmentIsDeployedDeploymentConfigs(req: Request,
         });
     }
     catch(e){
-        res.status(404).send({ error: e});
+        next(e);
     }
 }
 
-export async function createDeploymentConfigs(req: Request, res: Response) {
+export async function createDeploymentConfigs(req: Request, res: Response, next: NextFunction) {
     console.log("Request for createDeploymentConfigs triggered");
 
     const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
@@ -120,11 +120,11 @@ export async function createDeploymentConfigs(req: Request, res: Response) {
         res.status(201).send();
     }
     catch(e){
-        return e;
+        next(e);
     }
 }
 
-export async function updateDeploymentConfigs(req: Request, res: Response) {
+export async function updateDeploymentConfigs(req: Request, res: Response, next: NextFunction) {
     console.log("Request for updateDeploymentConfigs triggered");
 
     const { id } = req.params;
@@ -148,11 +148,11 @@ export async function updateDeploymentConfigs(req: Request, res: Response) {
         res.status(204).send();
     }
     catch(e){
-        return e;
+        next(e);
     }
 }
 
-export async function deleteDeploymentConfigs(req: Request, res: Response) {
+export async function deleteDeploymentConfigs(req: Request, res: Response, next: NextFunction) {
     console.log("Request for deleteDeploymentConfigs triggered");
 
     const { id } = req.params;
@@ -174,11 +174,11 @@ export async function deleteDeploymentConfigs(req: Request, res: Response) {
         res.status(204).send();
     }
     catch(e){
-        return e;
+        next(e);
     }
 }
 
-export async function deployDeploymentConfigs(req: Request, res: Response) {
+export async function deployDeploymentConfigs(req: Request, res: Response, next: NextFunction) {
     console.log("Request for deployDeploymentConfigs triggered");
 
     const { id } = req.params;
@@ -202,6 +202,6 @@ export async function deployDeploymentConfigs(req: Request, res: Response) {
         res.status(204).send();
     }
     catch(e){
-        return e;
+        next(e);
     }
 }

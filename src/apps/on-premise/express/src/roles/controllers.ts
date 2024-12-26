@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { dependencies, HANDLERS } from './application.di'
 import FindRoleQuery from "@context/roles/application/find/findRoleQuery";
 import FindRoleQueryHandler from "@context/roles/application/find/findRoleQueryHandler";
@@ -31,7 +31,7 @@ export async function searchRoles(req: Request, res: Response) {
     });
 }
 
-export async function findRole(req: Request, res: Response) {
+export async function findRole(req: Request, res: Response, next: NextFunction) {
     console.log("Request for findRole triggered");
 
     const { id } = req.params;
@@ -50,11 +50,11 @@ export async function findRole(req: Request, res: Response) {
         });
     }
     catch(e){
-        res.status(404).send({ error: e });
+        next(e);
     }
 }
 
-export async function createRole(req: Request, res: Response) {
+export async function createRole(req: Request, res: Response, next: NextFunction) {
     console.log("Request for createRole triggered");
 
     const handler = dependencies.get(HANDLERS).query.get(CreateRoleQuery) as 
@@ -65,11 +65,11 @@ export async function createRole(req: Request, res: Response) {
         res.status(201).send({ result: newRole});
     }
     catch(e){
-        return e;
+        next(e);
     }
 }
 
-export async function updateRole(req: Request, res: Response) {
+export async function updateRole(req: Request, res: Response, next: NextFunction) {
     console.log("Request for updateRole triggered");
 
     const { id } = req.params;
@@ -87,11 +87,11 @@ export async function updateRole(req: Request, res: Response) {
         res.status(204).send();
     }
     catch(e){
-        return e;
+        next(e);
     }
 }
 
-export async function deleteRole(req: Request, res: Response) {
+export async function deleteRole(req: Request, res: Response, next: NextFunction) {
     console.log("Request for deleteRole triggered");
 
     const { id } = req.params;
@@ -104,6 +104,6 @@ export async function deleteRole(req: Request, res: Response) {
         res.status(404).send();
     }
     catch(e){
-        return e;
+        next(e);
     }
 }

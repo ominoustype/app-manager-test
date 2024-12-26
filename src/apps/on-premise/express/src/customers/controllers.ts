@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import LITERALS, { dependencies } from "./application.di";
 import SearchCustomersQueryHandler from "@context/customers/application/search/searchCustomersQueryHandler";
 import FindCustomerQuery from "@context/customers/application/find/findCustomerQuery";
@@ -25,7 +25,7 @@ export async function searchCustomers(req: Request, res: Response) {
     });
 }
 
-export async function findCustomer(req: Request, res: Response) {
+export async function findCustomer(req: Request, res: Response, next: NextFunction) {
     console.log("Request for findCustomer triggered");
 
     const { id } = req.params;
@@ -44,7 +44,7 @@ export async function findCustomer(req: Request, res: Response) {
         });
     }
     catch(e){
-        res.status(404).send({ error: e });
+        next(e);
     }
 }
 

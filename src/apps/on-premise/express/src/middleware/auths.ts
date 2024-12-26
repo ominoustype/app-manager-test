@@ -40,8 +40,7 @@ export async function auth(req: Request, res: Response, next: NextFunction) {
         next();
     }
     catch(e) {
-        console.log(e);
-        if(e instanceof Error)
-            res.status(401).send({ error: e.message });
+        res;
+        next(e);
     }
 }
