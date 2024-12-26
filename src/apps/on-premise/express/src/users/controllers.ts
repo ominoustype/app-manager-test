@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import CreateUserCommand from '@context/users/application/create/createUserCommand'
 import FindUserQuery from '@context/users/application/find/findUserQuery'
 import SearchUsersQuery from '@context/users/application/search/searchUsersQuery'
@@ -44,7 +44,7 @@ export async function searchUsers(req: Request, res: Response) {
     })
 }
 
-export async function findUser(req: Request, res: Response) {
+export async function findUser(req: Request, res: Response, next: NextFunction) {
     console.log('Request for findUser Triggered')
     const { username } = req.params
 
@@ -63,7 +63,7 @@ export async function findUser(req: Request, res: Response) {
         });
     } catch (e) {
         //res.status(404).send({ error: e });
-        //next()
+        next(e)
     }
 }
 

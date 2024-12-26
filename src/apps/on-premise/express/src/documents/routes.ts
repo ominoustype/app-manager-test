@@ -1,7 +1,8 @@
 import { Express } from 'express'
 
 import { searchDocuments, findDocument, createDocument, updateDocument, deleteDocument, 
-    pushDocument, deployDocuments, restoreDocument, undoPushDocument } from './controllers'
+    pushDocument, deployDocuments, restoreDocument, undoPushDocument, 
+    moveDocument} from './controllers'
 import { auth } from '../middleware/auths'
 
 export default function loadDocuments(app: Express) {
@@ -13,5 +14,6 @@ export default function loadDocuments(app: Express) {
     app.put('/documents/undoPush/:id', auth, undoPushDocument)
     app.put('/documents/restore/:id/:version', auth, restoreDocument)
     app.put('/documents/:environmentId/deploy', auth, deployDocuments)
+    app.put('/documents/:documentId/move/:newEnvironmentId', auth, moveDocument)
     app.delete('/documents/:id', auth, deleteDocument) //TODO logic delete???
 }
