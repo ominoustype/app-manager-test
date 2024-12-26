@@ -10,7 +10,8 @@ export default class CreateEnvironmentCommandMother {
 
     static random(): CreateEnvironmentCommand{
         return CreateEnvironmentCommandMother.create(EnvironmentMother.random().toPrimitives(),{
-            username: MotherCreator.word()
+            username: MotherCreator.word(),
+            accessToken: MotherCreator.word()
         });
     }
 

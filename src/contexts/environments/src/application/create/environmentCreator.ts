@@ -13,6 +13,7 @@ import UpdateRoleCommand from "@context/roles/application/update/updateRoleComma
 import { RolePrimitives } from "@context/roles/domain/role";
 import FindByCustomerAndNameRoleQuery from "@context/roles/application/findByCustomerAndName/findByCustomerAndNameRoleQuery";
 import FindByCustomerAndNameRoleResponse from "@context/roles/application/findByCustomerAndName/findByCustomerAndNameRoleResponse";
+import LogoutUserCommand from "@context/users/application/logout/logoutUserCommand";
 
 export default class EnvironmentCreator {
     private readonly repository: EnvironmentRepository;
@@ -96,7 +97,14 @@ export default class EnvironmentCreator {
 
             await this.updateRole(adminRole.primitives, newEnvironment.id.value);
         }
-//TODO 7 frontend sends to /refreshToken
+//7
+        await this.commandBus.dispatch(
+            new LogoutUserCommand({
+                username: user.primitives.username,
+                accessToken: permissions.accessToken,
+                refreshToken: ""
+            })
+        );
     }
 
     async updateRole(primitives: RolePrimitives, environmentId: string) {
