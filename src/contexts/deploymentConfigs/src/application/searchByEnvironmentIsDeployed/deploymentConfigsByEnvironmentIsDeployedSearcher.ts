@@ -14,7 +14,7 @@ export default class DeploymentConfigsByEnvironmentIsDeployedSearcher {
     async run(query: SearchByEnvironmentIsDeployedDeploymentConfigsQuery): Promise<SearchByEnvironmentIsDeployedDeploymentConfigsResponse> {
         const { params, permissions } = query;
 
-        logger.info("Finding deploymentConfigs with environmentId",  params.environmentId );
+        logger.info("Finding deploymentConfigs with environmentId "+params.environmentId);
 
         if(!permissions.environmentIds.includes(params.environmentId)) {
             new DeploymentConfigsForbiddenAccessError(params.environmentId);
