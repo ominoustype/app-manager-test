@@ -14,6 +14,8 @@ import { RolePrimitives } from "@context/roles/domain/role";
 import FindByCustomerAndNameRoleQuery from "@context/roles/application/findByCustomerAndName/findByCustomerAndNameRoleQuery";
 import FindByCustomerAndNameRoleResponse from "@context/roles/application/findByCustomerAndName/findByCustomerAndNameRoleResponse";
 import LogoutUserCommand from "@context/users/application/logout/logoutUserCommand";
+import logger from "@context/shared/infrastructure/logger";
+import EnvironmentForbiddenAccessError from "@src/domain/errors/environmentForbiddenAccessError";
 
 export default class EnvironmentCreator {
     private readonly repository: EnvironmentRepository;
@@ -42,6 +44,8 @@ export default class EnvironmentCreator {
     */
     async run(command: CreateEnvironmentCommand): Promise<void> {
         const { data, permissions } = command;
+
+        logger.info("Creating environment with ", { data });
 //1
         const user = await this.queryBus.ask(
             new FindUserQuery({
@@ -50,26 +54,31 @@ export default class EnvironmentCreator {
         ) as FindUserResponse;
 
         if(!user?.primitives) {
-            return;
+            throw new Error("Invalid data");
         }
 //2
         const role = await this.queryBus.ask(
             new FindRoleQuery({
                 id: user.primitives.role.id
             })
-        ) as FindRoleResponse;
+        ) as FindRoleResponse;        
+        
+        if(!role?.primitives) {
+            throw new Error("Invalid data");
+        }
 
 //3&4
         if(role.primitives.customerId != data.customer.id && role.primitives.name != 'ADMIN') {
-            return;
+            throw new EnvironmentForbiddenAccessError("creating");
         }
 
         const newEnvironment = Environment.create(command.data);
 
         const environment = await this.repository.find(newEnvironment.id);
 
-        if(environment !== null)
+        if(!environment){
             throw new EnvironmentAlreadyExistsError(newEnvironment.id.value);
+        }
 
         await this.repository.create(newEnvironment);
         await this.eventBus.publish(newEnvironment.pullDomainEvents());
@@ -119,7 +128,6 @@ export default class EnvironmentCreator {
     }
 
     async findAndUpdateRole(customerId: string, environmentId: string, roleName: string) {
-
         const role = await this.queryBus.ask(
             new FindByCustomerAndNameRoleQuery({
                 name: roleName,

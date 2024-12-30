@@ -2,6 +2,9 @@ import EnvironmentFinder from "@src/domain/environmentFinder";
 import EnvironmentRepository from "@src/domain/environmentRepository";
 import DeployEnvironmentCommand from "./deployEnvironmentCommand";
 import { EventBus } from "@context/shared/domain/eventBus/eventBus";
+import EnvironmentMissingParameter from "@src/domain/errors/environmentMissingParameterError";
+import EnvironmentNotFoundError from "@src/domain/errors/environmentNotFoundError";
+import logger from "@context/shared/infrastructure/logger";
 
 export default class EnvironmentDeployer {
     private readonly repository: EnvironmentRepository;
@@ -17,17 +20,21 @@ export default class EnvironmentDeployer {
     }
 
     async run(command: DeployEnvironmentCommand): Promise<void>{
-        const { primitives, deploymentConfigsId } = command.data;
+        const { data, deploymentConfigsId } = command.data;
 
-        if(!primitives.id)
-            return;
+        logger.info("Deploying environment with ", { data });
 
-        const environment = await this.finder.find(primitives.id);
+        if(!data.id) {
+            throw new EnvironmentMissingParameter();
+        }
 
-        if(environment === null)
-            return;
+        const environment = await this.finder.find(data.id);
 
-        const newEnvironment = environment.deploy(primitives, deploymentConfigsId);
+        if(!environment) {
+            throw new EnvironmentNotFoundError(data.id);
+        }
+
+        const newEnvironment = environment.deploy(data, deploymentConfigsId);
 
         await this.repository.update(newEnvironment);
         

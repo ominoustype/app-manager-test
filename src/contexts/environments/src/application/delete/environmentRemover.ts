@@ -2,6 +2,9 @@ import EnvironmentFinder from "@src/domain/environmentFinder";
 import EnvironmentRepository from "@src/domain/environmentRepository";
 import RemoveEnvironmentCommand from "./removeEnvironmentCommand";
 import { EventBus } from "@context/shared/domain/eventBus/eventBus";
+import EnvironmentMissingParameter from "@src/domain/errors/environmentMissingParameterError";
+import EnvironmentAccessForbidden from "@src/domain/errors/environmentForbiddenAccessError";
+import logger from "@context/shared/infrastructure/logger";
 
 export default class EnvironmentRemover {
     private readonly repository: EnvironmentRepository;
@@ -19,17 +22,18 @@ export default class EnvironmentRemover {
     async run(command: RemoveEnvironmentCommand): Promise<void>{
         const { data, permissions } = command;
 
-        if(!data.id)
-            return;
+        logger.info("Deleting environment with ", { data });
 
-        if(permissions.environmentIds.includes(data.id)) { 
-            return;
+        if(!data.id){
+            throw new EnvironmentMissingParameter();
         }
 
-        const environment = await this.finder.find(data.id);   
-        if(environment===null)
-            return;
+        if(permissions.environmentIds.includes(data.id)) { 
+            new EnvironmentAccessForbidden(data.id);
+        }
 
+        const environment = await this.finder.find(data.id);
+        
         environment.delete();
 
         await this.repository.delete(environment);

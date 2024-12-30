@@ -30,7 +30,7 @@
   "include": [
     "src/**/*.ts",
     "tests/**/*.ts"
-  ],
+, "src/domain/errors/environmentMissingParameter.Errorts"  ],
   "exclude": [
     "../../../node_modules",
     "node_modules"
