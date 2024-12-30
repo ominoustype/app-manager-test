@@ -1,3 +1,4 @@
+import logger from '@context/shared/infrastructure/logger';
 import FindUserQuery from '@src/application/find/findUserQuery';
 import FindUserResponse from '@src/application/find/findUserResponse';
 import UserByUsernameFinder from '@src/domain/userByUsernameFinder';
@@ -11,6 +12,10 @@ export default class UserFinder {
     }
 
     async run(query: FindUserQuery): Promise<FindUserResponse> {
-        return new FindUserResponse(await this.finder.find(query.username));
+        const { username } = query;
+
+        logger.info("Finding user with ", { username  });
+        
+        return new FindUserResponse(await this.finder.find(username));
     }
 }

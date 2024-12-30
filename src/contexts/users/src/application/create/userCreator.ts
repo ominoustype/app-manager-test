@@ -11,6 +11,8 @@ import RoleName from '@src/domain/role/roleName';
 import CreateRoleQuery from '@context/roles/application/create/createRoleQuery';
 import CreateRoleResponse from '@context/roles/application/create/createRoleResponse';
 import UserNotFoundError from '@src/domain/errors/userNotFoundError';
+import logger from '@context/shared/infrastructure/logger';
+import UserCreationFaildError from '@src/domain/errors/userCreationFailedError';
 
 export default class UserCreator {
     private readonly repository: UserRepository;
@@ -29,39 +31,38 @@ export default class UserCreator {
     }
 
     async run(command: CreateUserCommand): Promise<void> {
-        const { 
-            user: userPrimitives, 
-            role: rolePrimitives
-        } = command.data;
+        const { data } = command;
 
-        //this.checkPrivileges(rolePrimitives.name, username);
+        logger.info("Creating user with ", { data });
 
         /* If the User already exists -> finish */
         const user = await this.repository.findByUsername(
-            new Username(userPrimitives.username)
+            new Username(data.username)
         );
 
         if (user) {
             throw new UserAlreadyExistsError(
-                userPrimitives.username
+                data.username
             );
         }
 
         /* Create Role first */
         const roleResponse = await this.queryBus.ask(
             new CreateRoleQuery({
-                ...rolePrimitives
-        })) as CreateRoleResponse;
+                ...data.role
+            })
+        ) as CreateRoleResponse;
 
-        if(!roleResponse?.primitives)
-            throw new Error("Role not received after creation");
+        if(!roleResponse?.primitives) {
+            throw new Error("Role not received after creation")
+        }
 
         const newRole = roleResponse.primitives;
 
         try {
             /* Create User */
             const newUser = User.create({
-               ...userPrimitives,
+               ...data.user,
                role: {
                 id: newRole.id, 
                 name: newRole.name as RoleName
@@ -74,7 +75,7 @@ export default class UserCreator {
         catch(e) {
             /* If create User fails -> remove the Role just created */
             await this.removeRole(newRole.id);
-            throw new Error("User creation has failed obstreperously");
+            throw new UserCreationFaildError("Error while creating the user");
         }
     }
 

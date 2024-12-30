@@ -1,6 +1,7 @@
 import TokenRepository from "@src/infrastructure/persistence/redis/tokenRedisRespository";
 import LogoutUserCommand from "./logoutUserCommand";
 import TokenGenerator from "@src/infrastructure/persistence/mongo/tokenator";
+import logger from "@context/shared/infrastructure/logger";
 
 export default class UserLoggerOut {
 
@@ -15,6 +16,8 @@ export default class UserLoggerOut {
 
     async run(command: LogoutUserCommand): Promise<void> {
         const { accessToken, refreshToken } = command.data;
+
+        logger.info("Logout, invalidating tokens ", { accessToken, refreshToken });
 
         if (accessToken) {
             await this.invalidateToken(accessToken);

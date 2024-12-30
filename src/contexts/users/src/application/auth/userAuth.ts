@@ -1,7 +1,10 @@
+import logger from "@context/shared/infrastructure/logger";
 import AuthUserQuery from "./authUserQuery";
 import AuthUserResponse from "./authUserResponse";
 import TokenRepository from "@src/domain/session/tokenRepository";
 import Tokenator from "@src/domain/session/tokenator";
+import UserMissingParameterError from "@src/domain/errors/userMissingParameterError";
+import InvalidTokenError from "@src/domain/errors/invalidTokenError";
 
 export default class UserAuth {
     private readonly tokenator: Tokenator;
@@ -22,17 +25,18 @@ export default class UserAuth {
     async run(query: AuthUserQuery): Promise<AuthUserResponse> {
         const { accessToken } = query;
 
+        logger.info("Authorizating user with ", { accessToken });
+
         if (!accessToken) {
-            throw new Error("No token!");
+            throw new UserMissingParameterError();
         }
 
         const cached = await this.tokenRepository.find(accessToken);
 
         if(cached) {
-            throw new Error("Blacklisted token");
+            logger.error("Blacklisted token", { accessToken });
+            throw new InvalidTokenError(accessToken);
         }
-        
-        console.log("Auth: AccessToken OK");
 
         const { payload, isValid } = this.tokenator.verify(accessToken);
 
@@ -40,7 +44,8 @@ export default class UserAuth {
             return new AuthUserResponse(payload!);
         }
         else {
-            throw new Error("Invalid token");
+            logger.error("Invalid token", { accessToken });
+            throw new InvalidTokenError(accessToken);
         }
     }
 }
