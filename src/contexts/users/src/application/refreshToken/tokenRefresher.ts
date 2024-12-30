@@ -4,8 +4,7 @@ import RefreshTokenResponse from "./refreshTokenResponse";
 import Tokenator from "@src/domain/session/tokenator";
 import { QueryBus } from "@context/shared/domain/queryBus/queryBus";
 import FindRoleQuery from "@context/roles/application/find/findRoleQuery";
-import FindRoleResponse from "@context/roles/application/find/findRoleResponse";
-import TokenRepository from "@src/infrastructure/persistence/redis/tokenRedisRespository";
+import FindRoleResponse from "@context/roles/application/find/findRoleResponse";;
 import UserByUsernameFinder from "@src/domain/userByUsernameFinder";
 import UserMissingParameterError from "@src/domain/errors/userMissingParameterError";
 import InvalidTokenError from "@src/domain/errors/invalidTokenError";
@@ -14,13 +13,11 @@ import logger from "@context/shared/infrastructure/logger";
 export default class TokenRefresher {
     private readonly finder: UserByUsernameFinder;
     private readonly tokenator: Tokenator;
-    private readonly tokenRepository: TokenRepository;
     private readonly queryBus: QueryBus;
 
-    constructor(repository: UserRepository, tokenator: Tokenator, tokenRepository: TokenRepository, queryBus: QueryBus) {
+    constructor(repository: UserRepository, tokenator: Tokenator, queryBus: QueryBus) {
         this.finder = new UserByUsernameFinder(repository);
         this.tokenator = tokenator;
-        this.tokenRepository = tokenRepository;
         this.queryBus = queryBus;
     }
 
@@ -38,10 +35,6 @@ export default class TokenRefresher {
         if(!isValid) {
             throw new InvalidTokenError(refreshToken);
         }
-
-        const ttl = this.tokenator.timeToLife(payload!);
-
-        await this.tokenRepository.create(refreshToken, ttl); //TODO ?
 
         const user = await this.finder.find(payload!.username);
 
