@@ -2,6 +2,7 @@ import DomainDeploymentConfigsFinder from "@src/domain/deploymentConfigsFinder";
 import DeploymentConfigsRepository from "@src/domain/deploymentConfigsRepository";
 import FindDeploymentConfigsQuery from "@src/application/find/findDeploymentConfigsQuery";
 import FindDeploymentConfigsResponse from "@src/application/find/findDeploymentConfigsResponse";
+import logger from "@context/shared/infrastructure/logger";
 
 export default class DeploymentConfigsFinder{
     private readonly finder: DomainDeploymentConfigsFinder;
@@ -11,6 +12,10 @@ export default class DeploymentConfigsFinder{
     }
 
     async run(query: FindDeploymentConfigsQuery): Promise<FindDeploymentConfigsResponse>{
-        return new FindDeploymentConfigsResponse(await this.finder.find(query.id, query.environmentIds));
+        const { id, environmentIds } = query;
+
+        logger.info("Finding deploymentConfigs with ", { id });
+        
+        return new FindDeploymentConfigsResponse(await this.finder.find(id, environmentIds));
     }
 }

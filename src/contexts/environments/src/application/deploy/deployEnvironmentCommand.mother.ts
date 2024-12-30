@@ -9,14 +9,14 @@ export default class DeployEnvironmentCommandMother {
 
     static random(): DeployEnvironmentCommand{
         return DeployEnvironmentCommandMother.create({
-            primitives: EnvironmentMother.random().toPrimitives(),
+            data: EnvironmentMother.random().toPrimitives(),
             deploymentConfigsId: UuidMother.random().toString()
         });
     }
 
     static applyCommand(command: DeployEnvironmentCommand){
         return { 
-            environment: EnvironmentMother.random(command.data.primitives),
+            environment: EnvironmentMother.random(command.data.data),
             deploymentConfigsId: command.data.deploymentConfigsId
         }
     }

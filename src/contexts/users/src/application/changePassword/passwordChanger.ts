@@ -5,6 +5,7 @@ import Password from "@src/domain/password/password";
 import InvalidPasswordError from "@src/domain/errors/invalidPasswordError";
 import PasswordGenerator from "@src/domain/password/passwordGenerator";
 import PasswordValidator from "@src/domain/password/passwordValidator";
+import logger from "@context/shared/infrastructure/logger";
 
 export default class PasswordChanger {
     private readonly repository: UserRepository;
@@ -20,24 +21,24 @@ export default class PasswordChanger {
     }
 
     async run(command: ChangePasswordCommand): Promise<void> {
-        const user = await this.finder.find(command.username);
+        const { username, oldPassword, newPassword } = command;
 
-        // TODO check not found user
+        logger.info("Changing password to user with ", { username });
+
+        const user = await this.finder.find(username);
+
         if(user.password) {
             const isValid = this.passwordValidator.validate(
-                new Password(command.oldPassword),
+                new Password(oldPassword),
                 user.password
             );
 
             if (!isValid) {
-                console.log("The given password does not match the one stored in the BBDD")
-                throw new InvalidPasswordError(command.username);
+                throw new InvalidPasswordError(username);
             }
         }
 
-        const password = this.passwordGenerator.generate(
-            command.newPassword
-        );
+        const password = this.passwordGenerator.generate(newPassword);
 
         const userUpdated = user.update({
             password: password.value

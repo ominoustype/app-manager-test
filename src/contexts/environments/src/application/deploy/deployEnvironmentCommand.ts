@@ -2,7 +2,7 @@ import Command from "@context/shared/domain/commandBus/command";
 import { EnvironmentPrimitives } from "@src/domain/environment";
 
 export type DeployEnvironmentCommandData = {
-    primitives: Partial<EnvironmentPrimitives>,
+    data: Partial<EnvironmentPrimitives>,
     deploymentConfigsId: string
 }
 

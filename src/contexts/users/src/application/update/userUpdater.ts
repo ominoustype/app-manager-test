@@ -5,9 +5,10 @@ import UserByUsernameFinder from "@src/domain/userByUsernameFinder";
 import { QueryBus } from "@context/shared/domain/queryBus/queryBus";
 import { CommandBus } from "@context/shared/domain/commandBus/commandBus";
 import UpdateRoleCommand from "@context/roles/application/update/updateRoleCommand";
-import UserNotFoundError from "@src/domain/errors/userNotFoundError";
 import FindRoleQuery from "@context/roles/application/find/findRoleQuery";
 import FindRoleResponse from "@context/roles/application/find/findRoleResponse";
+import UserMissingParameterError from "@src/domain/errors/userMissingParameterError";
+import logger from "@context/shared/infrastructure/logger";
 
 export default class UserUpdater {
     private readonly repository: UserRepository;
@@ -35,32 +36,22 @@ export default class UserUpdater {
             username: username
         } = command.data;
 
+        logger.info("Updating user&role with ", { username });
+
         if (!username) {
-            return;
+           throw new UserMissingParameterError();
         }
         
         const user = await this.finder.find(username);
 
-        if(!user) {
-            throw new UserNotFoundError(username);
-        }
-
         const updUser = user.update(userPrimitives);
 
-        if (!updUser) {
-            return;
-        }
-
         /* Find Role */
-        const roleResponse = await this.queryBus.ask(
+        await this.queryBus.ask(
             new FindRoleQuery({
                  id: user.role?.id.value 
             })
         ) as FindRoleResponse;
-
-        if(!roleResponse?.primitives) {
-            throw new Error("LOL");
-        }
 
         await this.repository.update(updUser);
 

@@ -8,6 +8,7 @@ import loadEnvironments from './environments/routes'
 import loadRoles from './roles/routes'
 import loadUsers from './users/routes'
 import loadCustomers from './customers/routes'
+import logger from '@context/shared/infrastructure/logger'
 
 const app = ExpressServer()
 const PORT = process.env.PORT || 4000
@@ -40,7 +41,7 @@ app.get('/', (_req, res) => {
 })
 
 app.listen(PORT_CONTAINER, () => {
-  console.log(`Example app listening at http://localhost:${PORT}`)
+  logger.info(`Example app listening at http://localhost:${PORT}`)
 })
 
 const art:string  = `<pre>

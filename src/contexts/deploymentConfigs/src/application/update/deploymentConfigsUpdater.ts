@@ -2,6 +2,8 @@ import { EventBus } from "@context/shared/domain/eventBus/eventBus";
 import DeploymentConfigsFinder from "@src/domain/deploymentConfigsFinder";
 import DeploymentConfigsRepository from "@src/domain/deploymentConfigsRepository";
 import UpdateDeploymentConfigsCommand from "./updateDeploymentConfigsCommand";
+import DeploymentConfigsNotFoundError from "@src/domain/errors/deploymentConfigsNotFoundError";
+import DeploymentConfigsMissingParameterError from "@src/domain/errors/deploymentConfigsMissingParameterError";
 
 export default class DeploymentConfigsUpdater{
     readonly finder: DeploymentConfigsFinder;
@@ -17,13 +19,17 @@ export default class DeploymentConfigsUpdater{
     }
 
     async run(command: UpdateDeploymentConfigsCommand){
-        if(!command.data.id)
-            return
+        const { data, permissions } = command;
 
-        const deploymentConfigs = await this.finder.find(command.data.id, command.permissions.environmentIds);
+        if(!data.id) {
+            throw new DeploymentConfigsMissingParameterError();
+        }
 
-        if(deploymentConfigs===null)
-            return;
+        const deploymentConfigs = await this.finder.find(data.id, permissions.environmentIds);
+
+        if(!deploymentConfigs) {
+            throw new DeploymentConfigsNotFoundError(data.id);
+        }
 
         const newDeploymentConfigs = deploymentConfigs.update(command.data);
 

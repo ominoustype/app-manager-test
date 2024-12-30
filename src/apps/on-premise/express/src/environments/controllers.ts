@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { BUSES, dependencies, HANDLERS } from './application.di'
 import CreateEnvironmentCommand from "@context/environments/application/create/createEnvironmentCommand";
 import UpdateEnvironmentCommand from "@context/environments/application/update/updateEnvironmentCommand";
@@ -23,12 +23,15 @@ import FindUserQueryHandler from "@context/users/application/find/findUserQueryH
 import FindRoleQueryHandler from "@context/roles/application/find/findRoleQueryHandler";
 import FindByCustomerAndNameRoleQueryHandler from "@context/roles/application/findByCustomerAndName/findByCustomerAndNameRoleQueryHandler";
 import UpdateRoleCommandHandler from "@context/roles/application/update/updateRoleCommandHandler";
+import LogoutUserCommand from "@context/users/application/logout/logoutUserCommand";
+import LogOutUserCommandHandler from "@context/users/application/logout/logoutUserCommandHandler";
+import logger from "@context/shared/infrastructure/logger";
 
 const CONTENT_TYPE = 'content-type';
 const APPLICATION_JSON = 'application/json';
 
 export async function searchEnvironments(req: Request, res: Response) {
-    console.log("Request for searchEnvironments triggered");
+    logger.info("Request for searchEnvironments triggered");
 
     const handler = dependencies.get(HANDLERS).query.get(SearchEnvironmentsQuery) as 
         SearchEnvironmentsQueryHandler;
@@ -52,15 +55,15 @@ export async function searchEnvironments(req: Request, res: Response) {
     });
 }
 
-export async function findEnvironment(req: Request, res: Response) {
-    console.log("Request for findEnvironment triggered");
+export async function findEnvironment(req: Request, res: Response, next: NextFunction) {
+    logger.info("Request for findEnvironment triggered");
 
     const { id } = req.params;
 
     const handler = dependencies.get(HANDLERS).query.get(FindEnvironmentQuery) as
         FindEnvironmentQueryHandler;
 
-    console.log("Id to find: "+id);
+    logger.info("Id to find: ", { id });
 
     const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
     
@@ -79,12 +82,12 @@ export async function findEnvironment(req: Request, res: Response) {
         });
     }
     catch(e){
-        res.status(404).send({ error: e });
+        next(e);
     }
 }
 
-export async function createEnvironment(req: Request, res: Response) {
-    console.log("Request for createEnvironment triggered");
+export async function createEnvironment(req: Request, res: Response, next: NextFunction) {
+    logger.info("Request for createEnvironment triggered");
 
     const queryBus = dependencies.get(BUSES).query;
     const commandBus = dependencies.get(BUSES).command;
@@ -95,35 +98,41 @@ export async function createEnvironment(req: Request, res: Response) {
     /* Find user, find role, find by customer & name role, update role */
     const userFinder = dependencies.get(HANDLERS).query.get(FindUserQuery) as 
         FindUserQueryHandler;
-    queryBus.addQueryHandlers([userFinder]);
+    queryBus.addQueryHandlers([ userFinder ]);
 
     const roleFinder = dependencies.get(HANDLERS).query.get(FindRoleQuery) as
         FindRoleQueryHandler;
-    queryBus.addQueryHandlers([roleFinder]);
+    queryBus.addQueryHandlers([ roleFinder ]);
 
     const byCustomerAndNameRoleFinder = dependencies.get(HANDLERS).query.get(FindByCustomerAndNameRoleQuery) as
         FindByCustomerAndNameRoleQueryHandler;
-    queryBus.addQueryHandlers([byCustomerAndNameRoleFinder]);
+    queryBus.addQueryHandlers([ byCustomerAndNameRoleFinder ]);
 
     const roleUpdater  = dependencies.get(HANDLERS).command.get(UpdateRoleCommand) as
-        UpdateRoleCommandHandler;;
-    commandBus.addCommandHandlers([roleUpdater])
+        UpdateRoleCommandHandler;
+    commandBus.addCommandHandlers([ roleUpdater ]);
+
+    const userLogout  = dependencies.get(HANDLERS).command.get(LogoutUserCommand) as
+        LogOutUserCommandHandler;
+    commandBus.addCommandHandlers([ userLogout ]);
 
     const username = (req as CustomRequest).user.username;
+    const accessToken = (req as CustomRequest).user.accessToken;
 
     try{
         await handler.handle(new CreateEnvironmentCommand(req.body, { 
-            username: username 
+            username: username,
+            accessToken: accessToken
         }));
         res.status(201).send();
     }
     catch(e){
-        return e;
+        next(e);
     }
 }
 
-export async function updateEnvironment(req: Request, res: Response) {
-    console.log("Request for updateEnvironment triggered");
+export async function updateEnvironment(req: Request, res: Response, next: NextFunction) {
+    logger.info("Request for updateEnvironment triggered");
 
     const { id } = req.params;
 
@@ -141,7 +150,7 @@ export async function updateEnvironment(req: Request, res: Response) {
     const handler = dependencies.get(HANDLERS).command.get(UpdateEnvironmentCommand) as
         UpdateEnvironmentCommandHandler;
 
-    console.log("Id to update: "+id);
+    logger.info("Id to update: ", { id });
 
     const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
 
@@ -157,24 +166,24 @@ export async function updateEnvironment(req: Request, res: Response) {
         res.status(204).send();
     }
     catch(e){
-        return e;
+        next(e);
     }
 }
 
-export async function deleteEnvironment(req: Request, res: Response) {
-    console.log("Request for deleteEnvironment triggered");
+export async function deleteEnvironment(req: Request, res: Response, next: NextFunction) {
+    logger.info("Request for deleteEnvironment triggered");
 
     const { id } = req.params;
 
     const handler = dependencies.get(HANDLERS).command.get(RemoveEnvironmentCommand) as 
         RemoveDeploymentConfigsCommandHandler;
 
-    console.log("Id to delete: "+id);
+    logger.info("Id to delete: ", { id });
 
     const environmentIds = (req as CustomRequest).user.permissions.environmentIds;
 
     try{
-        await handler.handle(new RemoveEnvironmentCommand({ 
+        await handler.handle(new RemoveEnvironmentCommand({
                 id: id 
             }, 
             { 
@@ -184,6 +193,6 @@ export async function deleteEnvironment(req: Request, res: Response) {
         res.status(204).send();
     }
     catch(e){
-        return e;
+        next(e);
     }
 }

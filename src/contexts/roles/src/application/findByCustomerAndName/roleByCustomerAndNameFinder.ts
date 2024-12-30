@@ -1,6 +1,8 @@
 import RoleRepository from "@src/domain/roleRepository";
 import FindByCustomerAndNameRoleResponse from "./findByCustomerAndNameRoleResponse";
 import FindByCustomerAndNameRoleQuery from "./findByCustomerAndNameRoleQuery";
+import RoleByCustomerAndNameNotFoundError from "@src/domain/errors/roleByCustomerAndNameNotFoundError";
+import RoleMissingParameterError from "@src/domain/errors/roleMissingParameterError";
 
 export default class RoleByCustomerAndNameFinder {
     private readonly repository: RoleRepository;
@@ -10,10 +12,16 @@ export default class RoleByCustomerAndNameFinder {
     }
 
     async run(query: FindByCustomerAndNameRoleQuery): Promise<FindByCustomerAndNameRoleResponse> {
-        const role = await this.repository.findByCustomerAndName(query.name, query.customerId);
+        const { name, customerId } = query;
 
-        if(!role){
-            throw new Error("Role not found");
+        if(!name || !customerId) {
+            throw new RoleMissingParameterError();
+        }
+
+        const role = await this.repository.findByCustomerAndName(name, customerId);
+
+        if(!role) {
+            throw new RoleByCustomerAndNameNotFoundError(customerId, name);
         }
         
         return new FindByCustomerAndNameRoleResponse(role);

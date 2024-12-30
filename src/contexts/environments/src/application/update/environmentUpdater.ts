@@ -8,6 +8,10 @@ import UpdateDocumentCommand from "@context/documents/application/update/updateD
 import SearchByEnvironmentDocumentsResponse from "@context/documents/application/searchByEnvironment/searchByEnvironmentDocumentsResponse";
 import SearchByEnvironmentDocumentsQuery from "@context/documents/application/searchByEnvironment/searchByEnvironmentDocumentsQuery";
 import { DocumentPrimitives } from "@context/documents/domain/document";
+import logger from "@context/shared/infrastructure/logger";
+import EnvironmentNotFoundError from "@src/domain/errors/environmentNotFoundError";
+import EnvironmentForbiddenAccess from "@src/domain/errors/environmentForbiddenAccessError";
+import EnvironmentMissingParameter from "@src/domain/errors/environmentMissingParameterError";
 
 export default class EnvironmentUpdater {
     private readonly repository: EnvironmentRepository;
@@ -31,36 +35,38 @@ export default class EnvironmentUpdater {
     async run(command: UpdateEnvironmentCommand): Promise<void>{
         const { data, permissions } = command;
 
-        if(!data.id)
-            return;
+        logger.info("Updating environment with ", { data });
+
+        if(!data.id) {
+            throw new EnvironmentMissingParameter();
+        }
     
         if(!permissions.environmentIds.includes(data.id)) {
-            return;
+            new EnvironmentForbiddenAccess(data.id);
         }
 
         const environment = await this.finder.find(data.id);
 
-        if(environment === null)
-            return;
+        if(!environment) {
+            throw new EnvironmentNotFoundError(data.id);
+        }
 
         const newEnvironment = environment.update(command.data);
 
         const response = await this.queryBus.ask(
             new SearchByEnvironmentDocumentsQuery({
                 environment: data.id
-            },
-            {
+            },{
                 environmentIds: permissions.environmentIds
             })
-        )  as SearchByEnvironmentDocumentsResponse;
+        ) as SearchByEnvironmentDocumentsResponse;
 
         response.documents.map(async (document: DocumentPrimitives) => {
             await this.commandBus.dispatch(
                 new UpdateDocumentCommand({
                     ...document,
                     environment: newEnvironment.toPrimitives()
-                },
-                {
+                },{
                     environmentIds: permissions.environmentIds
                 })
             );

@@ -56,10 +56,8 @@ export default class DocumentPusher {
                 isDeployed: false 
             },{
                 environmentIds: permissions.environmentIds
-            })) as SearchByEnvironmentIsDeployedDeploymentConfigsResponse;
-
-        if(deploymentsConfigs === null )
-            return;
+            })
+        ) as SearchByEnvironmentIsDeployedDeploymentConfigsResponse;
 
         const deploymentsConfigsPrimitives = deploymentsConfigs.primitives;
 
@@ -89,7 +87,7 @@ export default class DocumentPusher {
                     }
                 });
     
-                if(alreadyPushed){
+                if(alreadyPushed) {
                     throw new DocumentAlreadyPushedError(document.id.value);
                 }
                 deploymentConfigs.documents.push(documentPrimitives);
@@ -100,9 +98,10 @@ export default class DocumentPusher {
                         ...deploymentConfigs
                     }, {
                         environmentIds: permissions.environmentIds
-                    }));
+                    })
+                );
             }
-            else{
+            else {
                 throw new MultipleDeploymentConfigsFoundError(document.environment.id.value);
             }
         }

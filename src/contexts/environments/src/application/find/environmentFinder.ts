@@ -2,6 +2,8 @@ import DomainEnvironmentFinder from '@src/domain/environmentFinder';
 import FindEnvironmentResponse from '@src/application/find/findEnvironmentResponse';
 import FindEnvironmentQuery from './findEnvironmentQuery';
 import EnvironmentRepository from '@src/domain/environmentRepository';
+import EnvironmentAccessForbidden from '@src/domain/errors/environmentForbiddenAccessError';
+import logger from '@context/shared/infrastructure/logger';
 
 export default class EnvironmentFinder {
     private readonly finder: DomainEnvironmentFinder;
@@ -13,8 +15,10 @@ export default class EnvironmentFinder {
     async run(query: FindEnvironmentQuery): Promise<FindEnvironmentResponse> {
         const { id, environmentIds } = query;
 
+        logger.info("Finding environment with ", { id });
+
         if(!environmentIds.includes(id)) {
-            throw new Error("401");
+            throw new EnvironmentAccessForbidden(id);
         }
 
         return new FindEnvironmentResponse(await this.finder.find(query.id));

@@ -1,15 +1,16 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import LITERALS, { dependencies } from "./application.di";
 import SearchCustomersQueryHandler from "@context/customers/application/search/searchCustomersQueryHandler";
 import FindCustomerQuery from "@context/customers/application/find/findCustomerQuery";
 import FindCustomerQueryHandler from "@context/customers/application/find/findCustomerQueryHandler";
 import SearchCustomersQuery from "@context/customers/application/search/searchCustomersQuery";
+import logger from "@context/shared/infrastructure/logger";
 
 const CONTENT_TYPE = 'content-type';
 const APPLICATION_JSON = 'application/json';
 
 export async function searchCustomers(req: Request, res: Response) {
-    console.log("Request for searchCustomers triggered");
+    logger.info("Request for searchCustomers triggered");
 
     const handler = dependencies.get(LITERALS.HANDLERS).query.get(SearchCustomersQuery) as 
         SearchCustomersQueryHandler;
@@ -25,15 +26,15 @@ export async function searchCustomers(req: Request, res: Response) {
     });
 }
 
-export async function findCustomer(req: Request, res: Response) {
-    console.log("Request for findCustomer triggered");
+export async function findCustomer(req: Request, res: Response, next: NextFunction) {
+    logger.info("Request for findCustomer triggered");
 
     const { id } = req.params;
 
     const handler = dependencies.get(LITERALS.HANDLERS).query.get(FindCustomerQuery) as
         FindCustomerQueryHandler;
 
-    console.log("Id to find: "+id);
+    logger.info("Id to find: "+id);
 
     try{
         const response = await handler.handle(new FindCustomerQuery({ id }));
@@ -44,7 +45,7 @@ export async function findCustomer(req: Request, res: Response) {
         });
     }
     catch(e){
-        res.status(404).send({ error: e });
+        next(e);
     }
 }
 

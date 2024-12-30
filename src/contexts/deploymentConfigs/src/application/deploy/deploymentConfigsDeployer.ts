@@ -4,7 +4,10 @@ import DeployDeploymentConfigsCommand from "./deployDeploymentConfigsCommand";
 import DeploymentConfigsRepository from "@src/domain/deploymentConfigsRepository";
 import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob';
 import { DocumentPrimitives } from "@src/domain/documents/document";
-import DeploymentConfigsNotFoundError from "@src/domain/errors/deploymentsConfigsNotFoundError";
+import DeploymentConfigsNotFoundError from "@src/domain/errors/deploymentConfigsNotFoundError";
+import DeploymentConfigsMissingParameterError from "@src/domain/errors/deploymentConfigsMissingParameterError";
+import DeploymentConfigsForbiddenAccessError from "@src/domain/errors/deploymentConfigsForbiddenAccessError";
+import logger from "@context/shared/infrastructure/logger";
 
 export default class DeploymentConfigsDeployer {
     readonly finder: DeploymentConfigsFinder;
@@ -20,52 +23,58 @@ export default class DeploymentConfigsDeployer {
     }
 
     async run(command: DeployDeploymentConfigsCommand): Promise<void> {
-        const { environmentId, username, password, path } = command.data,
-            { environmentIds } = command.permissions;
+        const { data, permissions } = command;
 
-        if(!environmentId)
-            return;
+        logger.info("Deploying deploymentConfigs with ", { data });
+
+        if(!data.environmentId || !data.username || !data.password || !data.path) {
+            throw new DeploymentConfigsMissingParameterError();
+        }
 
         /* Get the deploymentConfigs linked to the given environmentId with attribute 'isDeployed = false' */
-        const deploymentsConfigs = await this.repository.searchByEnvironmentIsDeployed({ environmentId: environmentId, isDeployed: false });
+        const deploymentsConfigs = await this.repository.searchByEnvironmentIsDeployed({ environmentId: data.environmentId, isDeployed: false });
         if(!deploymentsConfigs || deploymentsConfigs.toPrimitives().length != 1 )
-            throw new DeploymentConfigsNotFoundError(environmentId);
+            throw new DeploymentConfigsNotFoundError(data.environmentId);
 
         const deploymentConfigs = deploymentsConfigs.find((() => true));
 
-        if(!environmentIds.includes(deploymentConfigs!.environment.id.value)) {
-            return;
+        if(!permissions.environmentIds.includes(deploymentConfigs!.environment.id.value)) {
+            throw new DeploymentConfigsForbiddenAccessError(data.environmentId);
         }
 
         /* Deploy all documents to Azure Blob Storage */
-        await this.deployDocuments(username, password, path, deploymentConfigs!.toPrimitives().documents);
+        await this.deployDocuments(
+            data.username, 
+            data.password, 
+            data.path, 
+            deploymentConfigs!.toPrimitives().documents
+        );
 
-        const newDeploymentConfigs = deploymentConfigs!.deploy(path);
+        /* Update deploymentConfigs */
+        const newDeploymentConfigs = deploymentConfigs!.deploy(data.path);
 
         await this.repository.deploy(newDeploymentConfigs);
         await this.eventBus.publish(newDeploymentConfigs.pullDomainEvents());
     }
 
     async deployDocuments(username:string, password: string, path: string, documents: Array<DocumentPrimitives>) {
-        // Azure Blob Storage credentials
+
         const accountName = username;
         const accountKey = password;
         const sharedKeyCredential = new StorageSharedKeyCredential(accountName, accountKey);
-   
-        // Establish connection
+
         const blobServiceClient = new BlobServiceClient(`https://${accountName}.blob.core.windows.net`, sharedKeyCredential);
   
-        // Retrieve container for data deployment
+
         const containerName = path; // Use path attribute as container-name
         const containerClient = blobServiceClient.getContainerClient(containerName);
 
         await Promise.all(documents.map((document) => {
-            // Prepare data
+
             const data = document.properties[0].value;
             const length = Buffer.byteLength(data);
             const name = document.name+'.json';
 
-            // Deploy data
             containerClient.uploadBlockBlob(name, data, length, {  //1st arg is filename
                 blobHTTPHeaders: { blobContentType: "application/json" }
             });

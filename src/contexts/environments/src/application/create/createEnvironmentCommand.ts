@@ -4,7 +4,8 @@ import { EnvironmentPrimitives } from "@src/domain/environment";
 export type CreateEnvironmentCommandData = Omit<EnvironmentPrimitives, 'id'>;
 
 export type CreateEnvironmentCommandPermissions = {
-    username: string
+    username: string,
+    accessToken: string;
 };
 
 export default class CreateEnvironmentCommand extends Command{

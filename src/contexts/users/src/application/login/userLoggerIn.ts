@@ -9,8 +9,9 @@ import Password from '@src/domain/password/password';
 import Tokenator from '@src/infrastructure/persistence/mongo/tokenator';
 import Token from '@src/domain/session/token';
 import PasswordValidator from '@src/domain/password/passwordValidator';
-import UserNotFoundError from '@src/domain/errors/userNotFoundError';
 import InvalidPasswordError from '@src/domain/errors/invalidPasswordError';
+import logger from '@context/shared/infrastructure/logger';
+import PasswordNotFound from '@src/domain/errors/passwordNotFoundError';
 
 export default class UserLoggerIn {
     private readonly finder: UserByUsernameFinder;
@@ -28,26 +29,28 @@ export default class UserLoggerIn {
     async run(query: LogInUserQuery): Promise<LogInUserResponse> {
         const { username, password } = query;
 
+        logger.info("Loggin user with ", { username });
+
         const user = await this.finder.find(username);
 
-        if(!user?.password)
-            throw new UserNotFoundError(username);
+        if(!user.password) {
+            throw new PasswordNotFound(username);
+        }
 
         const isValid = this.validator.validate(
             new Password(password), 
             user.password
         );
 
-        if(!isValid)
+        if(!isValid) {
             throw new InvalidPasswordError(username);
+        }
 
         const role = (await this.queryBus.ask(
             new FindRoleQuery({ 
                 id:user.role.id.value 
-            }))) as FindRoleResponse;
-
-        if(!role)
-            throw new Error("Role not found");
+            }))
+        ) as FindRoleResponse;
 
         const accessToken = this.generator.generateAccessToken(user.toPrimitives(), role.primitives);
         const refreshToken = this.generator.generateRefreshToken(user.toPrimitives());

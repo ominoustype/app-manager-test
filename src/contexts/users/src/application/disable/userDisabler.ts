@@ -2,6 +2,8 @@ import { EventBus } from "@context/shared/domain/eventBus/eventBus";
 import DisableUserCommand from "./disableUserCommand";
 import UserRepository from "../../domain/userRepository";
 import UserByUsernameFinder from "@src/domain/userByUsernameFinder";
+import logger from "@context/shared/infrastructure/logger";
+import UserMissingParameterError from "@src/domain/errors/userMissingParameterError";
 
 export default class UserDisabler {
     private readonly repository: UserRepository;
@@ -17,11 +19,15 @@ export default class UserDisabler {
     }
 
     async run(command: DisableUserCommand): Promise<void> {
-        const user = await this.finder.find(command.username);
+        const { username } = command;
 
-        if (!user) {
-            return;
+        logger.info("Disabling user with ", { username });
+
+        if(username) {
+            throw new UserMissingParameterError();
         }
+
+        const user = await this.finder.find(command.username);
 
         user.disable();
 
@@ -30,5 +36,3 @@ export default class UserDisabler {
         await this.eventBus.publish(user.pullDomainEvents());
     }
 }
-
-module.exports = UserDisabler;

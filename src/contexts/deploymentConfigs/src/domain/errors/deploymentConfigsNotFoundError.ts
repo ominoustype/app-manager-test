@@ -1,5 +1,5 @@
-export default class DeploymentsConfigsNotFoundError extends Error{
-    constructor(environmentId: string){
-        super(`DeploymentsConfigs linked to the environment with id ${environmentId} not found`);
+export default class DeploymentConfigsNotFoundError extends Error{
+    constructor(id: string){
+        super(`DeploymentConfigs with id ${id} not found`);
     }
 }

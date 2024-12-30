@@ -3,29 +3,35 @@ import DeploymentConfigsRepository from "@src/domain/deploymentConfigsRepository
 import CreateDeploymentConfigsCommand from "./createDeploymentConfigsCommand";
 import DeploymentConfigs from "@src/domain/deploymentConfigs";
 import DeploymentConfigsAlreadyExistsError from "@src/domain/errors/deploymentConfigsAlreadyExistsError";
-import DeploymentConfigsFinder from "@src/domain/deploymentConfigsFinder";
+import DeploymentConfigsForbiddenAccessError from "@src/domain/errors/deploymentConfigsForbiddenAccessError";
 
 export default class DeploymentConfigsCreator{
     private readonly repository: DeploymentConfigsRepository;
 
     private readonly eventBus: EventBus;
 
-    private readonly finder: DeploymentConfigsFinder;
     
     constructor(repository: DeploymentConfigsRepository, eventBus: EventBus){
         this.repository = repository;
         this.eventBus = eventBus;
-        this.finder = new DeploymentConfigsFinder(repository);
     }
 
     async run (command: CreateDeploymentConfigsCommand): Promise<void>{
-        const deploymentConfigs = DeploymentConfigs.create(command.data);
+        const { data, permissions } = command;
 
-        const aux = await this.finder.find(deploymentConfigs.id.value, command.permissions.environmentIds);
-        if(aux !== null)
-            throw new DeploymentConfigsAlreadyExistsError(deploymentConfigs.id.value);
+        if(!permissions.environmentIds.includes(data.environment.id)) {
+            throw new DeploymentConfigsForbiddenAccessError(data.environment.id);
+        }
 
-        await this.repository.create(deploymentConfigs);
-        await this.eventBus.publish(deploymentConfigs.pullDomainEvents());
+        const newDeploymentConfigs = DeploymentConfigs.create(data);
+
+        const deploymentConfigs = await this.repository.find(newDeploymentConfigs.id);
+
+        if(deploymentConfigs !== null) {
+            throw new DeploymentConfigsAlreadyExistsError(newDeploymentConfigs.id.value);
+        }
+
+        await this.repository.create(newDeploymentConfigs);
+        await this.eventBus.publish(newDeploymentConfigs.pullDomainEvents());
     }
 }

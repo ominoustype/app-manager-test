@@ -1,11 +1,11 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import CreateUserCommand from '@context/users/application/create/createUserCommand'
 import FindUserQuery from '@context/users/application/find/findUserQuery'
 import SearchUsersQuery from '@context/users/application/search/searchUsersQuery'
 import UpdateUserCommand from '@context/users/application/update/updateUserCommand'
 import RemoveUserCommand from '@context/users/application/delete/removeUserCommand'
 
-import { dependencies } from './application.di'
+import { BUSES, dependencies, HANDLERS } from './application.di'
 import DisableUserCommand from '@context/users/application/disable/disableUserCommand'
 import ChangePasswordCommand from '@context/users/application/changePassword/changePasswordCommand'
 import LogInUserQuery from '@context/users/application/login/loginUserQuery'
@@ -19,14 +19,29 @@ import InMemoryCommandBus from '@context/shared/infrastructure/commandBus/inMemo
 import CreateRoleQuery from '@context/roles/application/create/createRoleQuery'
 import UpdateRoleCommand from '@context/roles/application/update/updateRoleCommand'
 import RefreshTokenQueryHandler from '@context/users/application/refreshToken/refreshTokenQueryHandler'
+import LogOutUserCommandHandler from '@context/users/application/logout/logoutUserCommandHandler'
+import FindRoleQueryHandler from '@context/roles/application/find/findRoleQueryHandler'
+import LogInUserQueryHandler from '@context/users/application/login/loginUserQueryHandler'
+import ChangePasswordCommandHandler from '@context/users/application/changePassword/changePasswordCommandHandler'
+import RemoveUserCommandHandler from '@context/users/application/delete/removeUserCommandHandler'
+import DisableUserCommandHandler from '@context/users/application/disable/disableUserCommandHandler'
+import UpdateRoleCommandHandler from '@context/roles/application/update/updateRoleCommandHandler'
+import UpdateUserCommandHandler from '@context/users/application/update/updateUserCommandHandler'
+import SearchUsersQueryHandler from '@context/users/application/search/searchUsersQueryHandler'
+import FindUserQueryHandler from '@context/users/application/find/findUserQueryHandler'
+import CreateUserCommandHandler from '@context/users/application/create/createUserCommandHandler'
+import RemoveRoleCommandHandler from '@context/roles/application/delete/removeRoleCommandHandler'
+import CreateRoleQueryHandler from '@context/roles/application/create/createRoleQueryHandler'
+import logger from '@context/shared/infrastructure/logger'
 
 const CONTENT_TYPE = 'content-type';
 const APPLICATION_JSON = 'application/json';
 
 export async function searchUsers(req: Request, res: Response) {
-    console.log('Request for searchUsers Triggered')
+    logger.info('Request for searchUsers Triggered');
 
-    const handler = dependencies.get('handlers').query.get(SearchUsersQuery);
+    const handler = dependencies.get(HANDLERS).query.get(SearchUsersQuery) as 
+        SearchUsersQueryHandler;
 
     const result = await handler.handle(
         new SearchUsersQuery({
@@ -36,7 +51,7 @@ export async function searchUsers(req: Request, res: Response) {
         })
     );
 
-    res.header(CONTENT_TYPE, APPLICATION_JSON)
+    res.header(CONTENT_TYPE, APPLICATION_JSON);
     res.status(200).send({
         body:({
             result: result.primitives
@@ -44,13 +59,14 @@ export async function searchUsers(req: Request, res: Response) {
     })
 }
 
-export async function findUser(req: Request, res: Response) {
-    console.log('Request for findUser Triggered')
-    const { username } = req.params
+export async function findUser(req: Request, res: Response, next: NextFunction) {
+    logger.info('Request for findUser Triggered');
+    const { username } = req.params;
 
-    const handler = dependencies.get('handlers').query.get(FindUserQuery);
+    const handler = dependencies.get(HANDLERS).query.get(FindUserQuery) as 
+        FindUserQueryHandler;
 
-    console.log('Username to find', username)
+    logger.info('Username to find', { username });
 
     try {
         const response = await handler.handle(
@@ -62,54 +78,61 @@ export async function findUser(req: Request, res: Response) {
             body: response.primitives
         });
     } catch (e) {
-        //res.status(404).send({ error: e });
-        //next()
+        next(e);
     }
 }
 
-export async function createUser(req: Request, res: Response) {
-    console.log('Request for createUser Triggered')
+export async function createUser(req: Request, res: Response, next: NextFunction) {
+    logger.info('Request for createUser Triggered');
 
-    const queryBus = dependencies.get('buses').query as InMemoryQueryBus;
-    const commandBus = dependencies.get('buses').command as InMemoryCommandBus;
+    const queryBus = dependencies.get(BUSES).query as InMemoryQueryBus;
+    const commandBus = dependencies.get(BUSES).command as InMemoryCommandBus;
 
-    const roleFinder = dependencies.get('handlers').query.get(FindRoleQuery);
-    queryBus.addQueryHandlers([roleFinder]);
+    const roleFinder = dependencies.get(HANDLERS).query.get(FindRoleQuery) as
+        FindRoleQueryHandler;
+    queryBus.addQueryHandlers([ roleFinder ]);
 
-    const roleCreator = dependencies.get('handlers').query.get(CreateRoleQuery);
-    queryBus.addQueryHandlers([roleCreator]);
+    const roleCreator = dependencies.get(HANDLERS).query.get(CreateRoleQuery) as
+        CreateRoleQueryHandler;
+    queryBus.addQueryHandlers([ roleCreator ]);
     
-    const roleRemover = dependencies.get('handlers').command.get(RemoveRoleCommand);
-    commandBus.addCommandHandlers([roleRemover]);
+    const roleRemover = dependencies.get(HANDLERS).command.get(RemoveRoleCommand) as
+        RemoveRoleCommandHandler;
+    commandBus.addCommandHandlers([ roleRemover ]);
     
-    const handler = dependencies.get('handlers').command.get(CreateUserCommand);
+    const handler = dependencies.get(HANDLERS).command.get(CreateUserCommand) as 
+        CreateUserCommandHandler;
 
     try {
         await handler.handle(new CreateUserCommand(req.body));
 
         res.status(201).send();
-    } catch (e) {
-        return e;
+    } 
+    catch (e) {
+        next(e);
     }  
 }
 
-export async function updateUser(req: Request, res: Response) {
-    console.log('Request for updateUser Triggered')
+export async function updateUser(req: Request, res: Response, next: NextFunction) {
+    logger.info('Request for updateUser Triggered');
 
-    const { username } = req.params
+    const { username } = req.params;
 
-    const queryBus = dependencies.get('buses').query as InMemoryQueryBus;
-    const commandBus = dependencies.get('buses').command as InMemoryCommandBus;
+    const queryBus = dependencies.get(BUSES).query as InMemoryQueryBus;
+    const commandBus = dependencies.get(BUSES).command as InMemoryCommandBus;
 
-    const roleFinder = dependencies.get('handlers').query.get(FindRoleQuery);
-    queryBus.addQueryHandlers([roleFinder]);
+    const roleFinder = dependencies.get(HANDLERS).query.get(FindRoleQuery) as 
+        FindRoleQueryHandler;
+    queryBus.addQueryHandlers([ roleFinder ]);
 
-    const roleUpdater = dependencies.get('handlers').command.get(UpdateRoleCommand);
-    commandBus.addCommandHandlers([roleUpdater]);
+    const roleUpdater = dependencies.get(HANDLERS).command.get(UpdateRoleCommand) as 
+        UpdateRoleCommandHandler;
+    commandBus.addCommandHandlers([ roleUpdater ]);
 
-    const handler = dependencies.get('handlers').command.get(UpdateUserCommand);
+    const handler = dependencies.get(HANDLERS).command.get(UpdateUserCommand) as 
+        UpdateUserCommandHandler;
 
-    console.log('Username to update', username)
+    logger.info('Username to update', { username });
 
     try {
         await handler.handle(
@@ -119,19 +142,21 @@ export async function updateUser(req: Request, res: Response) {
             })
         );
 
-        res.status(204).send()
-    } catch (e) {
-        return e;
+        res.status(204).send();
+    } 
+    catch (e) {
+        next(e);
     }
 }
 
-export async function deleteUser(req: Request, res: Response) {
-    console.log('Request for deleteUser Triggered')
-    const { username } = req.params
+export async function deleteUser(req: Request, res: Response, next: NextFunction) {
+    logger.info('Request for deleteUser Triggered');
+    const { username } = req.params;
 
-    const handler = dependencies.get('handlers').command.get(RemoveUserCommand);
+    const handler = dependencies.get(HANDLERS).command.get(RemoveUserCommand) as 
+        RemoveUserCommandHandler;
 
-    console.log('Username to delete', username)
+    logger.info('Username to delete', { username });
 
     try {
         await handler.handle(
@@ -140,20 +165,22 @@ export async function deleteUser(req: Request, res: Response) {
             })
         );
 
-        res.status(204).send()
-    } catch (e) {
-        return e;
+        res.status(204).send();
+    } 
+    catch (e) {
+        next(e);
     }
 }
 
-export async function disableUser(req: Request, res: Response) {
-    console.log('Request for disableUser Triggered')
+export async function disableUser(req: Request, res: Response, next: NextFunction) {
+    logger.info('Request for disableUser Triggered');
 
-    const { username } = req.params
+    const { username } = req.params;
 
-    const handler = dependencies.get('handlers').command.get(DisableUserCommand);
+    const handler = dependencies.get(HANDLERS).command.get(DisableUserCommand) as 
+        DisableUserCommandHandler;
 
-    console.log('Username to disable', username)
+    logger.info('Username to disable', { username });
 
     try {
         await handler.handle(
@@ -162,20 +189,22 @@ export async function disableUser(req: Request, res: Response) {
             })
         );
 
-        res.status(204).send()
-    } catch (e) {
-        return e;
+        res.status(204).send();
+    } 
+    catch (e) {
+        next(e);
     }
 }
 
-export async function changePassword(req: Request, res: Response) {
-    console.log('Request for changePassword Triggered')
+export async function changePassword(req: Request, res: Response, next: NextFunction) {
+    logger.info('Request for changePassword Triggered');
 
-    const { username, oldPassword, newPassword } = req.body
+    const { username, oldPassword, newPassword } = req.body;
 
-    const handler = dependencies.get('handlers').command.get(ChangePasswordCommand);
+    const handler = dependencies.get(HANDLERS).command.get(ChangePasswordCommand) as 
+        ChangePasswordCommandHandler;
 
-    console.log('Username to change password', username)
+    logger.info('Username to change password', { username });
 
     try {
         await handler.handle(
@@ -186,23 +215,28 @@ export async function changePassword(req: Request, res: Response) {
             })
         );
 
-        res.status(204).send()
-    } catch (e) {
-        return e;
+        res.status(204).send();
+    } 
+    catch (e) {
+        next(e);
     }
 }
 
-export async function logInUser(req: Request, res: Response) {
-    console.log('Request for logInUser Triggered')
-    const { username, password } = req.body
+export async function logInUser(req: Request, res: Response, next: NextFunction) {
+    logger.info('Request for logInUser Triggered');
 
-    const queryBus = dependencies.get('buses').query as InMemoryQueryBus;
+    const { username, password } = req.body;
 
-    const roleFinder = dependencies.get('handlers').query.get(FindRoleQuery);
+    const queryBus = dependencies.get(BUSES).query as InMemoryQueryBus;
+
+    const roleFinder = dependencies.get(HANDLERS).query.get(FindRoleQuery) as 
+        FindRoleQueryHandler;
     queryBus.addQueryHandlers([ roleFinder ]);
 
-    const handler = dependencies.get('handlers').query.get(LogInUserQuery);
-    console.log('Username to login', username)
+    const handler = dependencies.get('handlers').query.get(LogInUserQuery) as 
+        LogInUserQueryHandler;
+
+    logger.info('Username to login', { username });
 
     try {
         const response = await handler.handle(
@@ -217,21 +251,22 @@ export async function logInUser(req: Request, res: Response) {
             }
         });
     } catch (e) {
-        res.status(404).send({ error: e });
+        next(e);
     }
 }
 
-export async function logOutUser(req: Request, res: Response) {
-    console.log('Request for logOutUser Triggered')
+export async function logOutUser(req: Request, res: Response, next: NextFunction) {
+    logger.info('Request for logOutUser Triggered');
 
-    const { username } = req.params
+    const { username } = req.params;
 
     const accessToken = req.header('Authorization')?.replace('Bearer ', '');
     const { refreshToken } = req.body;
 
-    const handler = dependencies.get('handlers').command.get(LogoutUserCommand);
+    const handler = dependencies.get(HANDLERS).command.get(LogoutUserCommand) as 
+        LogOutUserCommandHandler;
 
-    console.log('Username to logout', username);
+    logger.info('Username to logout', { username });
 
     try {
         await handler.handle(
@@ -241,26 +276,28 @@ export async function logOutUser(req: Request, res: Response) {
                 refreshToken: refreshToken
             }));
         
-        res.status(204).send()
+        res.status(204).send();
     } 
     catch (e) {
-        return e;
+        next(e);
     }
 }
 
-export async function refreshToken(req: Request, res: Response) {
-    console.log('Request for refreshToken Triggered');
+export async function refreshToken(req: Request, res: Response, next: NextFunction) {
+    logger.info('Request for refreshToken Triggered');
 
-    const { refreshToken } = req.body
+    const { refreshToken } = req.body;
 
-    const queryBus = dependencies.get('buses').query as InMemoryQueryBus;
+    const queryBus = dependencies.get(BUSES).query as InMemoryQueryBus;
 
-    const roleFinder = dependencies.get('handlers').query.get(FindRoleQuery);
-    queryBus.addQueryHandlers([roleFinder]);
+    const roleFinder = dependencies.get(HANDLERS).query.get(FindRoleQuery) as 
+        FindRoleQueryHandler;
+    queryBus.addQueryHandlers([ roleFinder ]);
     
-    const handler = await dependencies.get('handlers').query.get(RefreshTokenQuery) as RefreshTokenQueryHandler;
+    const handler = await dependencies.get(HANDLERS).query.get(RefreshTokenQuery) as 
+        RefreshTokenQueryHandler;
 
-    console.log('Refresh token to be used', refreshToken);
+    logger.info('Refresh token to be used', { refreshToken });
 
     try{
         const response = await handler.handle(new RefreshTokenQuery({
@@ -272,8 +309,7 @@ export async function refreshToken(req: Request, res: Response) {
         });
     }
     catch(e) {
-        console.log(e);
-        res.status(500).send({ error: e });
+        next(e);
     }
 }
 

@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from 'express'
 import AuthUserQuery from '@context/users/application/auth/authUserQuery';
 import AuthUserQueryHandler from '@context/users/application/auth/authUserQueryHandler';
 import AuthUserResponse from '@context/users/application/auth/authUserResponse';
+import logger from '@context/shared/infrastructure/logger';
 
 export interface CustomRequest extends Request {
     user: User
@@ -15,10 +16,11 @@ type Permissions = {
 type User = {
     permissions: Permissions;
     username: string;
+    accessToken: string;
 };
 
 export async function auth(req: Request, res: Response, next: NextFunction) {
-    console.log("Request for authUser triggered");
+    logger.info("Request for authUser triggered");
 
     const handler = dependencies.get(HANDLERS).query.get(AuthUserQuery) as
         AuthUserQueryHandler;
@@ -34,14 +36,14 @@ export async function auth(req: Request, res: Response, next: NextFunction) {
             permissions: {
                 environmentIds: response.environmentIds
             },
-            username: response.username
+            username: response.username,
+            accessToken: accessToken!
         };
         
         next();
     }
     catch(e) {
-        console.log(e);
-        if(e instanceof Error)
-            res.status(401).send({ error: e.message });
+        res;
+        next(e);
     }
 }
