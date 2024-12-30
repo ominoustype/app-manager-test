@@ -4,6 +4,7 @@ yarn.lock
 
 ####
 data_docs/*
+logs/*
 ####
 
 # Logs

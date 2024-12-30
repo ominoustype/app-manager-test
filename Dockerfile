@@ -27,6 +27,7 @@ FROM node:22-alpine
 ENV NODE_ENV production
 USER node:node
 WORKDIR /app
+RUN mkdir ./logs 
 
 # Copy global dependencies
 COPY --chown=node:node --from=build /app/package*.json /app/yarn.lock ./
