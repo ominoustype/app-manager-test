@@ -3,6 +3,9 @@ import { EventBus } from "@context/shared/domain/eventBus/eventBus";
 import RoleFinder from "@src/domain/roleFinder";
 import RoleRepository from "@src/domain/roleRepository";
 import RemoveRoleCommand from "./removeRoleCommand";
+import logger from "@context/shared/infrastructure/logger";
+import RoleNotFoundError from "@src/domain/errors/roleNotFoundError";
+import RoleMissingParameterError from "@src/domain/errors/roleMissingParameterError";
 
 export default class RoleRemover {
     private readonly repository: RoleRepository;
@@ -16,15 +19,19 @@ export default class RoleRemover {
     }
 
     async run(command: RemoveRoleCommand): Promise<void> {
-        const id = command.data.id;
+        const { id } = command.data;
 
-        if(!id)
-            return;
+        logger.info("Deleting role with ", { id });
+
+        if(!id) {
+            throw new RoleMissingParameterError();
+        }
 
         const role = await this.finder.find(id);
 
-        if(role === null)
-            return;
+        if(!role) {
+            throw new RoleNotFoundError(id);
+        }
 
         role.delete();
 

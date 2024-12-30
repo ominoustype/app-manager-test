@@ -4,6 +4,7 @@ import Role from "@src/domain/role";
 import { EventBus } from "@context/shared/domain/eventBus/eventBus";
 import RoleAlreadyExistsError from "@src/domain/errors/roleAlreadyExistError";
 import CreateRoleResponse from "./createRoleResponse";
+import logger from "@context/shared/infrastructure/logger";
 
 export default class RoleCreator {
     private readonly repository: RoleRepository;
@@ -15,12 +16,17 @@ export default class RoleCreator {
     }
 
     async run(command: CreateRoleCommand): Promise<CreateRoleResponse> {
-        const newRole = Role.create(command.data);
+        const { data } = command;
+
+        logger.info("Creating role with ", { data });
+
+        const newRole = Role.create(data);
 
         const role = await this.repository.find(newRole.id);
 
-        if(role !== null)
+        if(!role) {
             throw new RoleAlreadyExistsError(newRole.id.value);
+        }
 
         await this.repository.create(newRole);
 
