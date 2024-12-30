@@ -88,7 +88,7 @@ export default class DocumentDeployer {
 //2     /* Update the environment adding the reference of the deploymentConfigs about to be deployed */
         await this.commandBus.dispatch(
             new DeployEnvironmentCommand({
-                primitives: environmentPrimitives,
+                data: environmentPrimitives,
                 deploymentConfigsId: deploymentConfigsPrimitives.id
             })
         );
