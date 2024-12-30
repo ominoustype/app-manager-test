@@ -13,8 +13,9 @@ export default class DeploymentConfigsFinder{
         const deploymentConfigs = await this.deploymentConfigsRepository.
             findByIdAndEnvironmentIds(new DeploymentConfigsId(id), environmentIds);
         
-        if(!deploymentConfigs)
+        if(!deploymentConfigs) {
             throw new DeploymentConfigsNotFoundError(id);
+        }
 
         return deploymentConfigs;
     }

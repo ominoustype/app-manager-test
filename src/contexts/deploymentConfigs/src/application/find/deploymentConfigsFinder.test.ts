@@ -3,7 +3,7 @@ import FindDeploymentConfigsQueryHandler from "./findDeploymentConfigsQueryHandl
 import DeploymentConfigsFinder from "./deploymentConfigsFinder";
 import FindDeploymentConfigsQueryMother from "./findDeploymentConfigsQuery.mother";
 import FindDeploymentConfigsResponseMother from "./findDeploymentConfigsResponse.mother";
-import DeploymentConfigsNotFoundError from "@src/domain/errors/deploymentConfigsNotFoundError";
+import DeploymentConfigsNotFoundError from "@src/domain/errors/deploymentsConfigsNotFoundError";
 import Uuid from "@context/shared/domain/uuid";
 
 describe('deploymentConfigs', () => {
