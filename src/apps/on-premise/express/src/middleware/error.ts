@@ -19,6 +19,10 @@ import DeploymentConfigsAlreadyExistsError from '@context/deploymentConfigs/doma
 import UserNotFoundError from '@context/users/domain/errors/userNotFoundError';
 import UserAlreadyExistsError from '@context/users/domain/errors/userAlreadyExistsError';
 import UserMissingParameterError from '@context/users/domain/errors/userMissingParameterError';
+import InvalidPasswordError from '@context/users/domain/errors/invalidPasswordError';
+import InvalidTokenError from '@context/users/domain/errors/invalidTokenError';
+import PasswordNotFoundError from '@context/users/domain/errors/passwordNotFoundError';
+import UserForbiddenAccessError from '@context/users/domain/errors/userForbiddenAccessError';
 
 export default function errorHandler<T extends Error>(error: T, _request: Request, response: Response, _next: NextFunction) {
     logger.error(error.message);
@@ -41,7 +45,8 @@ export default function errorHandler<T extends Error>(error: T, _request: Reques
     }
 
     if(error instanceof DeploymentConfigsForbiddenAccessError ||
-                        EnvironmentForbiddenAccessError) {
+                        EnvironmentForbiddenAccessError ||
+                        UserForbiddenAccessError || InvalidPasswordError || PasswordNotFoundError || InvalidTokenError) {
         response.status(401).send({ message: "Forbidden access" });
     }
 

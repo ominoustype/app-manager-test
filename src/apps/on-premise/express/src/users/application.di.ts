@@ -103,7 +103,7 @@ const removeUserCommandHandler = new RemoveUserCommandHandler(userRemover);
 
 const userFinder = new UserFinder(userRepository);
 const usersSearcher = new UsersSearcher(userRepository);
-const tokenRefresher = new TokenRefresher(userRepository, tokenator, tokenRepository, queryBus);
+const tokenRefresher = new TokenRefresher(userRepository, tokenator, queryBus);
 
 const findUserQueryHandler = new FindUserQueryHandler(userFinder);
 const searchUsersQueryHandler = new SearchUsersQueryHandler(usersSearcher);
