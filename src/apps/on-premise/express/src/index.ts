@@ -8,6 +8,7 @@ import loadEnvironments from './environments/routes'
 import loadRoles from './roles/routes'
 import loadUsers from './users/routes'
 import loadCustomers from './customers/routes'
+import loadReleaseNotes from './releaseNotes/routes'
 import logger from '@context/shared/infrastructure/logger'
 
 const app = ExpressServer()
@@ -33,6 +34,7 @@ loadEnvironments(app)
 loadRoles(app)
 loadCustomers(app)
 loadUsers(app)
+loadReleaseNotes(app)
 
 app.use(errorHandler)
 
@@ -55,7 +57,7 @@ const art:string  = `<pre>
 <pre>`;
 
 const title:string = `<br><pre>
-     _     ____   ____      __  __     _     _   _     _     ____  _____  ____  \r\n    \/ \\   |  _ \\ |  _ \\    |  \\\/  |   \/ \\   | \\ | |   \/ \\   \/ ___|| ____||  _ \\ \r\n   \/ _ \\  | |_) || |_) |   | |\\\/| |  \/ _ \\  |  \\| |  \/ _ \\ | |  _ |  _|  | |_) |\r\n  \/ ___ \\ |  __\/ |  __\/    | |  | | \/ ___ \\ | |\\  | \/ ___ \\| |_| || |___ |  _ < \r\n \/_\/   \\_\\|_|    |_|       |_|  |_|\/_\/   \\_\\|_| \\_|\/_\/   \\_\\\\____||_____||_| \\_\\\r\n                                                                                                                                                 
+     _     ____   ____      __  __     _     _   _     _     ____  _____  ____  \r\n    \/ \\   |  _ \\ |  _ \\    |  \\\/  |   \/ \\   | \\ | |   \/ \\   \/ ___|| ____||  _ \\ \r\n   \/ _ \\  | |_) || |_) |   | |\\\/| |  \/ _ \\  |  \\| |  \/ _ \\ | |  _ |  _|  | |_) |\r\n  \/ ___ \\ |  __\/ |  __\/    | |  | | \/ ___ \\ | |\\  | \/ ___ \\| |_| || |___ |  _ < \r\n \/_\/   \\_\\|_|    |_|       |_|  |_|\/_\/   \\_\\|_| \\_|\/_\/   \\_\\\\____||_____||_| \\_\\\r\n
 <pre>`
 
 const deployment_text = `<br><br><i> (`+deployment+`)<i>`
