@@ -1,0 +1,16 @@
+src/apps/on-premise/express/src/index.ts
+  h_8d697fa42b6204 11,37,60
+src/apps/on-premise/express/src/releaseNotes/releaseNotesService.ts
+  h_8d697fa42b6204 1-48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "cc23ca7938853699b45455bb6587f8676db08cc9",
+  "prompts": {},
+  "humans": {
+    "h_8d697fa42b6204": {
+      "author": "Antonio Sanchez <antoniostes@ext.inditex.com>"
+    }
+  }
+}
